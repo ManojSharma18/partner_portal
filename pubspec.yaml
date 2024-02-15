@@ -34,7 +34,7 @@ dependencies:
   hover_widget:
   dropdown_search:
   intl:
-
+  provider:
 
 
   # The following adds the Cupertino Icons font to your application.

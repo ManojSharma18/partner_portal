@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
+import 'package:partner_admin_portal/constants/responsive_builder.dart';
 import 'package:partner_admin_portal/widgets/item_availability.dart';
 import 'package:partner_admin_portal/widgets/item_details.dart';
 
@@ -124,304 +125,310 @@ class _MenuEditorState extends State<MenuEditor> with TickerProviderStateMixin {
     double fem = MediaQuery.of(context).size.width / baseWidth;
     double ffem = fem * 0.97;
     print("Selected $selectedItem");
-    return Container(
-      decoration: BoxDecoration(
-          color: Colors.grey.shade100
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 5,),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 5),
-                    color: Colors.white,
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                              color: Colors.grey.shade200
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("SECTIONS | ${foodCategories.length}",
-                                style: SafeGoogleFont(
-                                  'Poppins',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF363563),
-                                ),),
+    return ResponsiveBuilder(mobileBuilder: (BuildContext context,BoxConstraints constraints){
+      return Container();
+    }, tabletBuilder: (BuildContext context,BoxConstraints constraints){
+      return Container();
+    }, desktopBuilder: (BuildContext context,BoxConstraints constraints){
+      return Container(
+        decoration: BoxDecoration(
+            color: Colors.grey.shade100
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 5,),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      margin: EdgeInsets.only(left: 5),
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                                color: Colors.grey.shade200
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("SECTIONS | ${foodCategories.length}",
+                                  style: SafeGoogleFont(
+                                    'Poppins',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF363563),
+                                  ),),
 
-                              SizedBox(width: 10,),
-                              InkWell(
-                                onTap: _showAddItemCategory,
-                                child: Text("+ ADD New", style: SafeGoogleFont(
-                                  'Poppins',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xfffbb830),
-                                ),),
-                              )
+                                SizedBox(width: 10,),
+                                InkWell(
+                                  onTap: _showAddItemCategory,
+                                  child: Text("+ ADD New", style: SafeGoogleFont(
+                                    'Poppins',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xfffbb830),
+                                  ),),
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 20,),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: foodCategories.length,
+                              itemBuilder: (context, index) {
+                                String category = foodCategories.keys.elementAt(index);
+                                List<String> items = foodCategories[category] ?? [];
+                                return InkWell(
+                                  onTap: () {
+                                    print('Tapped on $category');
+                                    setState(() {
+                                      selectedCategory = category; // Update selected category
+                                    });
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: 5, bottom: 5),
+                                        color: selectedCategory == category
+                                            ? Color(0xFF363563)
+                                            : null,
+                                        child: ListTile(
+                                          title: Text(
+                                            category, style: SafeGoogleFont(
+                                            'Poppins',
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: selectedCategory == category
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),),
+                                          leading: Icon(
+                                            Icons.grid_view_rounded, size: 10,
+                                            color: selectedCategory == category
+                                                ? Colors.white
+                                                : Colors.black,),
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              InkWell(
+                                                onTap:(){
+                                                  _showPopupMenu(context);
+                                                },
+                                                child: Icon(Icons.more_vert, color: selectedCategory == category
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                ),
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  _showAddItemDialog();
+                                                },
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    SizedBox(width: 5),
+                                                    Icon(
+                                                        Icons.add,
+                                                        size: 15,
+                                                        color: GlobalVariables
+                                                            .primaryColor
+                                                    ),
+                                                    SizedBox(width: 5),
+                                                    // Adjust the spacing as needed
+                                                    Text(
+                                                        'ADD ITEM',
+                                                        style: SafeGoogleFont(
+                                                          'Poppins',
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Color(0xfffbb830),
+                                                        )
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Visibility(
+                                        visible: selectedCategory == category,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .start,
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .start,
+                                          children: _buildItemsList(category,items),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    color: Colors.black26,
+                    width: 1,
+                  ),
+
+                  Container(
+                    color: Colors.black26,
+                    width: 1,
+                  ),
+                  Expanded(
+                    flex: 5,
+                    child: DefaultTabController(
+                      length: 5, // Number of tabs
+                      child: Scaffold(
+                        appBar: AppBar(
+                          toolbarHeight: 0,backgroundColor:Colors.grey.shade200,
+                          bottom: TabBar(
+                            controller: _tabController,
+                            isScrollable: false,
+                            labelPadding: EdgeInsets.symmetric(horizontal: 5),
+                            indicatorWeight: 5, // Adjust the indicator weight
+                            indicatorColor: Color(0xfffbb830),
+                            unselectedLabelColor: Colors.black54,
+                            labelColor: Color(0xFF363563),
+                            labelStyle: SafeGoogleFont(
+                              'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF363563),
+                            ),
+                            tabs: [
+                              Tab(text: 'Item details'),
+                              Tab(text: 'Pricing'),
+                              Tab(text: 'Availability'),
+                              Tab(text: 'Add on'),
+                              Tab(text: 'Variants'),
                             ],
                           ),
                         ),
-                        SizedBox(height: 20,),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: foodCategories.length,
-                            itemBuilder: (context, index) {
-                              String category = foodCategories.keys.elementAt(index);
-                              List<String> items = foodCategories[category] ?? [];
-                              return InkWell(
-                                onTap: () {
-                                  print('Tapped on $category');
-                                  setState(() {
-                                    selectedCategory = category; // Update selected category
-                                  });
-                                },
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.only(
-                                          top: 5, bottom: 5),
-                                      color: selectedCategory == category
-                                          ? Color(0xFF363563)
-                                          : null,
-                                      child: ListTile(
-                                        title: Text(
-                                          category, style: SafeGoogleFont(
-                                          'Poppins',
+                        body: TabBarView(
+                          controller: _tabController,
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            // Content for Tab 1
+                            // Content for Tab 1
+                            ItemDetails(name: selectedItem, updateSelectedItem: updateSelectedItem),
+
+
+                            // Content for Tab 2
+                            Center(child: Text('Tab 2 Content')),
+
+                            // Content for Tab 3
+                            ItemAvailability(),
+
+                            // Content for Tab 4
+                            Center(child: Text('Tab 4 Content')),
+
+                            // Content for Tab 5
+                            Center(child: Text('Tab 5 Content')),
+                          ],
+                        ),
+                        bottomNavigationBar: Visibility(
+                          visible: selectedItem!='',
+                          child: Padding(
+                            padding:  EdgeInsets.only(right: 16.0,left: 150*fem),
+                            child: BottomNavigationBar(
+                              elevation: 0,
+                              type: BottomNavigationBarType.fixed,
+                              items: [
+                                BottomNavigationBarItem(
+                                  icon: Container(
+                                    width: 100,
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Delete item",
+                                        style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
-                                          color: selectedCategory == category
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),),
-                                        leading: Icon(
-                                          Icons.grid_view_rounded, size: 10,
-                                          color: selectedCategory == category
-                                              ? Colors.white
-                                              : Colors.black,),
-                                        trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            InkWell(
-                                              onTap:(){
-                                                _showPopupMenu(context);
-                                              },
-                                              child: Icon(Icons.more_vert, color: selectedCategory == category
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                              ),
-                                            ),
-                                            InkWell(
-                                              onTap: () {
-                                                _showAddItemDialog();
-                                              },
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  SizedBox(width: 5),
-                                                  Icon(
-                                                      Icons.add,
-                                                      size: 15,
-                                                      color: GlobalVariables
-                                                          .primaryColor
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                  // Adjust the spacing as needed
-                                                  Text(
-                                                    'ADD ITEM',
-                                                    style: SafeGoogleFont(
-                                                      'Poppins',
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Color(0xfffbb830),
-                                                    )
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
-                                    Visibility(
-                                      visible: selectedCategory == category,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment
-                                            .start,
-                                        mainAxisAlignment: MainAxisAlignment
-                                            .start,
-                                        children: _buildItemsList(category,items),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  color: Colors.black26,
-                  width: 1,
-                ),
-
-                Container(
-                  color: Colors.black26,
-                  width: 1,
-                ),
-                Expanded(
-                  flex: 5,
-                  child: DefaultTabController(
-                    length: 5, // Number of tabs
-                    child: Scaffold(
-                      appBar: AppBar(
-                       toolbarHeight: 0,backgroundColor:Colors.grey.shade200,
-                        bottom: TabBar(
-                          controller: _tabController,
-                          isScrollable: false,
-                          labelPadding: EdgeInsets.symmetric(horizontal: 5),
-                          indicatorWeight: 5, // Adjust the indicator weight
-                          indicatorColor: Color(0xfffbb830),
-                          unselectedLabelColor: Colors.black54,
-                          labelColor: Color(0xFF363563),
-                          labelStyle: SafeGoogleFont(
-                            'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF363563),
-                          ),
-                          tabs: [
-                            Tab(text: 'Item details'),
-                            Tab(text: 'Pricing'),
-                            Tab(text: 'Availability'),
-                            Tab(text: 'Add on'),
-                            Tab(text: 'Variants'),
-                          ],
-                        ),
-                      ),
-                      body: TabBarView(
-                        controller: _tabController,
-                        physics: NeverScrollableScrollPhysics(),
-                        children: [
-                          // Content for Tab 1
-                          // Content for Tab 1
-                          ItemDetails(name: selectedItem, updateSelectedItem: updateSelectedItem),
-
-
-                          // Content for Tab 2
-                          Center(child: Text('Tab 2 Content')),
-
-                          // Content for Tab 3
-                          ItemAvailability(),
-
-                          // Content for Tab 4
-                          Center(child: Text('Tab 4 Content')),
-
-                          // Content for Tab 5
-                          Center(child: Text('Tab 5 Content')),
-                        ],
-                      ),
-                      bottomNavigationBar: Visibility(
-                        visible: selectedItem!='',
-                        child: Padding(
-                          padding:  EdgeInsets.only(right: 16.0,left: 150*fem),
-                          child: BottomNavigationBar(
-                            elevation: 0,
-                            type: BottomNavigationBarType.fixed,
-                            items: [
-                              BottomNavigationBarItem(
-                                icon: Container(
-                                  width: 100,
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(5),
                                   ),
-                                  child: Center(
-                                    child: Text(
-                                      "Delete item",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                  label: '',
+                                ),
+                                BottomNavigationBarItem(
+                                  icon: Container(
+                                    width: 100,
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(color: Colors.black54),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Cancel",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black54,
+                                        ),
                                       ),
                                     ),
                                   ),
+                                  label: '',
                                 ),
-                                label: '',
-                              ),
-                              BottomNavigationBarItem(
-                                icon: Container(
-                                  width: 100,
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(color: Colors.black54),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Cancel",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black54,
+                                BottomNavigationBarItem(
+                                  icon: Container(
+                                    width: 100,
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue, // Replace with your primary color
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Save changes",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),
+                                  label: '',
                                 ),
-                                label: '',
-                              ),
-                              BottomNavigationBarItem(
-                                icon: Container(
-                                  width: 100,
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue, // Replace with your primary color
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Save changes",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                label: '',
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
 
 
-    );
+      );
+    });
   }
 
   void _showPopupMenu(BuildContext context) {
@@ -578,7 +585,7 @@ class _MenuEditorState extends State<MenuEditor> with TickerProviderStateMixin {
                 'Poppins',
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: color,
+                color: selectedItem == item ? GlobalVariables.textColor : color,
               ),
             ),
             trailing: Transform.scale(
@@ -596,7 +603,7 @@ class _MenuEditorState extends State<MenuEditor> with TickerProviderStateMixin {
                 },
               ),
             ),
-            leading: Icon(Icons.grid_view_rounded, size: 10, color: color),
+            leading: Icon(Icons.grid_view_rounded, size: 10, color: selectedItem == item ? GlobalVariables.textColor : color,),
           ),
         ),
       ),

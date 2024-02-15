@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
+import 'package:partner_admin_portal/provider/day_provider.dart';
 import 'package:partner_admin_portal/screens/dashboard_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => DayProvider(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

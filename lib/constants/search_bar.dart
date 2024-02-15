@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:partner_admin_portal/constants/global_variables.dart';
 
 class SearchBars extends StatelessWidget {
   final String hintText;
@@ -14,7 +15,7 @@ class SearchBars extends StatelessWidget {
     return Container(
         width: width,
         height: height,
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
 
         child: Card(
           elevation: 1,
@@ -28,11 +29,12 @@ class SearchBars extends StatelessWidget {
                 Icon(Icons.search, color: Color(0xfffbb830)), // Search icon
                 SizedBox(width: 10), // Add spacing between icon and text field
                 Expanded(
-                  child: TextField(
+                  child: TextFormField(
                     controller:controller,
                     onChanged: onChanged,
                     decoration: InputDecoration(
                       hintText: hintText,
+                      suffixIcon: Icon(Icons.filter_list,color: GlobalVariables.textColor,),
                       border: InputBorder.none, // Hide the border
                     ),
                   ),
