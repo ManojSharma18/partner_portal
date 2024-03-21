@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:partner_admin_portal/bloc/manage_orders/order_bloc.dart';
+import 'package:partner_admin_portal/bloc/order_forecast/forecast_bloc.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
 import 'package:partner_admin_portal/provider/day_provider.dart';
 import 'package:partner_admin_portal/screens/dashboard_screen.dart';
+import 'package:partner_admin_portal/screens/login_screen.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 void main() {
   runApp(
     ChangeNotifierProvider(
@@ -19,14 +22,21 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: GlobalVariables.textColor),
-        useMaterial3: true,
+    return MultiBlocProvider(
+
+      providers: [
+        BlocProvider(create: (context) => OrderBloc(),),
+        BlocProvider(create: (context)=> ForecastBloc()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: GlobalVariables.textColor),
+          useMaterial3: true,
+        ),
+        home: LoginScreen(),
       ),
-      home: DashboardScreen(),
     );
   }
 }

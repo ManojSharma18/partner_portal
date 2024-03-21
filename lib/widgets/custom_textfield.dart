@@ -19,6 +19,7 @@ class CustomTextField extends StatefulWidget {
   final bool isDropdown;
   final List<String>? dropdownItems;
   final bool showSearchBox1;
+  final String itemName;
   final Function(String?)? onChanged;
   final VoidCallback? onTap;
   final bool showGenerateOTP;
@@ -40,13 +41,14 @@ class CustomTextField extends StatefulWidget {
     required this.label,
     this.required = false,
     required this.controller,
-    this.height = 50,
-    this.width = 350,
+    this.height = 40,
+    this.width = 150,
     this.isDropdown = false,
     this.dropdownItems,
     this.showSearchBox1 = false,
     this.onChanged,
     this.onTap,
+    this.itemName = "",
     this.showGenerateOTP = false,
     this.showVerifyOTP = false,
     this.showCalendar = false,
@@ -58,7 +60,7 @@ class CustomTextField extends StatefulWidget {
     this.suffixTooltip,
     this.hintText,
     this.readOnly = false,
-    this.fontSize =14,
+    this.fontSize =12,
     this.dropdownSize=14,
     this.dropdownAuto = false
   });
@@ -73,6 +75,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
   String? selectedValue;
   bool _isValidNumber = true;
   DateTime? _selectedDate;
+
+  bool dropAddItem = false;
 
   @override
   void initState() {
@@ -134,10 +138,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
               child: Text.rich(
                 TextSpan(
                   text: '${widget.label} ',
-                  style: SafeGoogleFont(
-                    'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
+                  style: TextStyle(
+                    fontFamily: 'RenogareSoft',
+                    fontSize: widget.fontSize,
+                    fontWeight: FontWeight.w600,
                     color: GlobalVariables.textColor,
                   ),
                   children: <TextSpan>[
@@ -165,7 +169,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 textStyle: TextStyle(
                   fontWeight: FontWeight.w300,
                   fontFamily: 'Open Sans',
-                  fontSize: 13,
+                  fontSize: 8,
                   color: Colors.white,
                   wordSpacing: 0.23,
                   letterSpacing: 0.23,
@@ -180,13 +184,19 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
 
 
-        SizedBox(height: 10,),
+        SizedBox(height: 5,),
         SizedBox(
           height: widget.height,
           width: widget.width,
           child: TextField(
             controller: widget.controller,
             readOnly: widget.readOnly,
+            style: TextStyle(
+              fontFamily: 'BertSans',
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Color(0xff1d1517),
+            ),
             onChanged: (text) {
               setState(() {
                 _isNumberEntered = text.contains(new RegExp(r'[0-9]'));
@@ -199,10 +209,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintStyle: SafeGoogleFont(
-    'Poppins',
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    color: GlobalVariables.textColor,
+                       'Poppins',
+                          fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                     color: GlobalVariables.textColor,
     ),
               prefixIcon: widget.prefixWidget,
               hintText: widget.hintText,
@@ -214,91 +224,102 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   enabled: true,
                   popupProps: PopupProps.menu(
                     showSelectedItems: true,
+                    constraints: BoxConstraints(
+                       maxHeight: 250
+                ),
                     showSearchBox: widget.showSearchBox1,
                     fit: FlexFit.loose,
                     emptyBuilder: (context, searchEntry) =>
-                        Center(
-                            child:
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text('Item not found',
-                                  style:SafeGoogleFont(
-                          'Poppins',
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.red,
-                        ),),
-
-                                Container(
-                                  margin: EdgeInsets.all(30),
-                                  child: Text('To add new item u have to wait until slys accepted your request. Do you want to add the item',
+                        Container(
+                          height: 250,
+                          child: Center(
+                              child:
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text('${widget.itemName} not found',
                                     style:SafeGoogleFont(
-                                      'Poppins',
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                      color: GlobalVariables.textColor,
-                                    ),),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Container(
-                                        width: 50,
-                                        decoration: BoxDecoration(
-                                            color:GlobalVariables.whiteColor,
-                                            border:Border.all(color: Colors.black54),
-                                            borderRadius: BorderRadius.circular(10)),
-                                        padding: EdgeInsets.all(7),
-                                        child: Center(
-                                          child: Text(
-                                            'No',
-                                            style: SafeGoogleFont(
-                                              'Poppins',
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black54,
+                            'Poppins',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.red,
+                          ),),
+                                  Container(
+                                    margin: EdgeInsets.all(30),
+                                    child: Text('Do you want to create this ${widget.itemName}',
+                                      style:SafeGoogleFont(
+                                        'Poppins',
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                        color: GlobalVariables.textColor,
+                                      ),),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Container(
+                                          width: 50,
+                                          decoration: BoxDecoration(
+                                              color:GlobalVariables.whiteColor,
+                                              border:Border.all(color: Colors.black54),
+                                              borderRadius: BorderRadius.circular(10)),
+                                          padding: EdgeInsets.all(7),
+                                          child: Center(
+                                            child: Text(
+                                              'No',
+                                              style: SafeGoogleFont(
+                                                'Poppins',
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black54,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Container(
-                                        width: 50,
-                                        decoration: BoxDecoration(
-                                            color: GlobalVariables.primaryColor,
-                                            borderRadius: BorderRadius.circular(10)),
-                                        padding: EdgeInsets.all(7),
-                                        child: Center(
-                                          child: Text(
-                                            'Yes',
-                                            style: SafeGoogleFont(
-                                              'Poppins',
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: GlobalVariables.whiteColor,
+                                      TextButton(
+                                        onPressed: () {
+                                         setState(() {
+                                           dropAddItem = true;
+                                           print(widget.dropdownItems!);
+                                           selectedValue = searchEntry;
+                                           widget.dropdownItems!.add(searchEntry);
+                                           widget.dropdownItems!.last;
+                                           widget.controller.text = searchEntry;
+                                           print(widget.dropdownItems!);
+                                         });
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Container(
+                                          width: 50,
+                                          decoration: BoxDecoration(
+                                              color: GlobalVariables.primaryColor,
+                                              borderRadius: BorderRadius.circular(10)),
+                                          padding: EdgeInsets.all(7),
+                                          child: Center(
+                                            child: Text(
+                                              'Yes',
+                                              style: SafeGoogleFont(
+                                                'Poppins',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: GlobalVariables.whiteColor,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-
-                              ],
-                            )),
+                                    ],
+                                  ),
+                                ],
+                              )),
+                        ),
                   ),
                   items: widget.dropdownItems ?? [],
                   onChanged: (selectedItem) {
@@ -310,8 +331,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       widget.controller.text = selectedItem ?? '';
                     });
                   },
-                  selectedItem: widget.dropdownItems != null && widget.dropdownItems!.isNotEmpty
-                      ? widget.dropdownItems!.first
+                  selectedItem:
+                       dropAddItem
+                      ? widget.dropdownItems!.last
+                      :  widget.dropdownItems != null && widget.dropdownItems!.isNotEmpty ? widget.dropdownItems!.first
                       : null,
                   dropdownDecoratorProps: DropDownDecoratorProps(
                     dropdownSearchDecoration: InputDecoration(
@@ -323,7 +346,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   },
                   dropdownBuilder: _style,
                   compareFn: (item, selectedItem) => item == selectedItem,
-
                 ),
               )
                   : widget.showCalendar
@@ -483,12 +505,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
         child: Text(
           selectedItem!,
           style: TextStyle(
-            fontWeight: FontWeight.w300,
-            fontFamily: 'Open Sans',
-            fontSize: widget.dropdownSize,
-            color: Colors.black,
-            wordSpacing: 0.23,
-            letterSpacing: 0.23,
+            fontFamily: 'BertSans',
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Color(0xff1d1517),
           ),
         ),
       ),

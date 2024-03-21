@@ -33,8 +33,16 @@ dependencies:
   google_fonts:
   hover_widget:
   dropdown_search:
+  equatable:
+  flutter_bloc: ^7.0.0
+  flutter_reorderable_list:
   intl:
   provider:
+  flutter_barcode_sdk:
+  camera:
+  ai_barcode: ^3.0.1
+  fl_chart:
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -64,10 +72,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
-
+  assets:
+   - assets/images/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
@@ -79,7 +85,14 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
+  fonts:
+      - family: RenogareSoft
+        fonts:
+          - asset: assets/fonts/RenogareSoft-Regular.ttf
+
+      - family: BertSans
+        fonts:
+          - asset: assets/fonts/BertSans-ExtraBold.ttf
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

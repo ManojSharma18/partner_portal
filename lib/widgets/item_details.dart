@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:partner_admin_portal/constants/custom_textfield.dart';
+import 'package:partner_admin_portal/widgets/custom_textfield.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
-import 'package:partner_admin_portal/constants/responsive_builder.dart';
+import 'package:partner_admin_portal/widgets/responsive_builder.dart';
 
 import '../constants/utils.dart';
 
+enum OrderType { preorder, normal }
+
+
+class Combo{
+  String section;
+  String items;
+  Combo({required this.items,required this.section});
+}
+
 class ItemDetails extends StatefulWidget {
+  final GlobalKey<FormState> checkKey;
   final String name;
   final Function(String) updateSelectedItem;
-  const ItemDetails({Key? key, required this.name, required this.updateSelectedItem,}) : super(key: key);
+  static TextEditingController displayNameController = TextEditingController();
+  static bool checking = false;
+  const ItemDetails({Key? key, required this.name, required this.updateSelectedItem, required this.checkKey,}) : super(key: key);
 
   @override
   State<ItemDetails> createState() => _ItemDetailsState();
@@ -16,7 +28,6 @@ class ItemDetails extends StatefulWidget {
 
 class _ItemDetailsState extends State<ItemDetails> {
   TextEditingController nameController = TextEditingController();
-  TextEditingController displayNameController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
   TextEditingController subCategoryController = TextEditingController();
   TextEditingController subTagController = TextEditingController();
@@ -24,20 +35,78 @@ class _ItemDetailsState extends State<ItemDetails> {
   TextEditingController typeController = TextEditingController();
   TextEditingController subTypeController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  TextEditingController regionalController = TextEditingController();
-  TextEditingController rawSourceController = TextEditingController();
+  TextEditingController comboController = TextEditingController();
+  TextEditingController sectionController = TextEditingController();
+  TextEditingController itemController = TextEditingController();
+  TextEditingController normalPriceController = TextEditingController();
+  TextEditingController preorderPriceController = TextEditingController();
+  TextEditingController packagindController = TextEditingController();
+  TextEditingController gstController = TextEditingController();
   TextEditingController cuisineController = TextEditingController();
-  TextEditingController cuisineDescriptionController = TextEditingController();
+  TextEditingController rawSourceController = TextEditingController();
 
+  OrderType _selectedOrderType = OrderType.normal;
+
+
+  List<String> rawSource = ["Organic","Non organic"];
   List<String> category = ["Veg","Non veg","Egg"];
   List<String> subCategory = ["Jain","Halal"];
   List<String> budget = ["Budget","Premium","Luxury"];
   List<String> type = ["Food","Beverage"];
   List<String> subType = ["Prepare to eat","Ready to Eat"];
-  List<String> regional = ["Coastal karnataka","Punjabi"];
-  List<String> rawSource = ["Organic","Non organic"];
+
+  bool gstPayment = true;
+
+
   List<String> cuisine = ["South Indian","North Indian","Chines","Japan"];
 
+
+  Map<String, List<Map<String,dynamic>>> foodCategories = {
+    'South indian breakfast': [
+      {'name' : 'Idli', 'availability' : true},
+      {'name' :'Poori','availability' : false},
+      {'name' : 'Shavige bath','availability' : false }
+    ],
+
+    'North indian breakfast': [
+      {'name' : 'Chole bature', 'availability' : true},
+      {'name' :'Rava chilla','availability' : false},
+      {'name' : 'Pav bhaji','availability' : true }
+    ],
+
+    'South indian palya': [
+      {'name' : 'Beans palya', 'availability' : true},
+      {'name' :'Balekayi palya','availability' : false},
+      {'name' : 'Soppin palya','availability' : false }
+    ],
+
+    'North indian subzi': [
+      {'name' : 'Aloo moongere ki sabzi', 'availability' : true},
+      {'name' : 'Aloo bhindi','availability' : false},
+      {'name' : 'Gobo mater','availability' : false }
+    ],
+
+    'South indian ricebath': [
+      {'name' : 'lemon rice', 'availability' : true},
+      {'name' :'puliyogare','availability' : false},
+      {'name' : 'tomoto anna','availability' : false }
+    ],
+
+    'South indian sambar': [
+      {'name' : 'onion sambar', 'availability' : true},
+      {'name' :'drumstick sambar','availability' : false},
+      {'name' : 'mixed vegitables sambar','availability' : false }
+    ],
+
+    'South indian sweets': [
+      {'name' : 'Akki payasa', 'availability' : true},
+      {'name' :'Godhi payasa','availability' : false},
+      {'name' : 'shavide payasa','availability' : false }
+    ],
+
+  };
+
+  List<Combo> comboList = [];
 
 
   bool basic = true;
@@ -57,7 +126,30 @@ class _ItemDetailsState extends State<ItemDetails> {
     });
   }
 
+  List<String> sections = [];
+  List<String> items = [];
+  @override
+  void initState() {
+    super.initState();
+    gstController.text = '5%';
+    ItemDetails.displayNameController.text = widget.name;
+    sectionController.text = 'South indian breakfast';
+    foodCategories.forEach((key, value) {
+      sections.add(key);
+      value.forEach((element) {
+        if(key == sectionController.text)
+        {
+          print(element['name']);
+          items.add(element['name']);
+        }
+      });
+    });
+  }
 
+  double finalPrice = 0.0;
+
+  double preOrderFinalPrice = 0.0;
+  double normalFinalPrice = 0.0;
 
 
   @override
@@ -65,87 +157,1862 @@ class _ItemDetailsState extends State<ItemDetails> {
     double baseWidth = 375;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     double ffem = fem * 0.97;
-    displayNameController.text = widget.name;
+    ItemDetails.displayNameController.text = widget.name;
     nameController.text = widget.name;
+
     return ResponsiveBuilder(mobileBuilder: (BuildContext context,BoxConstraints constraints){
-      return widget.name == '' ? Container()
-          : Container();
+      return widget.name == ''
+          ? Container()
+          : Container(
+        padding: EdgeInsets.all(15),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20,),
+              Row(
+                children: [
+                  Container(
+                    width: 150*fem,
+                    child: Row(
+                      children: [
+                        Row(
+                          children: [
+                            Radio(
+                              activeColor: GlobalVariables.primaryColor,
+                              value: OrderType.normal,
+                              groupValue: _selectedOrderType,
+
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedOrderType = OrderType.normal;
+                                });
+                              },
+                            ),
+                            Text('Normal Price',style: TextStyle(
+                              fontFamily: 'RenogareSoft',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: GlobalVariables.textColor,
+                            ),),
+                          ],
+                        ),
+                        SizedBox(width: 10,),
+                        Row(
+                          children: [
+                            Radio(
+                              activeColor: GlobalVariables.primaryColor,
+                              value: OrderType.preorder,
+                              groupValue: _selectedOrderType,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedOrderType = OrderType.preorder;
+                                });
+                              },
+                            ),
+                            Text('Preorder Price',style: TextStyle(
+                              fontFamily: 'RenogareSoft',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: GlobalVariables.textColor,
+                            ),),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20,),
+              SizedBox(height: 20,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // CustomTextField(label: "Normal price", controller: normalPriceController,width: 30*fem,
+                  //   onChanged: (val){
+                  //     // ItemDetails.checking = false;
+                  //     // double normaPrice = double.parse(val!);
+                  //     double normalPrice;
+                  //     double pacakgingPrice;
+                  //     try {
+                  //       normalPrice = double.parse(normalPriceController.text);
+                  //     } catch (e) {
+                  //       print('Invalid double: ${normalPriceController.text}');
+                  //       normalPrice = 0.0;
+                  //     }
+                  //     try {
+                  //       pacakgingPrice = double.parse(packagindController.text);
+                  //     } catch (e) {
+                  //       print('Invalid double: ${packagindController.text}');
+                  //       pacakgingPrice=0.0;
+                  //     }
+                  //     setState(() {
+                  //       normalFinalPrice =  normalPrice + ((5*normalPrice)/100) + pacakgingPrice;
+                  //       if(_selectedOrderType ==OrderType.normal)
+                  //       {
+                  //         finalPrice = normalFinalPrice;
+                  //       }
+                  //     });
+                  //   },),
+                  // CustomTextField(label: "Preorder price", controller: preorderPriceController,width: 30*fem,
+                  //   onChanged: (val){
+                  //   setState(() {
+                  //     double preorderPrice;
+                  //     double pacakgingPrice;
+                  //     try {
+                  //       preorderPrice = double.parse(preorderPriceController.text);
+                  //     } catch (e) {
+                  //       print('Invalid double: ${preorderPriceController.text}');
+                  //       preorderPrice = 0.0;
+                  //     }
+                  //     try {
+                  //       pacakgingPrice = double.parse(packagindController.text);
+                  //     } catch (e) {
+                  //       print('Invalid double: ${packagindController.text}');
+                  //       pacakgingPrice=0.0;
+                  //     }
+                  //     setState(() {
+                  //       preOrderFinalPrice =  preorderPrice + ((5*preorderPrice)/100) + pacakgingPrice;
+                  //       if(_selectedOrderType ==OrderType.preorder)
+                  //         {
+                  //           finalPrice = preorderPrice;
+                  //         }
+                  //     });
+                  //   });
+                  //   },),
+                  // CustomTextField(label: "Packaging price", controller: packagindController,width: 30*fem,
+                  //   onChanged: (val){
+                  //     double normalPrice;
+                  //     double preOrderPrice;
+                  //     double pacakgingPrice;
+                  //     try {
+                  //       normalPrice = double.parse(normalPriceController.text);
+                  //       preOrderPrice = double.parse(preorderPriceController.text);
+                  //     } catch (e) {
+                  //       print('Invalid double: ${normalPriceController.text}');
+                  //       normalPrice = 0.0;
+                  //       preOrderPrice=0.0;
+                  //     }
+                  //     try {
+                  //       pacakgingPrice = double.parse(packagindController.text);
+                  //     } catch (e) {
+                  //       print('Invalid double: ${packagindController.text}');
+                  //       pacakgingPrice=0.0;
+                  //     }
+                  //     setState(() {
+                  //       if(_selectedOrderType == OrderType.normal)
+                  //         {
+                  //           finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                  //         }
+                  //       else if(_selectedOrderType == OrderType.preorder){
+                  //         finalPrice =  preOrderPrice + ((5*(preOrderPrice+pacakgingPrice))/100) + pacakgingPrice;
+                  //       }
+                  //     });
+                  //   },),
+                  // Column(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     Row(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         Text("Final Price",style: TextStyle(
+                  //           fontFamily: 'RenogareSoft',
+                  //           fontSize: 14,
+                  //           fontWeight: FontWeight.w500,
+                  //           color: GlobalVariables.textColor,
+                  //         ),),
+                  //         SizedBox(width: 5,),
+                  //         Tooltip(
+                  //           height: 40,
+                  //           decoration: BoxDecoration(
+                  //               color: Colors.grey,
+                  //               border: Border.all(color: Colors.grey),
+                  //               borderRadius: BorderRadius.circular(5)
+                  //           ),
+                  //           textStyle: TextStyle(
+                  //             fontWeight: FontWeight.w300,
+                  //             fontFamily: 'Open Sans',
+                  //             fontSize: 10,
+                  //             color: Colors.white,
+                  //             wordSpacing: 0.23,
+                  //             letterSpacing: 0.23,
+                  //           ),
+                  //           message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
+                  //           child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     SizedBox(height: 2,),
+                  //     Text("\u{20B9} $finalPrice",style: TextStyle(
+                  //       fontFamily: 'RenogareSoft',
+                  //       fontSize: 15,
+                  //       fontWeight: FontWeight.w600,
+                  //       color: GlobalVariables.textColor,
+                  //     ),),
+                  //     SizedBox(height: 2,),
+                  //     // Text("Price + packaging + GST",style: TextStyle(
+                  //     //   fontFamily: 'RenogareSoft',
+                  //     //   fontSize: 12,
+                  //     //   fontWeight: FontWeight.w400,
+                  //     //   color: Colors.grey,
+                  //     // ),),
+                  //     // SizedBox(height: 2,),
+                  //     Row(
+                  //       children: [
+                  //         Checkbox(value:gstPayment, onChanged: (val){
+                  //           double pacakgingPrice;
+                  //           try {
+                  //             pacakgingPrice = double.parse(packagindController.text);
+                  //           } catch (e) {
+                  //             print('Invalid double: ${packagindController.text}');
+                  //             pacakgingPrice=0.0;
+                  //           }
+                  //           setState(() {
+                  //             gstPayment = val!;
+                  //             print("Val $gstPayment");
+                  //
+                  //             if(_selectedOrderType == OrderType.normal)
+                  //               {
+                  //                 if(gstPayment)
+                  //                 {
+                  //                   // finalPrice = finalPrice + pacakgingPrice;
+                  //                   finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                  //                 }
+                  //                 else{
+                  //                   // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                  //                   finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
+                  //                 }
+                  //               }
+                  //             else{
+                  //               if(gstPayment)
+                  //               {
+                  //                 // finalPrice = finalPrice + pacakgingPrice;
+                  //                 finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                  //               }
+                  //               else{
+                  //                 // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                  //                 finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
+                  //               }
+                  //             }
+                  //
+                  //           });
+                  //         }),
+                  //         SizedBox(width: 5,),
+                  //         Text("Including packing",style:  TextStyle(
+                  //           fontFamily: 'BertSans',
+                  //           fontSize: 12,
+                  //           fontWeight: FontWeight.w600,
+                  //           color: Color(0xff1d1517),
+                  //         ),)
+                  //
+                  //       ],
+                  //     ),
+                  //
+                  //   ],
+                  // ),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomTextField(label: "Normal price", controller: normalPriceController,width: 35*fem,
+                        onChanged: (val){
+                          double normalPrice;
+                          double pacakgingPrice;
+                          try {
+                            normalPrice = double.parse(normalPriceController.text);
+                          } catch (e) {
+                            print('Invalid double: ${normalPriceController.text}');
+                            normalPrice = 0.0;
+                          }
+                          try {
+                            pacakgingPrice = double.parse(packagindController.text);
+                          } catch (e) {
+                            print('Invalid double: ${packagindController.text}');
+                            pacakgingPrice=0.0;
+                          }
+                          setState(() {
+                            normalFinalPrice =  normalPrice + ((5*normalPrice)/100) + pacakgingPrice;
+                            if(_selectedOrderType ==OrderType.normal)
+                            {
+                              finalPrice = normalFinalPrice;
+                            }
+                          });
+                        },),
+                      SizedBox(height: 10,),
+                      Container(
+                        width: 35*fem,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Final Price",style: TextStyle(
+                                  fontFamily: 'RenogareSoft',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: GlobalVariables.textColor,
+                                ),),
+                                SizedBox(width: 5,),
+                                Tooltip(
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(5)
+                                  ),
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    fontFamily: 'Open Sans',
+                                    fontSize: 10,
+                                    color: Colors.white,
+                                    wordSpacing: 0.23,
+                                    letterSpacing: 0.23,
+                                  ),
+                                  message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
+                                  child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 2,),
+                            Text("\u{20B9} $finalPrice", style: TextStyle(
+                              fontFamily: 'RenogareSoft',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: GlobalVariables.textColor,
+                            ),),
+                            SizedBox(height: 2,),
+
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomTextField(label: "Packaging price", controller: packagindController,width: 35*fem,
+                        onChanged: (val){
+                          double normalPrice;
+                          double preOrderPrice;
+                          double pacakgingPrice;
+                          try {
+                            normalPrice = double.parse(normalPriceController.text);
+                            preOrderPrice = double.parse(preorderPriceController.text);
+                          } catch (e) {
+                            print('Invalid double: ${normalPriceController.text}');
+                            normalPrice = 0.0;
+                            preOrderPrice=0.0;
+                          }
+                          try {
+                            pacakgingPrice = double.parse(packagindController.text);
+                          } catch (e) {
+                            print('Invalid double: ${packagindController.text}');
+                            pacakgingPrice=0.0;
+                          }
+                          setState(() {
+                            if(_selectedOrderType == OrderType.normal)
+                            {
+                              finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                            }
+                            else if(_selectedOrderType == OrderType.preorder){
+                              finalPrice =  preOrderPrice + ((5*(preOrderPrice+pacakgingPrice))/100) + pacakgingPrice;
+                            }
+                          });
+                        },),
+                      SizedBox(height: 10,),
+                      Row(
+                        children: [
+                          Checkbox(value:gstPayment, onChanged: (val){
+                            double pacakgingPrice;
+                            try {
+                              pacakgingPrice = double.parse(packagindController.text);
+                            } catch (e) {
+                              print('Invalid double: ${packagindController.text}');
+                              pacakgingPrice=0.0;
+                            }
+                            setState(() {
+                              gstPayment = val!;
+                              print("Val $gstPayment");
+
+                              if(_selectedOrderType == OrderType.normal)
+                              {
+                                if(gstPayment)
+                                {
+                                  // finalPrice = finalPrice + pacakgingPrice;
+                                  finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                }
+                                else{
+                                  // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                                  finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
+                                }
+                              }
+                              else{
+                                if(gstPayment)
+                                {
+                                  // finalPrice = finalPrice + pacakgingPrice;
+                                  finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                }
+                                else{
+                                  // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                                  finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
+                                }
+                              }
+
+                            });
+                          }),
+                          SizedBox(width: 2*fem,),
+                          Text("Including\npacking",style:  TextStyle(
+                            fontFamily: 'BertSans',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xff1d1517),
+                          ),)
+
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  Container(
+                    width: 2,
+                    height: 120,
+                    color: GlobalVariables.primaryColor,
+                  ),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomTextField(label: "Preorder price", controller: preorderPriceController,width: 40*fem,
+                        onChanged: (val){
+                          setState(() {
+                            double preorderPrice;
+                            double pacakgingPrice;
+                            try {
+                              preorderPrice = double.parse(preorderPriceController.text);
+                            } catch (e) {
+                              print('Invalid double: ${preorderPriceController.text}');
+                              preorderPrice = 0.0;
+                            }
+                            try {
+                              pacakgingPrice = double.parse(packagindController.text);
+                            } catch (e) {
+                              print('Invalid double: ${packagindController.text}');
+                              pacakgingPrice=0.0;
+                            }
+                            setState(() {
+                              preOrderFinalPrice =  preorderPrice + ((5*preorderPrice)/100) + pacakgingPrice;
+                              if(_selectedOrderType ==OrderType.preorder)
+                              {
+                                finalPrice = preorderPrice;
+                              }
+                            });
+                          });
+                        },),
+                      SizedBox(height: 10,),
+                      Container(
+                        width: 40*fem,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Final Price",style: TextStyle(
+                                  fontFamily: 'RenogareSoft',
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: GlobalVariables.textColor,
+                                ),),
+                                SizedBox(width: 5,),
+                                Tooltip(
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(5)
+                                  ),
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    fontFamily: 'Open Sans',
+                                    fontSize: 10,
+                                    color: Colors.white,
+                                    wordSpacing: 0.23,
+                                    letterSpacing: 0.23,
+                                  ),
+                                  message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
+                                  child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 2,),
+                            Text("\u{20B9} $finalPrice", style: TextStyle(
+                              fontFamily: 'RenogareSoft',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: GlobalVariables.textColor,
+                            ),),
+                            SizedBox(height: 2,),
+
+                          ],
+                        ),
+                      ),
+
+                    ],
+                  ),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomTextField(label: "Packaging price", controller: packagindController,width: 40*fem,
+                        onChanged: (val){
+                          double normalPrice;
+                          double preOrderPrice;
+                          double pacakgingPrice;
+                          try {
+                            normalPrice = double.parse(normalPriceController.text);
+                            preOrderPrice = double.parse(preorderPriceController.text);
+                          } catch (e) {
+                            print('Invalid double: ${normalPriceController.text}');
+                            normalPrice = 0.0;
+                            preOrderPrice=0.0;
+                          }
+                          try {
+                            pacakgingPrice = double.parse(packagindController.text);
+                          } catch (e) {
+                            print('Invalid double: ${packagindController.text}');
+                            pacakgingPrice=0.0;
+                          }
+                          setState(() {
+                            if(_selectedOrderType == OrderType.normal)
+                            {
+                              finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                            }
+                            else if(_selectedOrderType == OrderType.preorder){
+                              finalPrice =  preOrderPrice + ((5*(preOrderPrice+pacakgingPrice))/100) + pacakgingPrice;
+                            }
+                          });
+                        },),
+                      SizedBox(height:10 ,),
+                      Row(
+            children: [
+              Checkbox(value:gstPayment, onChanged: (val){
+                double pacakgingPrice;
+                try {
+                  pacakgingPrice = double.parse(packagindController.text);
+                } catch (e) {
+                  print('Invalid double: ${packagindController.text}');
+                  pacakgingPrice=0.0;
+                }
+                setState(() {
+                  gstPayment = val!;
+                  print("Val $gstPayment");
+
+                  if(_selectedOrderType == OrderType.normal)
+                  {
+                    if(gstPayment)
+                    {
+                      // finalPrice = finalPrice + pacakgingPrice;
+                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                    }
+                    else{
+                      // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
+                    }
+                  }
+                  else{
+                    if(gstPayment)
+                    {
+                      // finalPrice = finalPrice + pacakgingPrice;
+                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                    }
+                    else{
+                      // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
+                    }
+                  }
+
+                });
+              }),
+              SizedBox(width: 2*fem,),
+              Text("Including\npacking",style:  TextStyle(
+                fontFamily: 'BertSans',
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: Color(0xff1d1517),
+              ),)
+
+            ],
+          ),
+                    ],
+                  ),
+
+
+
+
+                ],
+              ),
+              SizedBox(height: 15,),
+              Container(height: 1,color: GlobalVariables.primaryColor,),
+              SizedBox(height: 15,),
+              Visibility(
+                visible: basic,
+                child: Column(
+                  children: [
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+
+                        CustomTextField(label: "Display name", controller: ItemDetails.displayNameController,width: 120*fem,onChanged: (val) {
+                          ItemDetails.checking = true;
+                        },),
+                        CustomTextField(label: "Name", controller: nameController,width: 70*fem,onChanged: (val) {
+                          ItemDetails.checking = true;
+                        },),
+                      ],
+                    ),
+                    SizedBox(height: 25,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomTextField(label: "Sub tag", controller: subTagController,width: 45*fem,),
+                        CustomTextField(label: "Price range", controller: budgetController,width: 45*fem,isDropdown: true,dropdownItems: budget,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },),
+                        CustomTextField(label: "Item type", controller: typeController,width: 45*fem,isDropdown: true,dropdownItems: type,onChanged: (val) {
+                          ItemDetails.checking = true;
+                        },),
+                        CustomTextField(label: "Item subtype", controller: subTypeController,width: 45*fem,isDropdown: true,dropdownItems: subType,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },),
+
+                      ],
+                    ),
+
+                    SizedBox(height: 25,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomTextField(label: "Combo type", controller: comboController,width: 45*fem,isDropdown: true,dropdownItems: ['Single','Combo'],
+                          onChanged: (val){
+                            ItemDetails.checking = false;
+                            setState(() {
+                              comboController.text = val!;
+                            });
+                          },
+                        ),
+                        CustomTextField(label: "Raw source", controller: rawSourceController,width: 45*fem,isDropdown: true,dropdownItems: rawSource,),
+                        CustomTextField(label: "Category", controller: categoryController,width: 45*fem,isDropdown: true,dropdownItems: category,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },),
+                        CustomTextField(label: "Sub category", controller: subCategoryController,width: 45*fem,isDropdown: true,dropdownItems: subCategory,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },),
+                      ],
+                    ),
+
+                    SizedBox(height: 20,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment
+                          .start,
+                      children: [
+                        SizedBox(height: 20,),
+                        TextField(
+                          maxLines: 2,
+                          controller: descriptionController,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Enter Description for your item',
+                            labelStyle: TextStyle(
+                              fontFamily: 'BertSans',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff1d1517),
+                            ),
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+
+
+                      ],
+                    ),
+
+
+                    SizedBox(height: 20,),
+                    Visibility(
+                      visible: comboController.text == 'Combo',
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(top: 25),
+                            width: 20,
+                            child: Text("1",style: TextStyle(
+                              fontFamily: 'RenogareSoft',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: GlobalVariables.textColor,
+                            ),),
+                          ),
+                          SizedBox(width: 5*fem,),
+                          CustomTextField(label: "Sections", controller: sectionController,width: 55*fem,isDropdown: true,dropdownItems:sections,
+                            onChanged: (val) {
+                              print("VAlue $val");
+                              setState(() {
+                                items = [];
+                                foodCategories.forEach((key, value) {
+                                  value.forEach((element) {
+                                    if(key == val)
+                                    {
+                                      print(element['name']);
+                                      items.add(element['name']);
+                                    }
+                                  });
+                                });
+                              });
+                            },
+                          ),
+                          SizedBox(width: 10*fem,),
+                          CustomTextField(label: 'Search for item',
+                            width: 55*fem,
+                            controller: itemController,
+                            suffixWidget: Icon(Icons.search),
+                            dropdownItems: items,
+                            isDropdown: true,
+                            onChanged: (val) {
+                              setState(() {
+                                comboList.add(Combo(items: val!, section: sectionController.text));
+                                print("The Combo is ${comboList.toString()}");
+                                comboList.forEach((element) {
+                                  print(element.items);
+                                });
+                              });
+                            },
+                            showSearchBox1: true,
+                            // dropdownAuto: true,
+                          ),
+                          SizedBox(width: 10,),
+
+                        ],
+                      ),
+                    ),
+                    Visibility(
+                      visible: comboController.text == 'Combo',
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (int index = 0; index <= comboList.length && index  < 13; index++ )
+                            Column(
+                              children: [
+                                buildCombo(index,items),
+                                SizedBox(height: 0),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+
+            ],
+          ),
+        ),
+      );
     }, tabletBuilder: (BuildContext context,BoxConstraints constraints){
       return widget.name == '' ? Container()
-          : Container();
+          : Container(
+        padding: EdgeInsets.all(15),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+              SizedBox(height: 20,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // CustomTextField(label: "Normal price", controller: normalPriceController,width: 30*fem,
+                  //   onChanged: (val){
+                  //     // ItemDetails.checking = false;
+                  //     // double normaPrice = double.parse(val!);
+                  //     double normalPrice;
+                  //     double pacakgingPrice;
+                  //     try {
+                  //       normalPrice = double.parse(normalPriceController.text);
+                  //     } catch (e) {
+                  //       print('Invalid double: ${normalPriceController.text}');
+                  //       normalPrice = 0.0;
+                  //     }
+                  //     try {
+                  //       pacakgingPrice = double.parse(packagindController.text);
+                  //     } catch (e) {
+                  //       print('Invalid double: ${packagindController.text}');
+                  //       pacakgingPrice=0.0;
+                  //     }
+                  //     setState(() {
+                  //       normalFinalPrice =  normalPrice + ((5*normalPrice)/100) + pacakgingPrice;
+                  //       if(_selectedOrderType ==OrderType.normal)
+                  //       {
+                  //         finalPrice = normalFinalPrice;
+                  //       }
+                  //     });
+                  //   },),
+                  // CustomTextField(label: "Preorder price", controller: preorderPriceController,width: 30*fem,
+                  //   onChanged: (val){
+                  //   setState(() {
+                  //     double preorderPrice;
+                  //     double pacakgingPrice;
+                  //     try {
+                  //       preorderPrice = double.parse(preorderPriceController.text);
+                  //     } catch (e) {
+                  //       print('Invalid double: ${preorderPriceController.text}');
+                  //       preorderPrice = 0.0;
+                  //     }
+                  //     try {
+                  //       pacakgingPrice = double.parse(packagindController.text);
+                  //     } catch (e) {
+                  //       print('Invalid double: ${packagindController.text}');
+                  //       pacakgingPrice=0.0;
+                  //     }
+                  //     setState(() {
+                  //       preOrderFinalPrice =  preorderPrice + ((5*preorderPrice)/100) + pacakgingPrice;
+                  //       if(_selectedOrderType ==OrderType.preorder)
+                  //         {
+                  //           finalPrice = preorderPrice;
+                  //         }
+                  //     });
+                  //   });
+                  //   },),
+                  // CustomTextField(label: "Packaging price", controller: packagindController,width: 30*fem,
+                  //   onChanged: (val){
+                  //     double normalPrice;
+                  //     double preOrderPrice;
+                  //     double pacakgingPrice;
+                  //     try {
+                  //       normalPrice = double.parse(normalPriceController.text);
+                  //       preOrderPrice = double.parse(preorderPriceController.text);
+                  //     } catch (e) {
+                  //       print('Invalid double: ${normalPriceController.text}');
+                  //       normalPrice = 0.0;
+                  //       preOrderPrice=0.0;
+                  //     }
+                  //     try {
+                  //       pacakgingPrice = double.parse(packagindController.text);
+                  //     } catch (e) {
+                  //       print('Invalid double: ${packagindController.text}');
+                  //       pacakgingPrice=0.0;
+                  //     }
+                  //     setState(() {
+                  //       if(_selectedOrderType == OrderType.normal)
+                  //         {
+                  //           finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                  //         }
+                  //       else if(_selectedOrderType == OrderType.preorder){
+                  //         finalPrice =  preOrderPrice + ((5*(preOrderPrice+pacakgingPrice))/100) + pacakgingPrice;
+                  //       }
+                  //     });
+                  //   },),
+                  // Column(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+                  //     Row(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         Text("Final Price",style: TextStyle(
+                  //           fontFamily: 'RenogareSoft',
+                  //           fontSize: 14,
+                  //           fontWeight: FontWeight.w500,
+                  //           color: GlobalVariables.textColor,
+                  //         ),),
+                  //         SizedBox(width: 5,),
+                  //         Tooltip(
+                  //           height: 40,
+                  //           decoration: BoxDecoration(
+                  //               color: Colors.grey,
+                  //               border: Border.all(color: Colors.grey),
+                  //               borderRadius: BorderRadius.circular(5)
+                  //           ),
+                  //           textStyle: TextStyle(
+                  //             fontWeight: FontWeight.w300,
+                  //             fontFamily: 'Open Sans',
+                  //             fontSize: 10,
+                  //             color: Colors.white,
+                  //             wordSpacing: 0.23,
+                  //             letterSpacing: 0.23,
+                  //           ),
+                  //           message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
+                  //           child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     SizedBox(height: 2,),
+                  //     Text("\u{20B9} $finalPrice",style: TextStyle(
+                  //       fontFamily: 'RenogareSoft',
+                  //       fontSize: 15,
+                  //       fontWeight: FontWeight.w600,
+                  //       color: GlobalVariables.textColor,
+                  //     ),),
+                  //     SizedBox(height: 2,),
+                  //     // Text("Price + packaging + GST",style: TextStyle(
+                  //     //   fontFamily: 'RenogareSoft',
+                  //     //   fontSize: 12,
+                  //     //   fontWeight: FontWeight.w400,
+                  //     //   color: Colors.grey,
+                  //     // ),),
+                  //     // SizedBox(height: 2,),
+                  //     Row(
+                  //       children: [
+                  //         Checkbox(value:gstPayment, onChanged: (val){
+                  //           double pacakgingPrice;
+                  //           try {
+                  //             pacakgingPrice = double.parse(packagindController.text);
+                  //           } catch (e) {
+                  //             print('Invalid double: ${packagindController.text}');
+                  //             pacakgingPrice=0.0;
+                  //           }
+                  //           setState(() {
+                  //             gstPayment = val!;
+                  //             print("Val $gstPayment");
+                  //
+                  //             if(_selectedOrderType == OrderType.normal)
+                  //               {
+                  //                 if(gstPayment)
+                  //                 {
+                  //                   // finalPrice = finalPrice + pacakgingPrice;
+                  //                   finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                  //                 }
+                  //                 else{
+                  //                   // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                  //                   finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
+                  //                 }
+                  //               }
+                  //             else{
+                  //               if(gstPayment)
+                  //               {
+                  //                 // finalPrice = finalPrice + pacakgingPrice;
+                  //                 finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                  //               }
+                  //               else{
+                  //                 // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                  //                 finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
+                  //               }
+                  //             }
+                  //
+                  //           });
+                  //         }),
+                  //         SizedBox(width: 5,),
+                  //         Text("Including packing",style:  TextStyle(
+                  //           fontFamily: 'BertSans',
+                  //           fontSize: 12,
+                  //           fontWeight: FontWeight.w600,
+                  //           color: Color(0xff1d1517),
+                  //         ),)
+                  //
+                  //       ],
+                  //     ),
+                  //
+                  //   ],
+                  // ),
+
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          CustomTextField(label: "Normal price", controller: normalPriceController,width: 40*fem,
+                            onChanged: (val){
+                              double normalPrice;
+                              double pacakgingPrice;
+                              try {
+                                normalPrice = double.parse(normalPriceController.text);
+                              } catch (e) {
+                                print('Invalid double: ${normalPriceController.text}');
+                                normalPrice = 0.0;
+                              }
+                              try {
+                                pacakgingPrice = double.parse(packagindController.text);
+                              } catch (e) {
+                                print('Invalid double: ${packagindController.text}');
+                                pacakgingPrice=0.0;
+                              }
+                              setState(() {
+                                normalFinalPrice =  normalPrice + ((5*normalPrice)/100) + pacakgingPrice;
+                                if(_selectedOrderType ==OrderType.normal)
+                                {
+                                  finalPrice = normalFinalPrice;
+                                }
+                              });
+                            },),
+                          SizedBox(width: 10*fem,),
+                          CustomTextField(label: "Packaging price", controller: packagindController,width: 40*fem,
+                            onChanged: (val){
+                              double normalPrice;
+                              double preOrderPrice;
+                              double pacakgingPrice;
+                              try {
+                                normalPrice = double.parse(normalPriceController.text);
+                                preOrderPrice = double.parse(preorderPriceController.text);
+                              } catch (e) {
+                                print('Invalid double: ${normalPriceController.text}');
+                                normalPrice = 0.0;
+                                preOrderPrice=0.0;
+                              }
+                              try {
+                                pacakgingPrice = double.parse(packagindController.text);
+                              } catch (e) {
+                                print('Invalid double: ${packagindController.text}');
+                                pacakgingPrice=0.0;
+                              }
+                              setState(() {
+                                if(_selectedOrderType == OrderType.normal)
+                                {
+                                  finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                                }
+                                else if(_selectedOrderType == OrderType.preorder){
+                                  finalPrice =  preOrderPrice + ((5*(preOrderPrice+pacakgingPrice))/100) + pacakgingPrice;
+                                }
+                              });
+                            },),
+                        ],
+                      ),
+                      SizedBox(height: 20,),
+
+                      Row(
+                        children: [
+                          Container(
+                            width: 40*fem,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Final Price",style: TextStyle(
+                                      fontFamily: 'RenogareSoft',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: GlobalVariables.textColor,
+                                    ),),
+                                    SizedBox(width: 5,),
+                                    Tooltip(
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          border: Border.all(color: Colors.grey),
+                                          borderRadius: BorderRadius.circular(5)
+                                      ),
+                                      textStyle: TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                        fontFamily: 'Open Sans',
+                                        fontSize: 10,
+                                        color: Colors.white,
+                                        wordSpacing: 0.23,
+                                        letterSpacing: 0.23,
+                                      ),
+                                      message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
+                                      child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 2,),
+                                Text("\u{20B9} $finalPrice", style: TextStyle(
+                                  fontFamily: 'RenogareSoft',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: GlobalVariables.textColor,
+                                ),),
+                                SizedBox(height: 2,),
+
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 10*fem,),
+                          Row(
+                            children: [
+                              Checkbox(value:gstPayment, onChanged: (val){
+                                double pacakgingPrice;
+                                try {
+                                  pacakgingPrice = double.parse(packagindController.text);
+                                } catch (e) {
+                                  print('Invalid double: ${packagindController.text}');
+                                  pacakgingPrice=0.0;
+                                }
+                                setState(() {
+                                  gstPayment = val!;
+                                  print("Val $gstPayment");
+
+                                  if(_selectedOrderType == OrderType.normal)
+                                  {
+                                    if(gstPayment)
+                                    {
+                                      // finalPrice = finalPrice + pacakgingPrice;
+                                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                    }
+                                    else{
+                                      // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
+                                    }
+                                  }
+                                  else{
+                                    if(gstPayment)
+                                    {
+                                      // finalPrice = finalPrice + pacakgingPrice;
+                                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                    }
+                                    else{
+                                      // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
+                                    }
+                                  }
+
+                                });
+                              }),
+                              SizedBox(width: 5,),
+                              Text("Including packing",style:  TextStyle(
+                                fontFamily: 'BertSans',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff1d1517),
+                              ),)
+
+                            ],
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+
+                  Container(
+                    width: 2,
+                    height: 130,
+                    color: GlobalVariables.primaryColor,
+                  ),
+
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          CustomTextField(label: "Preorder price", controller: preorderPriceController,width: 40*fem,
+                            onChanged: (val){
+                              setState(() {
+                                double preorderPrice;
+                                double pacakgingPrice;
+                                try {
+                                  preorderPrice = double.parse(preorderPriceController.text);
+                                } catch (e) {
+                                  print('Invalid double: ${preorderPriceController.text}');
+                                  preorderPrice = 0.0;
+                                }
+                                try {
+                                  pacakgingPrice = double.parse(packagindController.text);
+                                } catch (e) {
+                                  print('Invalid double: ${packagindController.text}');
+                                  pacakgingPrice=0.0;
+                                }
+                                setState(() {
+                                  preOrderFinalPrice =  preorderPrice + ((5*preorderPrice)/100) + pacakgingPrice;
+                                  if(_selectedOrderType ==OrderType.preorder)
+                                  {
+                                    finalPrice = preorderPrice;
+                                  }
+                                });
+                              });
+                            },),
+                          SizedBox(width: 10*fem,),
+                          CustomTextField(label: "Packaging price", controller: packagindController,width: 40*fem,
+                            onChanged: (val){
+                              double normalPrice;
+                              double preOrderPrice;
+                              double pacakgingPrice;
+                              try {
+                                normalPrice = double.parse(normalPriceController.text);
+                                preOrderPrice = double.parse(preorderPriceController.text);
+                              } catch (e) {
+                                print('Invalid double: ${normalPriceController.text}');
+                                normalPrice = 0.0;
+                                preOrderPrice=0.0;
+                              }
+                              try {
+                                pacakgingPrice = double.parse(packagindController.text);
+                              } catch (e) {
+                                print('Invalid double: ${packagindController.text}');
+                                pacakgingPrice=0.0;
+                              }
+                              setState(() {
+                                if(_selectedOrderType == OrderType.normal)
+                                {
+                                  finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                                }
+                                else if(_selectedOrderType == OrderType.preorder){
+                                  finalPrice =  preOrderPrice + ((5*(preOrderPrice+pacakgingPrice))/100) + pacakgingPrice;
+                                }
+                              });
+                            },),
+                        ],
+                      ),
+                      SizedBox(height: 20,),
+                      Row(
+                        children: [
+                          Container(
+                            width: 40*fem,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Final Price",style: TextStyle(
+                                      fontFamily: 'RenogareSoft',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: GlobalVariables.textColor,
+                                    ),),
+                                    SizedBox(width: 5,),
+                                    Tooltip(
+                                      height: 40,
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          border: Border.all(color: Colors.grey),
+                                          borderRadius: BorderRadius.circular(5)
+                                      ),
+                                      textStyle: TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                        fontFamily: 'Open Sans',
+                                        fontSize: 10,
+                                        color: Colors.white,
+                                        wordSpacing: 0.23,
+                                        letterSpacing: 0.23,
+                                      ),
+                                      message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
+                                      child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 2,),
+                                Text("\u{20B9} $finalPrice", style: TextStyle(
+                                  fontFamily: 'RenogareSoft',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: GlobalVariables.textColor,
+                                ),),
+                                SizedBox(height: 2,),
+
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 10*fem,),
+                          Row(
+                            children: [
+                              Checkbox(value:gstPayment, onChanged: (val){
+                                double pacakgingPrice;
+                                try {
+                                  pacakgingPrice = double.parse(packagindController.text);
+                                } catch (e) {
+                                  print('Invalid double: ${packagindController.text}');
+                                  pacakgingPrice=0.0;
+                                }
+                                setState(() {
+                                  gstPayment = val!;
+                                  print("Val $gstPayment");
+
+                                  if(_selectedOrderType == OrderType.normal)
+                                  {
+                                    if(gstPayment)
+                                    {
+                                      // finalPrice = finalPrice + pacakgingPrice;
+                                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                    }
+                                    else{
+                                      // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
+                                    }
+                                  }
+                                  else{
+                                    if(gstPayment)
+                                    {
+                                      // finalPrice = finalPrice + pacakgingPrice;
+                                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                    }
+                                    else{
+                                      // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
+                                    }
+                                  }
+
+                                });
+                              }),
+                              SizedBox(width: 5,),
+                              Text("Including packing",style:  TextStyle(
+                                fontFamily: 'BertSans',
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff1d1517),
+                              ),)
+
+                            ],
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+
+
+
+
+                ],
+              ),
+              SizedBox(height: 15,),
+              Container(height: 1,color: GlobalVariables.primaryColor,),
+              SizedBox(height: 15,),
+              Visibility(
+                visible: basic,
+                child: Column(
+                  children: [
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+
+                        CustomTextField(label: "Display name", controller: ItemDetails.displayNameController,width: 120*fem,onChanged: (val) {
+                          ItemDetails.checking = true;
+                        },),
+                        CustomTextField(label: "Name", controller: nameController,width: 70*fem,onChanged: (val) {
+                          ItemDetails.checking = true;
+                        },),
+                      ],
+                    ),
+                    SizedBox(height: 25,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomTextField(label: "Sub tag", controller: subTagController,width: 45*fem,),
+                        CustomTextField(label: "Price range", controller: budgetController,width: 45*fem,isDropdown: true,dropdownItems: budget,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },),
+                        CustomTextField(label: "Item type", controller: typeController,width: 45*fem,isDropdown: true,dropdownItems: type,onChanged: (val) {
+                          ItemDetails.checking = true;
+                        },),
+                        CustomTextField(label: "Item subtype", controller: subTypeController,width: 45*fem,isDropdown: true,dropdownItems: subType,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },),
+
+                      ],
+                    ),
+
+                    SizedBox(height: 25,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomTextField(label: "Combo type", controller: comboController,width: 45*fem,isDropdown: true,dropdownItems: ['Single','Combo'],
+                          onChanged: (val){
+                            ItemDetails.checking = false;
+                            setState(() {
+                              comboController.text = val!;
+                            });
+                          },
+                        ),
+                        CustomTextField(label: "Raw source", controller: rawSourceController,width: 45*fem,isDropdown: true,dropdownItems: rawSource,),
+                        CustomTextField(label: "Category", controller: categoryController,width: 45*fem,isDropdown: true,dropdownItems: category,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },),
+                        CustomTextField(label: "Sub category", controller: subCategoryController,width: 45*fem,isDropdown: true,dropdownItems: subCategory,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },),
+                      ],
+                    ),
+
+                    SizedBox(height: 20,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment
+                          .start,
+                      children: [
+                        SizedBox(height: 20,),
+                        TextField(
+                          maxLines: 2,
+                          controller: descriptionController,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Enter Description for your item',
+                            labelStyle: TextStyle(
+                              fontFamily: 'BertSans',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff1d1517),
+                            ),
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+
+
+                      ],
+                    ),
+
+                    // SizedBox(height: 25,),
+                    // Row(
+                    //   crossAxisAlignment: CrossAxisAlignment.center,
+                    //   children: [
+                    //     Container(
+                    //       width: 90*fem,
+                    //       height: 1,
+                    //       color:GlobalVariables.primaryColor.withOpacity(0.8),
+                    //     ),
+                    //     SizedBox(width: 5,),
+                    //     Text("Item pricing",style: TextStyle(
+                    //       fontFamily: 'RenogareSoft',
+                    //       fontSize: 14,
+                    //       fontWeight: FontWeight.w600,
+                    //       color: GlobalVariables.textColor,
+                    //     ),),
+                    //     SizedBox(width: 5,),
+                    //     Container(
+                    //       width: 90*fem,
+                    //       height: 1,
+                    //       color:GlobalVariables.primaryColor.withOpacity(0.8),
+                    //     ),
+                    //   ],
+                    // ),
+
+
+
+
+                    SizedBox(height: 20,),
+                    Visibility(
+                      visible: comboController.text == 'Combo',
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(top: 25),
+                            width: 20,
+                            child: Text("1",style: TextStyle(
+                              fontFamily: 'RenogareSoft',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: GlobalVariables.textColor,
+                            ),),
+                          ),
+                          SizedBox(width: 5*fem,),
+                          CustomTextField(label: "Sections", controller: sectionController,width: 55*fem,isDropdown: true,dropdownItems:sections,
+                            onChanged: (val) {
+                              print("VAlue $val");
+                              setState(() {
+                                items = [];
+                                foodCategories.forEach((key, value) {
+                                  value.forEach((element) {
+                                    if(key == val)
+                                    {
+                                      print(element['name']);
+                                      items.add(element['name']);
+                                    }
+                                  });
+                                });
+                              });
+                            },
+                          ),
+                          SizedBox(width: 10*fem,),
+                          CustomTextField(label: 'Search for item',
+                            width: 55*fem,
+                            controller: itemController,
+                            suffixWidget: Icon(Icons.search),
+                            dropdownItems: items,
+                            isDropdown: true,
+                            onChanged: (val) {
+                              setState(() {
+                                comboList.add(Combo(items: val!, section: sectionController.text));
+                                print("The Combo is ${comboList.toString()}");
+                                comboList.forEach((element) {
+                                  print(element.items);
+                                });
+                              });
+                            },
+                            showSearchBox1: true,
+                            // dropdownAuto: true,
+                          ),
+                          SizedBox(width: 10,),
+
+                        ],
+                      ),
+                    ),
+                    Visibility(
+                      visible: comboController.text == 'Combo',
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (int index = 0; index <= comboList.length && index  < 13; index++ )
+                            Column(
+                              children: [
+                                buildCombo(index,items),
+                                SizedBox(height: 0),
+                              ],
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+
+            ],
+          ),
+        ),
+      );
     }, desktopBuilder: (BuildContext context,BoxConstraints constraints){
       return widget.name == '' ? Container()
           : Container(
         padding: EdgeInsets.all(15),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: EdgeInsets.only(right: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Basic",style: SafeGoogleFont(
-                      'Poppins',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: GlobalVariables.textColor,
-                    ),),
-                    InkWell(
-                        onTap: enableBasic,
-                        child: Icon(basic ? Icons.arrow_drop_down : Icons.arrow_drop_up,size: 35,color: GlobalVariables.textColor,)),
+              SizedBox(height: 20,),
+              Row(
+                children: [
+                  Container(
+                    width: 110*fem,
+                    child: Row(
+                      children: [
+                        Row(
+                          children: [
+                            Radio(
+                              activeColor: GlobalVariables.primaryColor,
+                              value: OrderType.normal,
+                              groupValue: _selectedOrderType,
 
-                  ],
-                ),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedOrderType = OrderType.normal;
+                                });
+                              },
+                            ),
+                            Text('Normal Price',style: TextStyle(
+                              fontFamily: 'RenogareSoft',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: GlobalVariables.textColor,
+                            ),),
+                          ],
+                        ),
+                        SizedBox(width: 10,),
+                        Row(
+                          children: [
+                            Radio(
+                              activeColor: GlobalVariables.primaryColor,
+                              value: OrderType.preorder,
+                              groupValue: _selectedOrderType,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedOrderType = OrderType.preorder;
+                                });
+                              },
+                            ),
+                            Text('Preorder Price',style: TextStyle(
+                              fontFamily: 'RenogareSoft',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: GlobalVariables.textColor,
+                            ),),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 20,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomTextField(label: "Normal price", controller: normalPriceController,width: 30*fem,
+                    onChanged: (val){
+                      // ItemDetails.checking = false;
+                      // double normaPrice = double.parse(val!);
+                      double normalPrice;
+                      double pacakgingPrice;
+                      try {
+                        normalPrice = double.parse(normalPriceController.text);
+                      } catch (e) {
+                        print('Invalid double: ${normalPriceController.text}');
+                        normalPrice = 0.0;
+                      }
+                      try {
+                        pacakgingPrice = double.parse(packagindController.text);
+                      } catch (e) {
+                        print('Invalid double: ${packagindController.text}');
+                        pacakgingPrice=0.0;
+                      }
+                      setState(() {
+                        normalFinalPrice =  normalPrice + ((5*normalPrice)/100) + pacakgingPrice;
+                        if(_selectedOrderType ==OrderType.normal)
+                        {
+                          finalPrice = normalFinalPrice;
+                        }
+                      });
+                    },),
+                  CustomTextField(label: "Preorder price", controller: preorderPriceController,width: 30*fem,
+                    onChanged: (val){
+                      setState(() {
+                        double preorderPrice;
+                        double pacakgingPrice;
+                        try {
+                          preorderPrice = double.parse(preorderPriceController.text);
+                        } catch (e) {
+                          print('Invalid double: ${preorderPriceController.text}');
+                          preorderPrice = 0.0;
+                        }
+                        try {
+                          pacakgingPrice = double.parse(packagindController.text);
+                        } catch (e) {
+                          print('Invalid double: ${packagindController.text}');
+                          pacakgingPrice=0.0;
+                        }
+                        setState(() {
+                          preOrderFinalPrice =  preorderPrice + ((5*preorderPrice)/100) + pacakgingPrice;
+                          if(_selectedOrderType ==OrderType.preorder)
+                          {
+                            finalPrice = preorderPrice;
+                          }
+                        });
+                      });
+                    },),
+                  CustomTextField(label: "Packaging price", controller: packagindController,width: 30*fem,
+                    onChanged: (val){
+                      double normalPrice;
+                      double preOrderPrice;
+                      double pacakgingPrice;
+                      try {
+                        normalPrice = double.parse(normalPriceController.text);
+                        preOrderPrice = double.parse(preorderPriceController.text);
+                      } catch (e) {
+                        print('Invalid double: ${normalPriceController.text}');
+                        normalPrice = 0.0;
+                        preOrderPrice=0.0;
+                      }
+                      try {
+                        pacakgingPrice = double.parse(packagindController.text);
+                      } catch (e) {
+                        print('Invalid double: ${packagindController.text}');
+                        pacakgingPrice=0.0;
+                      }
+                      setState(() {
+                        if(_selectedOrderType == OrderType.normal)
+                        {
+                          finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                        }
+                        else if(_selectedOrderType == OrderType.preorder){
+                          finalPrice =  preOrderPrice + ((5*(preOrderPrice+pacakgingPrice))/100) + pacakgingPrice;
+                        }
+                      });
+                    },),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Final Price",style: TextStyle(
+                            fontFamily: 'RenogareSoft',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: GlobalVariables.textColor,
+                          ),),
+                          SizedBox(width: 5,),
+                          Tooltip(
+                            height: 40,
+                            decoration: BoxDecoration(
+                                color: Colors.grey,
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(5)
+                            ),
+                            textStyle: TextStyle(
+                              fontWeight: FontWeight.w300,
+                              fontFamily: 'Open Sans',
+                              fontSize: 10,
+                              color: Colors.white,
+                              wordSpacing: 0.23,
+                              letterSpacing: 0.23,
+                            ),
+                            message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
+                            child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 2,),
+                      Text("\u{20B9} $finalPrice",style: TextStyle(
+                        fontFamily: 'RenogareSoft',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: GlobalVariables.textColor,
+                      ),),
+                      SizedBox(height: 2,),
+                      // Text("Price + packaging + GST",style: TextStyle(
+                      //   fontFamily: 'RenogareSoft',
+                      //   fontSize: 12,
+                      //   fontWeight: FontWeight.w400,
+                      //   color: Colors.grey,
+                      // ),),
+                      // SizedBox(height: 2,),
+                      Row(
+                        children: [
+                          Checkbox(value:gstPayment, onChanged: (val){
+                            double pacakgingPrice;
+                            try {
+                              pacakgingPrice = double.parse(packagindController.text);
+                            } catch (e) {
+                              print('Invalid double: ${packagindController.text}');
+                              pacakgingPrice=0.0;
+                            }
+                            setState(() {
+                              gstPayment = val!;
+                              print("Val $gstPayment");
+
+                              if(_selectedOrderType == OrderType.normal)
+                              {
+                                if(gstPayment)
+                                {
+                                  // finalPrice = finalPrice + pacakgingPrice;
+                                  finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                }
+                                else{
+                                  // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                                  finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
+                                }
+                              }
+                              else{
+                                if(gstPayment)
+                                {
+                                  // finalPrice = finalPrice + pacakgingPrice;
+                                  finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                }
+                                else{
+                                  // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
+                                  finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
+                                }
+                              }
+
+                            });
+                          }),
+                          SizedBox(width: 5,),
+                          Text("Including GST",style:  TextStyle(
+                            fontFamily: 'BertSans',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xff1d1517),
+                          ),)
+
+                        ],
+                      ),
+
+                    ],
+                  ),
+
+                  SizedBox(width: 10,)
+                ],
+              ),
+              SizedBox(height: 15,),
               Container(height: 1,color: GlobalVariables.primaryColor,),
-              SizedBox(height: 20,),
+              SizedBox(height: 15,),
               Visibility(
                 visible: basic,
                 child: Column(
                   children: [
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomTextField(label: "Name", controller: nameController,width: 50*fem,),
-                        CustomTextField(label: "Display name", controller: displayNameController,width: 50*fem,),
-                        CustomTextField(label: "Category", controller: categoryController,width: 50*fem,isDropdown: true,dropdownItems: category,),
-                        CustomTextField(label: "Sub category", controller: subCategoryController,width: 50*fem,isDropdown: true,dropdownItems: subCategory,),
+
+                        CustomTextField(label: "Display name", controller: ItemDetails.displayNameController,width: 120*fem,onChanged: (val) {
+                          ItemDetails.checking = true;
+                        },),
+                        CustomTextField(label: "Name", controller: nameController,width: 70*fem,onChanged: (val) {
+                          ItemDetails.checking = true;
+                        },),
                       ],
                     ),
+                    SizedBox(height: 25,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomTextField(label: "Sub tag", controller: subTagController,width: 45*fem,),
+                        CustomTextField(label: "Price range", controller: budgetController,width: 45*fem,isDropdown: true,dropdownItems: budget,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },),
+                        CustomTextField(label: "Item type", controller: typeController,width: 45*fem,isDropdown: true,dropdownItems: type,onChanged: (val) {
+                          ItemDetails.checking = true;
+                        },),
+                        CustomTextField(label: "Item subtype", controller: subTypeController,width: 45*fem,isDropdown: true,dropdownItems: subType,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },),
+
+                      ],
+                    ),
+
+                    SizedBox(height: 25,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomTextField(label: "Combo type", controller: comboController,width: 45*fem,isDropdown: true,dropdownItems: ['Single','Combo'],
+                          onChanged: (val){
+                            ItemDetails.checking = false;
+                            setState(() {
+                              comboController.text = val!;
+                            });
+                          },
+                        ),
+                        CustomTextField(label: "Raw source", controller: rawSourceController,width: 45*fem,isDropdown: true,dropdownItems: rawSource,),
+                        CustomTextField(label: "Category", controller: categoryController,width: 45*fem,isDropdown: true,dropdownItems: category,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },),
+                        CustomTextField(label: "Sub category", controller: subCategoryController,width: 45*fem,isDropdown: true,dropdownItems: subCategory,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },),
+                      ],
+                    ),
+
                     SizedBox(height: 20,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CustomTextField(label: "Sub tag", controller: subTagController,width: 50*fem,),
-                        CustomTextField(label: "Budget range", controller: budgetController,width: 50*fem,isDropdown: true,dropdownItems: budget,),
-                        CustomTextField(label: "Item type", controller: typeController,width: 50*fem,isDropdown: true,dropdownItems: type,),
-                        CustomTextField(label: "Item subtype", controller: subTypeController,width: 50*fem,isDropdown: true,dropdownItems: subType,),
-                      ],
-                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment
                           .start,
                       children: [
                         SizedBox(height: 20,),
-                        Row(
-                          children: [
-                            Text("Description",
-                              style: SafeGoogleFont(
-                                'Poppins',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xFF363563),
-                              ),),
-                          ],
-                        ),
-                        SizedBox(height: 10,),
                         TextField(
-                          maxLines: 3,
+                          maxLines: 2,
                           controller: descriptionController,
+                          onChanged: (val) {
+                            ItemDetails.checking = true;
+                          },
                           decoration: InputDecoration(
                             labelText: 'Enter Description for your item',
+                            labelStyle: TextStyle(
+                              fontFamily: 'BertSans',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff1d1517),
+                            ),
                             border: OutlineInputBorder(),
                           ),
                         ),
@@ -153,82 +2020,226 @@ class _ItemDetailsState extends State<ItemDetails> {
 
                       ],
                     ),
-                  ],
-                ),
-              ),
 
-              SizedBox(height: 20,),
-              Container(
-                margin: EdgeInsets.only(right: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Advanced",style: SafeGoogleFont(
-                      'Poppins',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: GlobalVariables.textColor,
-                    ),),
-                    InkWell(
-                        onTap: enableAdvance,
-                        child: Icon( advance ? Icons.arrow_drop_down : Icons.arrow_drop_up,size: 35,color: GlobalVariables.textColor,))
-                  ],
-                ),
-              ),
-              SizedBox(height: 20,),
-              Container(height: 1,color: GlobalVariables.primaryColor,),
-              SizedBox(height: 20,),
-              Visibility(
-                visible: advance,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CustomTextField(label: "Regional", controller: regionalController,width: 50*fem,isDropdown: true,dropdownItems: regional,),
-                        CustomTextField(label: "Raw source", controller: rawSourceController,width: 50*fem,isDropdown: true,dropdownItems: rawSource,),
-                        CustomTextField(label: "Cuisine", controller: cuisineController,width: 50*fem,isDropdown: true,dropdownItems: cuisine,),
-                        CustomTextField(label: "Item subtype", controller: subTypeController,width: 50*fem,),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment
-                          .start,
-                      children: [
-                        SizedBox(height: 20,),
-                        Row(
-                          children: [
-                            Text("Cuisine description",
-                              style: SafeGoogleFont(
-                                'Poppins',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xFF363563),
-                              ),),
-                          ],
-                        ),
-                        SizedBox(height: 10,),
-                        TextField(
-                          maxLines: 3,
-                          controller: cuisineDescriptionController,
-                          decoration: InputDecoration(
-                            labelText: 'Enter Description for your cuisine',
-                            border: OutlineInputBorder(),
+                    // SizedBox(height: 25,),
+                    // Row(
+                    //   crossAxisAlignment: CrossAxisAlignment.center,
+                    //   children: [
+                    //     Container(
+                    //       width: 90*fem,
+                    //       height: 1,
+                    //       color:GlobalVariables.primaryColor.withOpacity(0.8),
+                    //     ),
+                    //     SizedBox(width: 5,),
+                    //     Text("Item pricing",style: TextStyle(
+                    //       fontFamily: 'RenogareSoft',
+                    //       fontSize: 14,
+                    //       fontWeight: FontWeight.w600,
+                    //       color: GlobalVariables.textColor,
+                    //     ),),
+                    //     SizedBox(width: 5,),
+                    //     Container(
+                    //       width: 90*fem,
+                    //       height: 1,
+                    //       color:GlobalVariables.primaryColor.withOpacity(0.8),
+                    //     ),
+                    //   ],
+                    // ),
+
+
+
+
+                    SizedBox(height: 20,),
+                    Visibility(
+                      visible: comboController.text == 'Combo',
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(top: 25),
+                            width: 20,
+                            child: Text("1",style: TextStyle(
+                              fontFamily: 'RenogareSoft',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: GlobalVariables.textColor,
+                            ),),
                           ),
-                        ),
+                          SizedBox(width: 5*fem,),
+                          CustomTextField(label: "Sections", controller: sectionController,width: 55*fem,isDropdown: true,dropdownItems:sections,
+                            onChanged: (val) {
+                              print("VAlue $val");
+                              setState(() {
+                                items = [];
+                                foodCategories.forEach((key, value) {
+                                  value.forEach((element) {
+                                    if(key == val)
+                                    {
+                                      print(element['name']);
+                                      items.add(element['name']);
+                                    }
+                                  });
+                                });
+                              });
+                            },
+                          ),
+                          SizedBox(width: 10*fem,),
+                          CustomTextField(label: 'Search for item',
+                            width: 55*fem,
+                            controller: itemController,
+                            suffixWidget: Icon(Icons.search),
+                            dropdownItems: items,
+                            isDropdown: true,
+                            onChanged: (val) {
+                              setState(() {
+                                comboList.add(Combo(items: val!, section: sectionController.text));
+                                print("The Combo is ${comboList.toString()}");
+                                comboList.forEach((element) {
+                                  print(element.items);
+                                });
+                              });
+                            },
+                            showSearchBox1: true,
+                            // dropdownAuto: true,
+                          ),
+                          SizedBox(width: 10,),
 
-
-                      ],
+                        ],
+                      ),
+                    ),
+                    Visibility(
+                      visible: comboController.text == 'Combo',
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (int index = 0; index <= comboList.length && index  < 13; index++ )
+                            Column(
+                              children: [
+                                buildCombo(index,items),
+                                SizedBox(height: 0),
+                              ],
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 10,),
+
 
             ],
           ),
         ),
       );
     });
+  }
+
+  Widget buildCombo(int index,List<String> items)
+  {
+    double baseWidth = 375;
+    double fem = MediaQuery.of(context).size.width / baseWidth;
+    double ffem = fem * 0.97;
+    return Row(
+      children: [
+        Container(width: 20,
+          margin: EdgeInsets.only(top: 25),
+          child: Text((index+2).toString(),style: TextStyle(
+            fontFamily: 'RenogareSoft',
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: GlobalVariables.textColor,
+          ),),
+        ),
+        SizedBox(width: 5*fem,),
+        CustomTextField(label: "", controller: sectionController,width: 55*fem,isDropdown: true,dropdownItems:sections,
+          onChanged: (val) {
+            setState(() {
+
+              foodCategories.forEach((key, value) {
+                value.forEach((element) {
+                  if(key == val)
+                  {
+                    print(element['name']);
+                    items.add(element['name']);
+                  }
+                });
+              });
+            });
+          },
+        ),
+        SizedBox(width: 10*fem,),
+        CustomTextField( label: '',
+          width: 55*fem,
+          controller: itemController,
+          suffixWidget: Icon(Icons.search),
+          dropdownItems: items,
+          isDropdown: true,
+          onChanged: (val) {
+            // comboList.add(Combo(items: val!, section: sectionController.text));
+            setState(() {
+              print("The Combo is ${comboList.toString()}");
+              comboList.forEach((element) {
+                print(element.items);
+              });
+            });
+          },
+          showSearchBox1: true,
+          // dropdownAuto: true,
+        ),
+        SizedBox(width: 10,),
+        InkWell(
+          onTap: (){
+            setState(() {
+              comboList.removeAt(index);
+            });
+          },
+          child: Container(
+            margin: EdgeInsets.only(top: 20),
+            width: 25.0,
+            height: 25.0,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.red,
+            ),
+            child: Center(
+              child: Icon(
+                Icons.delete,
+                color: Colors.white,
+                size: 15,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 10,),
+        Visibility(
+          visible: index<12,
+          child: InkWell(
+            onTap: (){
+              setState(() {
+                comboList.add(Combo(items: itemController.text, section: sectionController.text));
+              });
+            },
+            child: Container(
+              margin: EdgeInsets.only(top: 20),
+              width: 25.0,
+              height: 25.0,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xfffbb830),
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 15,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+
   }
 }

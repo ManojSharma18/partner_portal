@@ -1,11 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
-import 'package:partner_admin_portal/constants/responsive_builder.dart';
+import 'package:partner_admin_portal/widgets/responsive_builder.dart';
 
 import '../constants/utils.dart';
 
 class ItemAvailability extends StatefulWidget {
-  const ItemAvailability({Key? key}) : super(key: key);
+  final GlobalKey<FormState> checkKey;
+  const ItemAvailability({Key? key, required this.checkKey}) : super(key: key);
 
   @override
   State<ItemAvailability> createState() => _ItemAvailabilityState();
@@ -75,10 +77,225 @@ class _ItemAvailabilityState extends State<ItemAvailability> {
     double fem = MediaQuery.of(context).size.width / baseWidth;
     double ffem = fem * 0.97;
     return ResponsiveBuilder(mobileBuilder: (BuildContext context,BoxConstraints constraints){
-      return Container();
+      return Container(
+        padding: EdgeInsets.all(15),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        child: RadioListTile(
+                          title: Text('Item available on selection',style: SafeGoogleFont(
+                            'Poppins',
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: GlobalVariables.textColor,
+                          ),),
+                          value: 1,
+                          groupValue: selectedOption,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedOption = value!;
+                            });
+                          },
+                        ),
+                      ),
+                      Container(
+
+                        child: RadioListTile(
+                          title: Text('Item available on selected schedule',style:
+                          SafeGoogleFont(
+                            'Poppins',
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color:GlobalVariables.textColor,
+                          ),),
+                          value: 3,
+                          groupValue: selectedOption,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedOption = value!;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+
+
+                ],
+              ),
+
+              Visibility(
+                visible: selectedOption != 1,
+                child: Column(
+                  children: [
+                    // SizedBox(height: 20,),
+                    // _buildMealSession(context, "Breakfast", breakfastSelected),
+                    // SizedBox(height: 10,),
+                    // _buildMealSession(context, "Lunch", lunchSelected),
+                    // SizedBox(height: 10,),
+                    // _buildMealSession(context, "Dinner", dinnerSelected),
+                    // SizedBox(height: 20,),
+                    SizedBox(height: 20,),
+                    Row(
+                      children: [
+                        DataTable(
+                            columnSpacing: 15,
+                            border: TableBorder.all(
+                                color: Colors.black12,
+                                width: 0.5,
+                                style: BorderStyle.solid,
+                                borderRadius: BorderRadius.circular(10)),
+                            columns: <DataColumn> [
+                              DataColumn(
+                                  label: Column(
+                                    children: [
+                                      Text("Days",style:SafeGoogleFont(
+                                        'Poppins',
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: GlobalVariables.textColor,
+                                      ),),
+                                      // SizedBox(width: 10,),
+                                      Checkbox(
+                                          value: _areAllDays(),
+                                          onChanged: (val) {
+                                            setAllMeal(val!);
+                                          })
+                                    ],
+                                  )),
+                              DataColumn(label: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  SizedBox(width: 20,),
+                                  Text("Breakfast",style:SafeGoogleFont(
+                                    'Poppins',
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: GlobalVariables.textColor,
+                                  ),),
+                                  Checkbox(
+                                      value: _areAllBreakfastSessionSelected('Breakfast'),
+                                      onChanged: (val) {
+                                        setMeal('Breakfast',val!);
+                                      })
+                                ],
+                              )),
+                              DataColumn(
+                                  label: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(width: 20,),
+                                      Text("Lunch",style:SafeGoogleFont(
+                                        'Poppins',
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: GlobalVariables.textColor,
+                                      ),),
+                                      Checkbox(value: _areAllBreakfastSessionSelected('Lunch'), onChanged: (val){
+                                        setMeal('Lunch', val!);
+                                      })
+                                    ],
+                                  )),
+                              DataColumn(
+                                  label: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(width: 20,),
+                                      Text("Dinner",style:SafeGoogleFont(
+                                        'Poppins',
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: GlobalVariables.textColor,
+                                      ),),
+                                      Checkbox(value: _areAllBreakfastSessionSelected('Dinner'), onChanged: (val){
+                                        setMeal('Dinner', val!);
+                                      })
+                                    ],
+                                  )),
+                            ],
+                            rows: daysMealSession.keys.map((String day) {
+                              var meals = daysMealSession[day] ?? const {};
+                              var breakfast = meals['Breakfast'];
+                              var lunch = meals['Lunch'];
+                              var dinner = meals['Dinner'];
+                              return DataRow(cells: <DataCell>[
+                                DataCell(
+                                    Column(
+                                      mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(day,style:SafeGoogleFont(
+                                          'Poppins',
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: GlobalVariables.textColor,
+                                        ),),
+                                        Checkbox(value: _aredaysSessions(day), onChanged: (value){
+                                          setDay(day, value!);
+                                        })
+                                      ],
+                                    )),
+                                DataCell(
+                                    Row(
+                                      children: [
+                                        buildSession1(day, "Breakfast", "S1", breakfast!['S1']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Breakfast", "S2", breakfast['S2']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Breakfast", "S3", breakfast['S3']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Breakfast", "S4", breakfast['S4']!),
+                                      ],
+                                    )
+                                ),
+                                DataCell(
+                                    Row(
+                                      children: [
+                                        buildSession1(day, "Lunch", "S1", lunch!['S1']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Lunch", "S2", lunch['S2']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Lunch", "S3", lunch['S3']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Lunch", "S4", lunch['S4']!),
+                                      ],
+                                    )
+                                ),
+                                DataCell(
+                                    Row(
+                                      children: [
+                                        buildSession1(day, "Dinner", "S1", dinner!['S1']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Dinner", "S2", dinner['S2']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Dinner", "S3", dinner['S3']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Dinner", "S4", dinner['S4']!),
+                                      ],
+                                    )
+                                ),
+                              ]);
+                            }).toList()
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+
+            ],
+          ),
+        ),
+      );
     }, tabletBuilder: (BuildContext context,BoxConstraints constraints){
-      return Container();
-    }, desktopBuilder: (BuildContext context,BoxConstraints constraints){
       return Container(
         padding: EdgeInsets.all(15),
         child: SingleChildScrollView(
@@ -113,13 +330,14 @@ class _ItemAvailabilityState extends State<ItemAvailability> {
                       Container(
                         width: 100*fem,
                         child: RadioListTile(
-                          title: Text('Item available all time when restaurant is open',style: SafeGoogleFont(
+                          title: Text('Item available on selected schedule ',style:
+                          SafeGoogleFont(
                             'Poppins',
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: GlobalVariables.textColor,
+                            color:GlobalVariables.textColor,
                           ),),
-                          value: 2,
+                          value: 3,
                           groupValue: selectedOption,
                           onChanged: (value) {
                             setState(() {
@@ -131,22 +349,7 @@ class _ItemAvailabilityState extends State<ItemAvailability> {
                     ],
                   ),
 
-                  RadioListTile(
-                    title: Text('Item available on selected schedule when restaurant is working',style:
-                    SafeGoogleFont(
-                      'Poppins',
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color:GlobalVariables.textColor,
-                    ),),
-                    value: 3,
-                    groupValue: selectedOption,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedOption = value!;
-                      });
-                    },
-                  ),
+
                 ],
               ),
 
@@ -165,7 +368,7 @@ class _ItemAvailabilityState extends State<ItemAvailability> {
                     Row(
                       children: [
                         DataTable(
-                            columnSpacing: 30,
+                            columnSpacing: 10,
                             border: TableBorder.all(
                                 color: Colors.black12,
                                 width: 0.5,
@@ -173,12 +376,248 @@ class _ItemAvailabilityState extends State<ItemAvailability> {
                                 borderRadius: BorderRadius.circular(10)),
                             columns: <DataColumn> [
                               DataColumn(
-                                  label: Text("Days",style:SafeGoogleFont(
+                                  label: Row(
+                                    children: [
+                                      Text("Days",style:SafeGoogleFont(
+                                        'Poppins',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: GlobalVariables.textColor,
+                                      ),),
+                                      SizedBox(width: 20,),
+                                      Checkbox(
+                                          value: _areAllDays(),
+                                          onChanged: (val) {
+                                            setAllMeal(val!);
+                                          })
+                                    ],
+                                  )),
+                              DataColumn(label: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  SizedBox(width: 25,),
+                                  Text("Breakfast",style:SafeGoogleFont(
                                     'Poppins',
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                     color: GlobalVariables.textColor,
-                                  ),)),
+                                  ),),
+                                  Checkbox(
+                                      value: _areAllBreakfastSessionSelected('Breakfast'),
+                                      onChanged: (val) {
+                                        setMeal('Breakfast',val!);
+                                      })
+                                ],
+                              )),
+                              DataColumn(
+                                  label: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(width: 25,),
+                                      Text("Lunch",style:SafeGoogleFont(
+                                        'Poppins',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: GlobalVariables.textColor,
+                                      ),),
+                                      Checkbox(value: _areAllBreakfastSessionSelected('Lunch'), onChanged: (val){
+                                        setMeal('Lunch', val!);
+                                      })
+                                    ],
+                                  )),
+                              DataColumn(
+                                  label: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(width: 25,),
+                                      Text("Dinner",style:SafeGoogleFont(
+                                        'Poppins',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: GlobalVariables.textColor,
+                                      ),),
+                                      Checkbox(value: _areAllBreakfastSessionSelected('Dinner'), onChanged: (val){
+                                        setMeal('Dinner', val!);
+                                      })
+                                    ],
+                                  )),
+                            ],
+                            rows: daysMealSession.keys.map((String day) {
+                              var meals = daysMealSession[day] ?? const {};
+                              var breakfast = meals['Breakfast'];
+                              var lunch = meals['Lunch'];
+                              var dinner = meals['Dinner'];
+                              return DataRow(cells: <DataCell>[
+                                DataCell(
+                                    Row(
+                                      mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(day,style:SafeGoogleFont(
+                                          'Poppins',
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: GlobalVariables.textColor,
+                                        ),),
+                                        Checkbox(value: _aredaysSessions(day), onChanged: (value){
+                                          setDay(day, value!);
+                                        })
+                                      ],
+                                    )),
+                                DataCell(
+                                    Row(
+                                      crossAxisAlignment : CrossAxisAlignment.center,
+                                      mainAxisAlignment : MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        buildSession1(day, "Breakfast", "S1", breakfast!['S1']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Breakfast", "S2", breakfast['S2']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Breakfast", "S3", breakfast['S3']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Breakfast", "S4", breakfast['S4']!),
+                                      ],
+                                    )
+                                ),
+                                DataCell(
+                                    Row(
+                                      crossAxisAlignment : CrossAxisAlignment.center,
+                                      mainAxisAlignment : MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        buildSession1(day, "Lunch", "S1", lunch!['S1']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Lunch", "S2", lunch['S2']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Lunch", "S3", lunch['S3']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Lunch", "S4", lunch['S4']!),
+                                      ],
+                                    )
+                                ),
+                                DataCell(
+                                    Row(
+                                      crossAxisAlignment : CrossAxisAlignment.center,
+                                      mainAxisAlignment : MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        buildSession1(day, "Dinner", "S1", dinner!['S1']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Dinner", "S2", dinner['S2']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Dinner", "S3", dinner['S3']!),
+                                        SizedBox(width: 3,),
+                                        buildSession1(day, "Dinner", "S4", dinner['S4']!),
+                                      ],
+                                    )
+                                ),
+                              ]);
+                            }).toList()
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+
+            ],
+          ),
+        ),
+      );
+    }, desktopBuilder: (BuildContext context,BoxConstraints constraints){
+      return Container(
+        padding: EdgeInsets.all(15),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 70*fem,
+                        child: RadioListTile(
+                          title: Text('Item available on selection',style: SafeGoogleFont(
+                            'Poppins',
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: GlobalVariables.textColor,
+                          ),),
+                          value: 1,
+                          groupValue: selectedOption,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedOption = value!;
+                            });
+                          },
+                        ),
+                      ),
+                      Container(
+                        width: 150*fem,
+                        child: RadioListTile(
+                          title: Text('Item available on selected schedule when restaurant is working',style:
+                          SafeGoogleFont(
+                            'Poppins',
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color:GlobalVariables.textColor,
+                          ),),
+                          value: 3,
+                          groupValue: selectedOption,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedOption = value!;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+
+
+                ],
+              ),
+
+              Visibility(
+                visible: selectedOption != 1,
+                child: Column(
+                  children: [
+                    // SizedBox(height: 20,),
+                    // _buildMealSession(context, "Breakfast", breakfastSelected),
+                    // SizedBox(height: 10,),
+                    // _buildMealSession(context, "Lunch", lunchSelected),
+                    // SizedBox(height: 10,),
+                    // _buildMealSession(context, "Dinner", dinnerSelected),
+                    // SizedBox(height: 20,),
+                    SizedBox(height: 20,),
+                    Row(
+                      children: [
+                        DataTable(
+                            columnSpacing: 10,
+                            border: TableBorder.all(
+                                color: Colors.black12,
+                                width: 0.5,
+                                style: BorderStyle.solid,
+                                borderRadius: BorderRadius.circular(10)),
+                            columns: <DataColumn> [
+                              DataColumn(
+                                  label: Row(
+                                    children: [
+                                      Text("Days",style:SafeGoogleFont(
+                                        'Poppins',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: GlobalVariables.textColor,
+                                      ),),
+                                      SizedBox(width: 20,),
+                                      Checkbox(
+                                          value: _areAllDays(),
+                                          onChanged: (val) {
+                                            setAllMeal(val!);
+                                          })
+                                    ],
+                                  )),
                               DataColumn(label: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -214,20 +653,20 @@ class _ItemAvailabilityState extends State<ItemAvailability> {
                                   )),
                               DataColumn(
                                   label: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(width: 50,),
-                                  Text("Dinner",style:SafeGoogleFont(
-                                    'Poppins',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: GlobalVariables.textColor,
-                                  ),),
-                                  Checkbox(value: _areAllBreakfastSessionSelected('Dinner'), onChanged: (val){
-                                    setMeal('Dinner', val!);
-                                  })
-                                ],
-                              )),
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(width: 50,),
+                                      Text("Dinner",style:SafeGoogleFont(
+                                        'Poppins',
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: GlobalVariables.textColor,
+                                      ),),
+                                      Checkbox(value: _areAllBreakfastSessionSelected('Dinner'), onChanged: (val){
+                                        setMeal('Dinner', val!);
+                                      })
+                                    ],
+                                  )),
                             ],
                             rows: daysMealSession.keys.map((String day) {
                               var meals = daysMealSession[day] ?? const {};
@@ -322,6 +761,24 @@ class _ItemAvailabilityState extends State<ItemAvailability> {
     return true;
   }
 
+  bool _areAllDays() {
+    for(var meals in daysMealSession.values)
+    {
+
+      for(var session in meals.values)
+      {
+        for(var s in session.values)
+          {
+            if(!s)
+            {
+              return false;
+            }
+          }
+      }
+    }
+    return true;
+  }
+
   void setMeal(String meal, bool val) {
     for (var meals in daysMealSession.values) {
       var m = meals[meal];
@@ -330,6 +787,21 @@ class _ItemAvailabilityState extends State<ItemAvailability> {
         setState(() {
           m[sessionKey] = val;
         });
+      }
+    }
+  }
+
+  void setAllMeal( bool val) {
+    for (var meals in daysMealSession.values) {
+
+      for (var sessionKey in meals.values) {
+
+        for(var s in sessionKey.keys)
+          {
+            setState(() {
+              sessionKey[s] = val;
+            });
+          }
       }
     }
   }
@@ -369,9 +841,6 @@ class _ItemAvailabilityState extends State<ItemAvailability> {
       }
   }
 
-
-
-
   Widget buildSession(String day, String meal, String sessionKey, bool session) {
     return InkWell(
       onTap: () {
@@ -391,6 +860,33 @@ class _ItemAvailabilityState extends State<ItemAvailability> {
           child: Text(sessionKey, style: SafeGoogleFont(
             'Poppins',
             fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: GlobalVariables.textColor,
+          ),),
+        ),
+      ),
+    );
+  }
+
+  Widget buildSession1(String day, String meal, String sessionKey, bool session) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          daysMealSession[day]![meal]![sessionKey] = !session;
+        });
+      },
+      child: Container(
+        width: 25,
+        height: 20,
+        decoration: BoxDecoration(
+          color: session ? GlobalVariables.primaryColor : GlobalVariables.whiteColor,
+          border: Border.all(color: GlobalVariables.primaryColor),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Center(
+          child: Text(sessionKey, style: SafeGoogleFont(
+            'Poppins',
+            fontSize: 10,
             fontWeight: FontWeight.bold,
             color: GlobalVariables.textColor,
           ),),

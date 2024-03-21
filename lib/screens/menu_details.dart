@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
-import 'package:partner_admin_portal/constants/responsive_builder.dart';
+import 'package:partner_admin_portal/widgets/responsive_builder.dart';
 import 'package:partner_admin_portal/provider/day_provider.dart';
-import 'package:partner_admin_portal/widgets/live_menu.dart';
-import 'package:partner_admin_portal/widgets/menu_editor.dart';
+import 'package:partner_admin_portal/widgets/menu/live_menu/live_menu.dart';
+import 'package:partner_admin_portal/widgets/menu/menu_editor/menu_editor.dart';
+import 'package:partner_admin_portal/widgets/menu_subscription_mobile.dart';
 import 'package:provider/provider.dart';
 
-import '../constants/custom_textfield.dart';
+import '../widgets/custom_textfield.dart';
 import '../constants/search_bar.dart';
 import '../constants/utils.dart';
 
 class MenuDetails extends StatefulWidget {
-  const MenuDetails({Key? key}) : super(key: key);
+  final int index;
+  const MenuDetails({Key? key, required this.index}) : super(key: key);
 
   @override
   State<MenuDetails> createState() => _MenuDetailsState();
@@ -24,6 +26,9 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
 
 
   String selectedDay = '';
+
+  String searchQuery = '';
+
   @override
   void initState() {
     super.initState();
@@ -94,19 +99,123 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
     }
   }
 
+  bool subscribed = false;
 
   @override
   Widget build(BuildContext context) {
     double baseWidth = 375;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     double ffem = fem * 0.97;
+    final dateProvider = context.watch<DayProvider>();
     DateTime currentDate = DateTime.now();
     String formattedDate = DateFormat('dd MMM').format(currentDate);
     Color baseColor = Color(0xfffbb830);
     Color lighterColor = baseColor.withOpacity(0.2);
     DayProvider dayProvider = context.watch<DayProvider>();
     return ResponsiveBuilder(mobileBuilder: (BuildContext context,BoxConstraints constraints){
-      return Scaffold(
+      return widget.index == 1 ? Scaffold(
+        appBar: AppBar(
+          backgroundColor: GlobalVariables.primaryColor.withOpacity(0.2),
+          title: Row(
+            children: [
+              Text( selectedDay,style:SafeGoogleFont(
+                'Poppins',
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF363563),
+              ),),
+              SizedBox(width: 10,),
+              InkWell(
+                onTap: () {
+                  showDropdownMenu(context);
+                },
+                child: Icon(Icons.arrow_drop_down_circle_outlined, color: GlobalVariables.textColor),
+              ),
+              SizedBox(width: 25,),
+              Switch(value: subscribed, onChanged: (val){
+                setState(() {
+                  subscribed = !subscribed;
+                });
+              },
+                activeThumbImage: AssetImage("assets/images/icons8-s-50.png"),
+
+              )
+            ],
+          ),
+        ),
+        body:  subscribed
+            ? DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: AppBar(
+              toolbarHeight: 0,
+              backgroundColor: GlobalVariables.primaryColor.withOpacity(0.2),
+              bottom: PreferredSize(preferredSize:Size.fromHeight(50),
+                child: TabBar(
+                  indicatorColor: GlobalVariables.primaryColor,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  labelStyle:SafeGoogleFont(
+                    'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF363563),
+                  ),
+                  tabs:
+                  [
+                    Tab(text: 'Subscription',),
+                    Tab(text: 'For Orders',),
+                  ],
+
+                ),
+
+              ),
+
+            ),
+            body: TabBarView(
+              children: [
+                MenuSubscriptionMobile(),
+                LiveMenu(searchQuery: '',),
+              ],
+            ),
+          ),
+        )
+            : DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            appBar: AppBar(
+              toolbarHeight: 0,
+              backgroundColor: GlobalVariables.primaryColor.withOpacity(0.2),
+              bottom: PreferredSize(preferredSize:Size.fromHeight(50),
+                child: TabBar(
+                  indicatorColor: GlobalVariables.primaryColor,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  labelStyle:SafeGoogleFont(
+                    'Poppins',
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF363563),
+                  ),
+                  tabs:
+                [
+                  Tab(text: 'For Orders',),
+                  Tab(text: 'Subscription',)
+                ],
+
+                ),
+
+              ),
+
+            ),
+            body: TabBarView(
+              children: [
+                LiveMenu(searchQuery: '',),
+                MenuSubscriptionMobile()
+              ],
+            ),
+          ),
+        ),
+
+      ) : Scaffold(
         appBar: AppBar(
           backgroundColor: GlobalVariables.primaryColor.withOpacity(0.2),
           title: Row(
@@ -128,46 +237,15 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
             ],
           ),
         ),
-        body: DefaultTabController(
-          length: 2,
-          child: Scaffold(
-            appBar: AppBar(
-              toolbarHeight: 0,
-              backgroundColor: GlobalVariables.primaryColor.withOpacity(0.2),
-              bottom: PreferredSize(preferredSize:Size.fromHeight(50),
-                child: TabBar(
-                  indicatorColor: GlobalVariables.primaryColor,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  labelStyle:SafeGoogleFont(
-                    'Poppins',
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF363563),
-                  ),
-                  tabs:
-                [
-                  Tab(text: 'For Orders',),
-                  Tab(text: 'Susbscription',)
-                ],
+        body: MenuEditor(searchQuery: searchQuery,),
 
-                ),
-
-              ),
-
-            ),
-            body: TabBarView(
-              children: [
-                LiveMenu(),
-                Column()
-              ],
-            ),
-          ),
-        ),
       );
+
     }, tabletBuilder:(BuildContext context,BoxConstraints constraints){
       return Scaffold(
         appBar: AppBar(
           // toolbarHeight: 80,
+          leading: Container(),
           title: Row(
             children: [
               Text("MENU DETAILS",style: SafeGoogleFont(
@@ -179,10 +257,9 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
               SizedBox(width: 5*fem,),
               Switch(
                   activeThumbImage: NetworkImage('https://cdn2.iconfinder.com/data/icons/picons-essentials/71/power-512.png',),
-                  inactiveTrackColor: GlobalVariables.whiteColor,
+                  inactiveTrackColor: Colors.grey,
                   inactiveThumbImage: NetworkImage('https://cdn2.iconfinder.com/data/icons/picons-essentials/71/power-512.png',),
-                  inactiveThumbColor: Colors.grey,
-                  activeTrackColor: Colors.green,
+                  inactiveThumbColor: GlobalVariables.whiteColor,
                   value: isOpend, onChanged: (val){
                 setState(() {
                   isOpend =val;
@@ -190,7 +267,6 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
               }),
               SizedBox(width: 5*fem,),
               Container(
-
                   child: Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: Center(child: Text("${dayProvider.selectedDay}",style: SafeGoogleFont(
@@ -202,7 +278,11 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
                   )
               ),
               SizedBox(width: 5*fem,),
-              SearchBars(hintText: "Search....", width:50*fem,height: 75,),
+              SearchBars(hintText: "Search item", width:100*fem,height: 45, onChanged: (val){
+                setState(() {
+                  searchQuery = val;
+                });
+              },),
             ],
           ),
           backgroundColor: Color(0xfffbb830),
@@ -228,8 +308,8 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
             SizedBox(width: 20,)
           ],
         ),
-        body: DefaultTabController(
-          length: 3, // Number of tabs
+        body:  widget.index == 1 ? DefaultTabController(
+          length: 7, // Number of tabs
           child: Scaffold(
             appBar: AppBar(
               backgroundColor: lighterColor,
@@ -239,7 +319,7 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
                 child: Row(
                   children: [
                     Container(
-                      width: 600,
+                      width: 300*fem,
                       child: TabBar(
                         labelPadding: EdgeInsets.symmetric(horizontal: 5),
                         indicatorWeight: 5, // Adjust the indicator weight
@@ -253,9 +333,72 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
                           color: Color(0xFF363563),
                         ),
                         tabs: [
-                          Tab(text: 'Live Menu'),
-                          Tab(text: 'Menu Editor'),
-                          Tab(text: 'Menu History'),
+                          // Tab(text: 'Live Menu'),
+                          // Tab(text: 'Menu Editor'),
+                          // Tab(text: 'Menu History'),
+
+                          for (int i = 0; i < 7; i++)
+                            i == 0
+                                ? Tab(
+                              text: "Today : ${DateFormat('dd MMM').format(DateTime.now().add(Duration(days: i)))} ",
+                            )
+                                : Tab(
+                              text: "${DateFormat('E').format(DateTime.now().add(Duration(days: i)))} : ${DateFormat('dd MMM').format(DateTime.now().add(Duration(days: i)))} ",
+                            ),
+
+                        ],
+                        onTap: (index) {
+                          dateProvider.updateSelectedDay('${DateFormat('E').format(DateTime.now().add(Duration(days: index)))} : ${DateFormat('dd MMM').format(DateTime.now().add(Duration(days: index)))}');
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            body: TabBarView(
+              children: [
+                // First tab: Item Availability
+                LiveMenu(searchQuery: searchQuery,),
+                LiveMenu(searchQuery: searchQuery,),
+                LiveMenu(searchQuery: searchQuery,),
+                LiveMenu(searchQuery: searchQuery,),
+                LiveMenu(searchQuery: searchQuery,),
+                LiveMenu(searchQuery: searchQuery,),
+                LiveMenu(searchQuery: searchQuery,),
+                // Second tab: Menu Editor
+
+              ],
+            ),
+          ),
+        )
+              : DefaultTabController(
+          length: 1, // Number of tabs
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: lighterColor,
+              toolbarHeight: 1,
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(0.0),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 100,
+                      child: TabBar(
+                        labelPadding: EdgeInsets.symmetric(horizontal: 5),
+                        indicatorWeight: 5, // Adjust the indicator weight
+                        indicatorColor: Color(0xfffbb830),
+                        unselectedLabelColor: Colors.black54,
+                        labelColor: Color(0xFF363563),
+                        labelStyle: SafeGoogleFont(
+                          'Poppins',
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF363563),
+                        ),
+                        tabs: [
+                          Tab(text: ''),
+
                         ],
                       ),
                     ),
@@ -266,17 +409,9 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
             body: TabBarView(
               children: [
                 // First tab: Item Availability
-                LiveMenu(),
-
+                MenuEditor(searchQuery: searchQuery,)
                 // Second tab: Menu Editor
-                MenuEditor(),
 
-                // Third tab: History of Menu Changes
-                Container(
-                  child: Center(
-                    child: Text('History of Menu Changes Tab Content'),
-                  ),
-                ),
               ],
             ),
           ),
@@ -287,6 +422,7 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
           return Scaffold(
             appBar: AppBar(
               // toolbarHeight: 80,
+              leading: Container(),
               title: Row(
                 children: [
                   Text("MENU DETAILS",style: SafeGoogleFont(
@@ -320,21 +456,17 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
                       )
                   ),
                   SizedBox(width: 50,),
-                  SearchBars(hintText: "Search....", width: MediaQuery.of(context).size.width/3,height: 75,),
+                  SearchBars(hintText: "Search item", width: MediaQuery.of(context).size.width/3,height: 45,
+                  onChanged: (val){
+                    setState(() {
+                      searchQuery = val;
+                    });
+                  },
+
+                  ),
                 ],
               ),
               backgroundColor: Color(0xfffbb830),
-              // bottom:  PreferredSize(
-              //   preferredSize: Size.fromHeight(0),
-              //   child: Padding(
-              //     padding: const EdgeInsets.only(bottom: 8.0),
-              //     child: Row(
-              //       children: [
-              //
-              //       ],
-              //     ),
-              //   ),
-              // ),
               actions: [
                 Icon(Icons.settings,color: Color(0xFF363563),size: 25,),
                 SizedBox(width: 40,),
@@ -346,8 +478,8 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
                 SizedBox(width: 20,)
               ],
             ),
-            body: DefaultTabController(
-              length: 3, // Number of tabs
+            body: widget.index == 1 ? DefaultTabController(
+              length: 7, // Number of tabs
               child: Scaffold(
                 appBar: AppBar(
                   backgroundColor: lighterColor,
@@ -357,7 +489,7 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
                     child: Row(
                       children: [
                         Container(
-                          width: 600,
+                          width: 1000,
                           child: TabBar(
                             labelPadding: EdgeInsets.symmetric(horizontal: 5),
                             indicatorWeight: 5, // Adjust the indicator weight
@@ -371,9 +503,72 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
                               color: Color(0xFF363563),
                             ),
                             tabs: [
-                              Tab(text: 'Live Menu'),
-                              Tab(text: 'Menu Editor'),
-                              Tab(text: 'Menu History'),
+                              // Tab(text: 'Live Menu'),
+                              // Tab(text: 'Menu Editor'),
+                              // Tab(text: 'Menu History'),
+
+                              for (int i = 0; i < 7; i++)
+                                i == 0
+                                    ? Tab(
+                                  text: "Today : ${DateFormat('dd MMM').format(DateTime.now().add(Duration(days: i)))} ",
+                                )
+                                    : Tab(
+                                  text: "${DateFormat('E').format(DateTime.now().add(Duration(days: i)))} : ${DateFormat('dd MMM').format(DateTime.now().add(Duration(days: i)))} ",
+                                ),
+
+                            ],
+                            onTap: (index) {
+                              dateProvider.updateSelectedDay('${DateFormat('E').format(DateTime.now().add(Duration(days: index)))} : ${DateFormat('dd MMM').format(DateTime.now().add(Duration(days: index)))}');
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                body: TabBarView(
+                  children: [
+                    // First tab: Item Availability
+                    LiveMenu(searchQuery: searchQuery,),
+                    LiveMenu(searchQuery: searchQuery,),
+                    LiveMenu(searchQuery: searchQuery,),
+                    LiveMenu(searchQuery: searchQuery,),
+                    LiveMenu(searchQuery: searchQuery,),
+                    LiveMenu(searchQuery: searchQuery,),
+                    LiveMenu(searchQuery: searchQuery,),
+                    // Second tab: Menu Editor
+
+                  ],
+                ),
+              ),
+            )
+                                    : DefaultTabController(
+              length: 1, // Number of tabs
+              child: Scaffold(
+                appBar: AppBar(
+                  backgroundColor: lighterColor,
+                  toolbarHeight: 1,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(0.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 100,
+                          child: TabBar(
+                            labelPadding: EdgeInsets.symmetric(horizontal: 5),
+                            indicatorWeight: 5, // Adjust the indicator weight
+                            indicatorColor: Color(0xfffbb830),
+                            unselectedLabelColor: Colors.black54,
+                            labelColor: Color(0xFF363563),
+                            labelStyle: SafeGoogleFont(
+                              'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF363563),
+                            ),
+                            tabs: [
+                              Tab(text: ''),
+
                             ],
                           ),
                         ),
@@ -384,17 +579,9 @@ class _MenuDetailsState extends State<MenuDetails> with TickerProviderStateMixin
                 body: TabBarView(
                   children: [
                     // First tab: Item Availability
-                    LiveMenu(),
-
+                    MenuEditor(searchQuery: searchQuery,)
                     // Second tab: Menu Editor
-                    MenuEditor(),
 
-                    // Third tab: History of Menu Changes
-                    Container(
-                      child: Center(
-                        child: Text('History of Menu Changes Tab Content'),
-                      ),
-                    ),
                   ],
                 ),
               ),
