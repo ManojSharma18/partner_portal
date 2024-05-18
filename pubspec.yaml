@@ -39,9 +39,11 @@ dependencies:
   intl:
   provider:
   flutter_barcode_sdk:
+  flutter_barcode_scanner:
   camera:
   ai_barcode: ^3.0.1
   fl_chart:
+  http:
 
 
 

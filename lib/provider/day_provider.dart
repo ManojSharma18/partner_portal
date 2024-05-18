@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 class DayProvider extends ChangeNotifier {
   int _tapCount = 0;
-  String _selectedDay = 'Today : ${DateFormat('dd MMM').format(DateTime.now())}'; // Initial value is Monday
+  String _selectedDay = 'Fri : ${DateFormat('dd MMM').format(DateTime.now())}'; // Initial value is Monday
 
   String get selectedDay => _selectedDay;
 
@@ -18,9 +18,8 @@ class DayProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   void showNextDay() {
-    if (_tapCount < 7) {
+    if (_tapCount < 6) {
       DateTime nextDay = DateTime.now().add(Duration(days: _tapCount + 1));
       String formattedNextDay = '${DateFormat('EEE').format(nextDay)} : ${DateFormat('dd MMM').format(nextDay)}';
       updateSelectedDay(formattedNextDay);

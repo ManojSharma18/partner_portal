@@ -6,6 +6,7 @@ import '../../../bloc/manage_orders/order_bloc.dart';
 import '../../../bloc/manage_orders/order_state.dart';
 import '../../../constants/global_function.dart';
 import '../../../constants/global_variables.dart';
+import '../../../constants/order_constants/subscription_variables.dart';
 import '../../../constants/utils.dart';
 import '../../../provider/day_provider.dart';
 import '../../menu/live_menu/live_menu.dart';
@@ -164,18 +165,18 @@ class ManageSubscriptionMobile extends StatelessWidget {
                   child:  Container(
                     color: GlobalVariables.whiteColor,
                     child: GridView.builder(
-                        itemCount: GlobalVariables.orders.length,
+                        itemCount: SubscriptionVariables.orders.length,
                         scrollDirection: Axis.vertical,
                         padding: EdgeInsets.all(20),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 1,
                             crossAxisSpacing: 20,
-                            mainAxisExtent: 440,
+                            mainAxisExtent: 400,
                             childAspectRatio: 5,
                             mainAxisSpacing: 30
                         ),
                         itemBuilder: (context,index) {
-                          final currentOrder =  GlobalVariables.orders[index];
+                          final currentOrder =  SubscriptionVariables.orders[index];
                           return Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
@@ -227,18 +228,44 @@ class ManageSubscriptionMobile extends StatelessWidget {
                                   child: Row(
                                     mainAxisAlignment:MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text("${currentOrder['CustomerName'] } ",
-                                        style: SafeGoogleFont(
-                                          'Poppins',
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-
-                                          color: Color(0xFF363563),
-                                        ),),
                                       Tooltip(
                                           message: "${currentOrder['number']}",
                                           child: Icon(Icons.call,color: Colors.green,size: 20,)
-                                      )
+                                      ),
+                                      Row(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Icon(Icons.person,color: Colors.blue,size: 18,),
+                                              SizedBox(width: 5,),
+                                              Text("Customer",
+                                                style: SafeGoogleFont(
+                                                  'Poppins',
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+
+                                                  color: Color(0xFF363563),
+                                                ),),
+                                            ],
+                                          ),
+                                          SizedBox(width: 15,),
+                                          Row(
+                                            children: [
+                                              Icon(Icons.delivery_dining,color: Colors.red,size: 18,),
+                                              SizedBox(width: 5,),
+                                              Text("Driver",
+                                                style: SafeGoogleFont(
+                                                  'Poppins',
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+
+                                                  color: Color(0xFF363563),
+                                                ),),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+
                                     ],
                                   ),
                                 ),
@@ -289,7 +316,7 @@ class ManageSubscriptionMobile extends StatelessWidget {
                                   height:190,
                                   child: ListView.builder(
                                     physics: NeverScrollableScrollPhysics(),
-                                    itemCount: GlobalVariables.orders[index]['Items'].length,
+                                    itemCount: SubscriptionVariables.orders[index]['Items'].length,
                                     itemBuilder: (_, itemIndex) {
                                       return Container(
                                         padding: EdgeInsets.only(top:10,bottom:10,left: 5*fem,right: 5*fem),
@@ -297,8 +324,9 @@ class ManageSubscriptionMobile extends StatelessWidget {
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             Container(
+                                              width:270*fem,
                                               child: Text(
-                                                '${GlobalVariables.orders[index]['Items'][itemIndex]['itemName']} ',
+                                                '${SubscriptionVariables.orders[index]['Items'][itemIndex]['itemName']} ',
                                                 style: SafeGoogleFont(
                                                   'Poppins',
                                                   fontSize: 13,
@@ -311,7 +339,7 @@ class ManageSubscriptionMobile extends StatelessWidget {
                                               width: 30,
                                               child: Text(
                                                 // "${GlobalVariables.orders[index]['Items'][itemIndex]['count']} x ${GlobalVariables.orders[index]['Items'][itemIndex]['price'] ~/ GlobalVariables.orders[index]['Items'][itemIndex]['count']}",
-                                                "${GlobalVariables.orders[index]['Items'][itemIndex]['count']}",
+                                                "${SubscriptionVariables.orders[index]['Items'][itemIndex]['count']}",
                                                 style: SafeGoogleFont(
                                                   'Poppins',
                                                   fontSize: 12,
@@ -334,37 +362,7 @@ class ManageSubscriptionMobile extends StatelessWidget {
                                   color: GlobalVariables.primaryColor,
                                 ),
 
-                                Container(
-                                  margin:EdgeInsets.only(left: 5*fem,right: 5*fem,top: 8,bottom: 8),
-                                  child: Row(
-                                    mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.delivery_dining,color: Colors.red,size: 22,),
-                                          SizedBox(width: 10,),
-                                          Text("${currentOrder['dname'] } ",
-                                            style: SafeGoogleFont(
-                                              'Poppins',
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
 
-                                              color: Color(0xFF363563),
-                                            ),),
-                                        ],
-                                      ),
-                                      Tooltip(
-                                          message: "${currentOrder['number']}",
-                                          child: Icon(Icons.call,color: Colors.green,size: 20,)
-                                      )
-                                    ],
-                                  ),
-                                ),
-
-                                Container(
-                                  height: 0.5,
-                                  color: GlobalVariables.primaryColor,
-                                ),
 
                                 Container(
                                   margin:EdgeInsets.only(left:2*fem,right: 2*fem,bottom: 10,top: 10),
@@ -376,7 +374,7 @@ class ManageSubscriptionMobile extends StatelessWidget {
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          Text("${GlobalVariables.orders.elementAt(index)['Type']} ",style:SafeGoogleFont(
+                                          Text("${SubscriptionVariables.orders.elementAt(index)['Type']} ",style:SafeGoogleFont(
                                             'Poppins',
                                             fontSize: 12,
                                             fontWeight: FontWeight.w500,

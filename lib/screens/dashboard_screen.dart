@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
 import 'package:partner_admin_portal/widgets/orders/manage/manage_subscription_mob.dart';
 import 'package:partner_admin_portal/widgets/responsive_builder.dart';
@@ -13,8 +14,12 @@ import 'package:partner_admin_portal/screens/payout_screen.dart';
 import 'package:partner_admin_portal/screens/rating_screen.dart';
 import 'package:partner_admin_portal/screens/report.dart';
 
+import '../bloc/menu/menu_bloc.dart';
+import '../bloc/menu/menu_event.dart';
 import '../constants/utils.dart';
 import '../widgets/navbar.dart';
+import '../widgets/orders/forecast/analyse_orders.dart';
+import '../widgets/orders/forecast/analyse_orders_mob.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -57,6 +62,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
   }
   @override
   Widget build(BuildContext context) {
+    final menuBloc = BlocProvider.of<MenuBloc>(context);
     return ResponsiveBuilder(mobileBuilder: (BuildContext context,BoxConstraints constraint)
         {
           return Scaffold(
@@ -135,6 +141,9 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                                    fontWeight: FontWeight.bold,
                                    color:GlobalVariables.textColor,
                                  ),),
+                                 onTap: (){
+                                   Navigator.push(context, MaterialPageRoute(builder: (context) => AnalyseOrdersMobile()));
+                                 },
                                ),
                              )
                            ],
@@ -506,25 +515,43 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                           child: SingleChildScrollView(
                             child: Column(
                               children: [
-                                NavBarItem(icon: "assets/images/list_819860.png",
-                                    text: "Orders",
-                                    hover: (val){
-                                  if(val)
+                                MouseRegion(
+                                  onEnter: (_){
+                                    setState(() {
+                                      isHovered = true;
+                                    });
+                                    if(isHovered)
                                     {
+                                      select(0);
+                                      // _selectedIndex = 1;
+                                      // menuIndex = 1;
                                       showPopupMenu(context);
                                     }
-                                  else{
-                                    Container();
-                                  }
-                                    },
-                                    touched: () {
-                                      showPopupMenu(context);
-                                      setState(() {
-                                        // select(0);
-                                        // _selectedIndex = 0;
-                                      });
-                                    },
-                                    active: selected[0]),
+                                  },
+                                  onExit: (_){
+                                    setState(() {
+                                      isHovered = false;
+                                    });
+                                    print("Hovered $isHovered");
+                                    if(!isHovered)
+                                    {
+                                      Container();
+                                    }
+                                  },
+                                  child: NavBarItem(icon: "assets/images/list_819860.png",
+                                      text: "Manage",
+                                      hover: (val){
+
+                                      },
+                                      touched: () {
+                                        // showPopupMenu(context);
+                                        setState(() {
+
+                                          // _selectedIndex = 0;
+                                        });
+                                      },
+                                      active: selected[0]),
+                                ),
                                 MouseRegion(
                                   onEnter: (_){
                                     setState(() {
@@ -532,6 +559,9 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                                     });
                                     if(isHovered)
                                       {
+                                        select(1);
+                                        // _selectedIndex = 1;
+                                        // menuIndex = 1;
                                         showPopupMenu1(context);
                                       }
                                   },
@@ -547,15 +577,10 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                                   },
                                   child: NavBarItem(icon: "assets/images/restaurant_685352.png",
                                       text: "Menu",
-                                    //   hover: (val){
-                                    // showPopupMenu1(context);
-                                    //   },
+
                                       touched: () {
                                         showPopupMenu1(context);
-                                        setState(() {
-                                          // select(1);
-                                          // _selectedIndex = 1;
-                                        });
+
                                       },
                                       active: selected[1]),
                                 ),
@@ -640,7 +665,6 @@ class _DashboardScreenState extends State<DashboardScreen>  {
   }
 
   void showPopupMenu1(BuildContext context) {
-
     {
       showMenu(
         context: context,
@@ -704,6 +728,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
   }
 
   void showPopupMenu(BuildContext context) {
+    final menuBloc = BlocProvider.of<MenuBloc>(context);
     showMenu(
       context: context,
       color: GlobalVariables.whiteColor,
@@ -733,11 +758,13 @@ class _DashboardScreenState extends State<DashboardScreen>  {
             title: Text('Forecast'),
             onTap: () {
               setState(() {
+                menuBloc.add(LoadMenuEvent(context));
                 orderIndex = 2;
                 select(0);
                 _selectedIndex = 0;
 
               });
+
 
               Navigator.pop(context); // Close the popup menu
 
@@ -747,6 +774,5 @@ class _DashboardScreenState extends State<DashboardScreen>  {
       ],
     );
   }
-
 
 }

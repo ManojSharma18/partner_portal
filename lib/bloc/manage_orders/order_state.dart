@@ -15,10 +15,12 @@ class OrderState extends Equatable {
   final Subsciption? subsciption;
   final int? index;
   final List<Map<String, dynamic>> orderList;
+  final List<Map<String,dynamic>>? subscriptionOrderList;
+  final List<Map<String,dynamic>>? canceledList;
   final List<Map<String, dynamic>> inProgressList;
   final List<Map<String, dynamic>> closedList;
   final List<Map<String, dynamic>>? filterList;
-  final String? status;
+  final String status;
   final String? ordId;
   final String? searchQuery;
 
@@ -31,10 +33,12 @@ class OrderState extends Equatable {
     this.orders,
     this.amount,
     required this.orderList,
+    this.canceledList,
+    this.subscriptionOrderList,
     this.index,
     required this.closedList,
     required this.inProgressList,
-    this.status,
+    this.status = "Start",
     this.subsciption,
     this.searchQuery,
     this.ordId,
@@ -43,7 +47,7 @@ class OrderState extends Equatable {
 
   @override
   List<Object?> get props =>
-      [active, mealTime, mealSession, inProgress, closed, amount, orders, orderList, index, inProgressList, closedList, status, searchQuery, filterList,subsciption,ordId];
+      [active, mealTime, mealSession, inProgress, closed, amount, orders, orderList, index, inProgressList, closedList, status, searchQuery, filterList,subsciption,ordId,canceledList,subscriptionOrderList];
 
   OrderState copyWith({
     bool? active,
@@ -54,6 +58,8 @@ class OrderState extends Equatable {
     Orders? orders,
     Amount? amount,
     List<Map<String, dynamic>>? orderList,
+    List<Map<String, dynamic>>? canceledList,
+    List<Map<String, dynamic>>? subscriptionOrderList,
     final List<Map<String, dynamic>>? inProgressList,
     final List<Map<String,dynamic>>? closedList,
     final List<Map<String,dynamic>>? filterList,
@@ -72,6 +78,8 @@ class OrderState extends Equatable {
       orders: orders ?? this.orders,
       amount: amount ?? this.amount,
       orderList: orderList ?? this.orderList,
+      subscriptionOrderList: subscriptionOrderList??this.subscriptionOrderList,
+      canceledList: canceledList??this.canceledList,
       index: index ?? this.index,
       inProgressList: inProgressList ?? this.inProgressList,
       closedList: closedList ?? this.closedList,

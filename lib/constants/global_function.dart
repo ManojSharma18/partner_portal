@@ -291,20 +291,31 @@ class GlobalFunction {
     );
   }
 
-  static showOrderItems(int index,double width,BuildContext context) {
+  static showOrderItems(int index,final Map<String,dynamic> currentOrder,double width,BuildContext context,double sum) {
     double baseWidth = 375;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     double ffem = fem * 0.97;
     showDialog(context: context, builder: (BuildContext context) {
       return  BlocBuilder<OrderBloc,OrderState>(
         builder: (BuildContext context, state) {
+          print(currentOrder);
           return AlertDialog(
-            title: Text("Items | ${state.orderList[index]['Items'].length}", style: SafeGoogleFont(
-              'Poppins',
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFF363563),
-            ),),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Items | ${currentOrder['Items'].length}", style: SafeGoogleFont(
+                  'Poppins',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF363563),
+                ),),
+                InkWell(
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                    child: Icon(Icons.cancel,color: GlobalVariables.textColor,))
+              ],
+            ),
             content:  Column(
               children: [
                 Container(
@@ -360,11 +371,14 @@ class GlobalFunction {
                     )
                 ),
                 Container(
-                  height: 300,
+                  height: 490,
                   width: 400,
                   child: ListView.builder(
-                    itemCount: state.orderList[index]['Items'].length,
+                    itemCount: currentOrder['Items'].length,
                     itemBuilder: (_, itemIndex) {
+                      double itemPrice = currentOrder['Items'][itemIndex]['price'];
+                      sum += itemPrice;
+                      print(sum);
                       return Container(
                         padding: EdgeInsets.only(top:10,bottom:10,left: 5*fem,right: 5*fem),
                         child: Row(
@@ -373,7 +387,7 @@ class GlobalFunction {
                             Container(
                               width:width,
                               child: Text(
-                                '${itemIndex+1}. ${state.orderList[index]['Items'][itemIndex]['itemName']} ',
+                                '${itemIndex+1}. ${currentOrder['Items'][itemIndex]['itemName']} ',
                                 style: SafeGoogleFont(
                                   'Poppins',
                                   fontSize: 13,
@@ -388,7 +402,7 @@ class GlobalFunction {
                                 Container(
                                   width: 30,
                                   child: Text(
-                                    "${state.orderList[index]['Items'][itemIndex]['count']} ",
+                                    "${currentOrder['Items'][itemIndex]['count']} ",
                                     style: SafeGoogleFont(
                                       'Poppins',
                                       fontSize: 12,
@@ -402,7 +416,7 @@ class GlobalFunction {
                                 Container(
                                   width: 40,
                                   child: Text(
-                                    '\u20B9 ${state.orderList[index]['Items'][itemIndex]['price']}',
+                                    '\u20B9 ${currentOrder['Items'][itemIndex]['price']}',
                                     style: TextStyle(
                                         fontSize: 13
                                     ),
@@ -410,71 +424,328 @@ class GlobalFunction {
                                 ),
                               ],
                             ),
+
                           ],
                         ),
                       );
                     },
                   ),
                 ),
+
               ],
             ),
             actions: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  InkWell(
-                    onTap:(){
-                      context.read<OrderBloc>().add(OrderRejectEvent(state.orderList, index,state.closedList));
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.red
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 15,right: 15,top: 8,bottom: 8),
-                        child: Center(
-                          child: Text(
-                            "Reject",
-                            style:SafeGoogleFont(
-                              'Poppins',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: GlobalVariables.whiteColor,
-                            ),
-                          ),
+                  Row(
+                    children: [
+                      Text(
+                        'Total:  \u20B9 ${sum.toStringAsFixed(2)}',
+                        style: SafeGoogleFont(
+                          'Poppins',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF363563),
                         ),
                       ),
-                    ),
+                      SizedBox(width: 5,),
+                      Tooltip(
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(5)
+                        ),
+                        textStyle: TextStyle(
+                          fontWeight: FontWeight.w300,
+                          fontFamily: 'Open Sans',
+                          fontSize: 10,
+                          color: Colors.white,
+                          wordSpacing: 0.23,
+                          letterSpacing: 0.23,
+                        ),
+                        message:  'Including CGST, SGST and delivery charges', // Provide a default value if widget.suffixTooltip is null
+                        child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 2*fem,),
-                  InkWell(
-                    onTap:(){
-                      context.read<OrderBloc>().add(OrderAcceptEvent(state.orderList, state.inProgressList, index,state.orderList[index]['Id']));
+                   Row(
+                     children: [
+                       InkWell(
+                         onTap:(){
+                           context.read<OrderBloc>().add(OrderRejectEvent(state.orderList, index,state.closedList,currentOrder['Id']));
+                           Navigator.pop(context);
+                         },
+                         child: Container(
+                           decoration: BoxDecoration(
+                               borderRadius: BorderRadius.circular(10),
+                               color: Colors.red
+                           ),
+                           child: Padding(
+                             padding: const EdgeInsets.only(left: 15,right: 15,top: 8,bottom: 8),
+                             child: Center(
+                               child: Text(
+                                 "Reject",
+                                 style:SafeGoogleFont(
+                                   'Poppins',
+                                   fontSize: 12,
+                                   fontWeight: FontWeight.w500,
+                                   color: GlobalVariables.whiteColor,
+                                 ),
+                               ),
+                             ),
+                           ),
+                         ),
+                       ),
+                       SizedBox(width: 2*fem,),
+                       InkWell(
+                         onTap:(){
+                           context.read<OrderBloc>().add(OrderAcceptEvent(state.orderList, state.inProgressList, index,state.orderList[index]['Id']));
+                           Navigator.pop(context);
+                         },
+                         child: Container(
+                           decoration: BoxDecoration(
+                               borderRadius: BorderRadius.circular(10),
+                               color: Colors.green
+                           ),
+                           child: Padding(
+                             padding: const EdgeInsets.only(left: 15,right: 15,top: 8,bottom: 8),
+                             child: Center(
+                               child: Text(
+                                 "Accept",
+                                 style:SafeGoogleFont(
+                                   'Poppins',
+                                   fontSize: 12,
+                                   fontWeight: FontWeight.w500,
+                                   color: GlobalVariables.whiteColor,
+                                 ),
+                               ),
+                             ),
+                           ),
+                         ),
+                       )
+                     ],
+                   )
+                ],
+              ),
+            ],
+          );
+        },
+      );
+    });
+
+  }
+
+  static showOrderItemsSubscription(int index,final Map<String,dynamic> currentOrder,double width,BuildContext context,double sum) {
+    double baseWidth = 375;
+    double fem = MediaQuery.of(context).size.width / baseWidth;
+    double ffem = fem * 0.97;
+    showDialog(context: context, builder: (BuildContext context) {
+      return  BlocBuilder<OrderBloc,OrderState>(
+        builder: (BuildContext context, state) {
+          print(currentOrder);
+          return AlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Items | ${currentOrder['Items'].length}", style: SafeGoogleFont(
+                  'Poppins',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF363563),
+                ),),
+                InkWell(
+                    onTap: (){
                       Navigator.pop(context);
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Colors.green
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 15,right: 15,top: 8,bottom: 8),
-                        child: Center(
+                    child: Icon(Icons.cancel,color: GlobalVariables.textColor,))
+              ],
+            ),
+            content:  Column(
+              children: [
+                Container(
+                    padding: EdgeInsets.only(top:10,bottom:10,left: 5*fem,right: 5*fem),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width:45*fem,
                           child: Text(
-                            "Accept",
-                            style:SafeGoogleFont(
+                            'Item names',
+                            style: SafeGoogleFont(
                               'Poppins',
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: GlobalVariables.whiteColor,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF363563),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 40,
+                              child: Text(
+                                "QTY",
+                                style: SafeGoogleFont(
+                                  'Poppins',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  height: 1.5,
+                                  color: Color(0xFF363563),
+                                ),
+                              ),
+                            ),
+
+                            Container(
+                              width: 40,
+                              child: Text(
+                                'Total',
+                                style: SafeGoogleFont(
+                                  'Poppins',
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  height: 1.5,
+                                  color: Color(0xFF363563),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                ),
+                Container(
+                  height: 470,
+                  width: 400,
+                  child: ListView.builder(
+                    itemCount: currentOrder['Items'].length,
+                    itemBuilder: (_, itemIndex) {
+                      double itemPrice = currentOrder['Items'][itemIndex]['price'];
+                      sum += itemPrice;
+                      print(sum);
+                      return Container(
+                        padding: EdgeInsets.only(top:10,bottom:10,left: 5*fem,right: 5*fem),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width:width,
+                              child: Text(
+                                '${itemIndex+1}. ${currentOrder['Items'][itemIndex]['itemName']} ',
+                                style: SafeGoogleFont(
+                                  'Poppins',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xFF363563),
+                                ),
+                              ),
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 30,
+                                  child: Text(
+                                    "${currentOrder['Items'][itemIndex]['count']} ",
+                                    style: SafeGoogleFont(
+                                      'Poppins',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.5,
+                                      color: Color(0xFF363563),
+                                    ),
+                                  ),
+                                ),
+
+                                Container(
+                                  width: 40,
+                                  child: Text(
+                                    '\u20B9 ${currentOrder['Items'][itemIndex]['price']}',
+                                    style: TextStyle(
+                                        fontSize: 13
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+              ],
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Total:  \u20B9 ${currentOrder['Amount']}',
+                        style: SafeGoogleFont(
+                          'Poppins',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF363563),
+                        ),
+                      ),
+                      SizedBox(width: 5,),
+                      Tooltip(
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(5)
+                        ),
+                        textStyle: TextStyle(
+                          fontWeight: FontWeight.w300,
+                          fontFamily: 'Open Sans',
+                          fontSize: 10,
+                          color: Colors.white,
+                          wordSpacing: 0.23,
+                          letterSpacing: 0.23,
+                        ),
+                        message:  'Including CGST, SGST and delivery charges', // Provide a default value if widget.suffixTooltip is null
+                        child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap:(){
+                          // context.read<OrderBloc>().add(OrderRejectEvent(state.orderList, index,state.closedList));
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          width: 100,
+                          height: 45,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: GlobalVariables.primaryColor
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Ok",
+                              style:SafeGoogleFont(
+                                'Poppins',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: GlobalVariables.textColor,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   )
                 ],
               ),
@@ -486,7 +757,7 @@ class GlobalFunction {
 
   }
 
-  static showItemsInprogressAndClosed(int index,double width,BuildContext context,List<Map<String,dynamic>> list) {
+  static showItemsInprogressAndClosed(int index,double width,BuildContext context,List<Map<String,dynamic>> list,double sum) {
     double baseWidth = 375;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     double ffem = fem * 0.97;
@@ -555,11 +826,13 @@ class GlobalFunction {
                     )
                 ),
                 Container(
-                  height: 300,
+                  height: 480,
                   width: 400,
                   child: ListView.builder(
                     itemCount: list[index]['Items'].length,
                     itemBuilder: (_, itemIndex) {
+                      double itemPrice = list[index]['Items'][itemIndex]['price'];
+                      sum += itemPrice;
                       return Container(
                         padding: EdgeInsets.only(top:10,bottom:10,left: 5*fem,right: 5*fem),
                         child: Row(
@@ -614,31 +887,69 @@ class GlobalFunction {
               ],
             ),
             actions: [
-              InkWell(
-                onTap:(){
-                  // context.read<OrderBloc>().add(OrderRejectEvent(state.orderList, index,state.closedList));
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  width: 100,
-                  height: 45,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: GlobalVariables.primaryColor
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Total:  \u20B9 ${sum.toStringAsFixed(2)}',
+                        style: SafeGoogleFont(
+                          'Poppins',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF363563),
+                        ),
+                      ),
+                      SizedBox(width: 5,),
+                      Tooltip(
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(5)
+                        ),
+                        textStyle: TextStyle(
+                          fontWeight: FontWeight.w300,
+                          fontFamily: 'Open Sans',
+                          fontSize: 10,
+                          color: Colors.white,
+                          wordSpacing: 0.23,
+                          letterSpacing: 0.23,
+                        ),
+                        message:  'Including CGST, SGST and delivery charges', // Provide a default value if widget.suffixTooltip is null
+                        child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
+                      ),
+                    ],
                   ),
-                  child: Center(
-                    child: Text(
-                      "Ok",
-                      style:SafeGoogleFont(
-                        'Poppins',
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: GlobalVariables.textColor,
+                  InkWell(
+                    onTap:(){
+                      // context.read<OrderBloc>().add(OrderRejectEvent(state.orderList, index,state.closedList));
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      width: 100,
+                      height: 45,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: GlobalVariables.primaryColor
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Ok",
+                          style:SafeGoogleFont(
+                            'Poppins',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: GlobalVariables.textColor,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
+
             ],
           );
         },

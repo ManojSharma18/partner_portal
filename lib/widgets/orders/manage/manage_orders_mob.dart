@@ -507,7 +507,7 @@ class ManageOrdersMob extends StatelessWidget {
                                                     children: [
                                                       InkWell(
                                                         onTap:(){
-                                                          context.read<OrderBloc>().add(OrderRejectEvent(state.orderList, index,state.closedList));
+                                                          context.read<OrderBloc>().add(OrderRejectEvent(state.orderList, index,state.closedList,currentOrder['Id']));
                                                         },
                                                         child: Container(
                                                           decoration: BoxDecoration(
@@ -899,7 +899,7 @@ class ManageOrdersMob extends StatelessWidget {
                                                             context.read<OrderBloc>().add(OrderCompleteEvent(index));
 
                                                           }else {
-                                                            context.read<OrderBloc>().add(OrderStatusEvent(state.inProgressList, index,"Ready"));
+                                                            context.read<OrderBloc>().add(OrderStatusEvent(state.inProgressList,state.orderList, index,"Ready",''));
                                                           }
 
                                                         },

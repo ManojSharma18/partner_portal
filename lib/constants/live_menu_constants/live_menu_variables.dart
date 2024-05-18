@@ -8,56 +8,32 @@ class LiveMenuVariables {
 
   static bool enabled = false;
 
-  static String selectedItem = 'Idli';
+  static String selectedItem = 'Akki payasa';
 
-  static Map<String, List<Map<String,dynamic>>> foodCategories = {
-    'South indian breakfast': [
-      {'name' : 'Idli', 'availability' : true,'category' : 'veg'},
-      {'name' :'Poori','availability' : false,'category' : 'veg'},
-      {'name' : 'Shavige bath','availability' : false,'category' : 'veg'}
-    ],
+  static Map<String, List<Map<String,dynamic>>> foodCategories = {};
 
-    'North indian breakfast': [
-      {'name' : 'Chole bature', 'availability' : true,'category' : 'veg'},
-      {'name' :'Rava chilla','availability' : false,'category' : 'veg'},
-      {'name' : 'Pav bhaji','availability' : true ,'category' : 'veg'}
-    ],
-
-    'South indian palya': [
-      {'name' : 'Beans palya', 'availability' : true,'category' : 'veg'},
-      {'name' :'Balekayi palya','availability' : false,'category' : 'veg'},
-      {'name' : 'Soppin palya','availability' : false ,'category' : 'veg'}
-    ],
-
-    'North indian subzi': [
-      {'name' : 'Aloo moongere ki sabzi', 'availability' : true,'category' : 'veg'},
-      {'name' : 'Aloo bhindi','availability' : false,'category' : 'veg'},
-      {'name' : 'Gobo mater','availability' : false,'category' : 'veg' }
-    ],
-
-    'South indian ricebath': [
-      {'name' : 'lemon rice', 'availability' : true,'category' : 'veg'},
-      {'name' :'puliyogare','availability' : false,'category' : 'veg'},
-      {'name' : 'tomoto anna','availability' : false ,'category' : 'veg'}
-    ],
-
-    'South indian sambar': [
-      {'name' : 'onion sambar', 'availability' : true,'category' : 'veg'},
-      {'name' :'drumstick sambar','availability' : false,'category' : 'veg'},
-      {'name' : 'mixed vegitables sambar','availability' : false ,'category' : 'veg'}
-    ],
-
-    'South indian sweets': [
-      {'name' : 'Akki payasa', 'availability' : true,'category' : 'veg'},
-      {'name' :'Godhi payasa','availability' : false,'category' : 'veg'},
-      {'name' : 'shavide payasa','availability' : false,'category' : 'veg'}
-    ],
-
-  };
+  static Map<String, dynamic> selectItem = {};
 
   static TextEditingController total = TextEditingController();
   static TextEditingController breakfastTotal = TextEditingController();
   static TextEditingController lunchTotal = TextEditingController();
   static TextEditingController dinnerTotal = TextEditingController();
+
+  static TextEditingController bfSession1Controller = TextEditingController();
+  static TextEditingController bfSession2Controller = TextEditingController();
+  static TextEditingController bfSession3Controller = TextEditingController();
+  static TextEditingController bfSession4Controller = TextEditingController();
+
+  static TextEditingController lnSession1Controller = TextEditingController();
+  static TextEditingController lnSession2Controller = TextEditingController();
+  static TextEditingController lnSession3Controller = TextEditingController();
+  static TextEditingController lnSession4Controller = TextEditingController();
+
+  static TextEditingController dnSession1Controller = TextEditingController();
+  static TextEditingController dnSession2Controller = TextEditingController();
+  static TextEditingController dnSession3Controller = TextEditingController();
+  static TextEditingController dnSession4Controller = TextEditingController();
+
+
 
 }

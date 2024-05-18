@@ -50,11 +50,25 @@ class SubscriptionEvent extends OrderEvent{
   const SubscriptionEvent(this.subs);
 }
 
-class OrderRejectEvent extends OrderEvent{
+class OrderRejectEvent extends OrderEvent {
+  final bool? isOrderList;
   final List<Map<String,dynamic>> orderList;
   final List<Map<String,dynamic>> closedList;
   final int index;
-  const OrderRejectEvent(this.orderList, this.index, this.closedList);
+  final String ordId;
+  const OrderRejectEvent(this.orderList, this.index, this.closedList, this.ordId, {this.isOrderList = true});
+}
+
+class CancelAllEvent extends OrderEvent {
+  final List<Map<String,dynamic>> filterdList;
+  const CancelAllEvent(this.filterdList);
+}
+
+class SubscriptionCanceledEvent extends OrderEvent{
+  final List<Map<String,dynamic>> subscriptionOrderList;
+  final List<Map<String,dynamic>> canceledList;
+  final int index;
+  const SubscriptionCanceledEvent(this.canceledList,this.subscriptionOrderList,this.index);
 }
 
 class OrderAcceptEvent extends OrderEvent {
@@ -67,9 +81,11 @@ class OrderAcceptEvent extends OrderEvent {
 
 class OrderStatusEvent extends OrderEvent{
   final List<Map<String,dynamic>> inProgressList;
+  final List<Map<String,dynamic>> filteredList;
   final int index;
   final String status;
-  const OrderStatusEvent(this.inProgressList,this.index, this.status,);
+  final String ordId;
+  const OrderStatusEvent(this.inProgressList,this.filteredList,this.index, this.status, this.ordId,);
 }
 
 class OrderCompleteEvent extends OrderEvent{

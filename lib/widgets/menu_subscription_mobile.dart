@@ -217,25 +217,23 @@ class _MenuSubscriptionMobileState extends State<MenuSubscriptionMobile> {
               );
             },
             onReorder: (oldIndex, newIndex) {
-              setState(() {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                List<MapEntry<String, List<Map<String, dynamic>>>> entries =
-                filteredSubscriptionCategory.length == 0
-                    ? subscriptionFoodCategories.entries.toList()
-                    : filteredSubscriptionCategory.entries.toList();
-                MapEntry<String, List<Map<String, dynamic>>> removedEntry =
-                entries.removeAt(oldIndex);
-                entries.insert(newIndex, removedEntry);
+              if (oldIndex < newIndex) {
+                newIndex -= 1;
+              }
+              List<MapEntry<String, List<Map<String, dynamic>>>> entries =
+              filteredSubscriptionCategory.length == 0
+                  ? subscriptionFoodCategories.entries.toList()
+                  : filteredSubscriptionCategory.entries.toList();
+              MapEntry<String, List<Map<String, dynamic>>> removedEntry =
+              entries.removeAt(oldIndex);
+              entries.insert(newIndex, removedEntry);
 
-                // Convert the List back to a Map
-                if (filteredSubscriptionCategory.length == 0) {
-                  subscriptionFoodCategories = Map.fromEntries(entries);
-                } else {
-                  filteredSubscriptionCategory = Map.fromEntries(entries);
-                }
-              });
+              // Convert the List back to a Map
+              if (filteredSubscriptionCategory.length == 0) {
+                subscriptionFoodCategories = Map.fromEntries(entries);
+              } else {
+                filteredSubscriptionCategory = Map.fromEntries(entries);
+              }
             },
           ),
         ),

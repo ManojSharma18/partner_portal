@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:partner_admin_portal/constants/menu_editor_constants/menu_editor_variables.dart';
 import 'package:partner_admin_portal/widgets/custom_textfield.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
 import 'package:partner_admin_portal/widgets/responsive_builder.dart';
@@ -27,23 +28,14 @@ class ItemDetails extends StatefulWidget {
 }
 
 class _ItemDetailsState extends State<ItemDetails> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController categoryController = TextEditingController();
-  TextEditingController subCategoryController = TextEditingController();
-  TextEditingController subTagController = TextEditingController();
-  TextEditingController budgetController = TextEditingController();
-  TextEditingController typeController = TextEditingController();
-  TextEditingController subTypeController = TextEditingController();
+
+
   TextEditingController descriptionController = TextEditingController();
-  TextEditingController comboController = TextEditingController();
   TextEditingController sectionController = TextEditingController();
   TextEditingController itemController = TextEditingController();
-  TextEditingController normalPriceController = TextEditingController();
-  TextEditingController preorderPriceController = TextEditingController();
-  TextEditingController packagindController = TextEditingController();
   TextEditingController gstController = TextEditingController();
   TextEditingController cuisineController = TextEditingController();
-  TextEditingController rawSourceController = TextEditingController();
+
 
   OrderType _selectedOrderType = OrderType.normal;
 
@@ -108,7 +100,6 @@ class _ItemDetailsState extends State<ItemDetails> {
 
   List<Combo> comboList = [];
 
-
   bool basic = true;
   bool advance = false;
 
@@ -158,7 +149,7 @@ class _ItemDetailsState extends State<ItemDetails> {
     double fem = MediaQuery.of(context).size.width / baseWidth;
     double ffem = fem * 0.97;
     ItemDetails.displayNameController.text = widget.name;
-    nameController.text = widget.name;
+    //MenuEditorVariables.nameController.text = widget.name;
 
     return ResponsiveBuilder(mobileBuilder: (BuildContext context,BoxConstraints constraints){
       return widget.name == ''
@@ -229,206 +220,25 @@ class _ItemDetailsState extends State<ItemDetails> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // CustomTextField(label: "Normal price", controller: normalPriceController,width: 30*fem,
-                  //   onChanged: (val){
-                  //     // ItemDetails.checking = false;
-                  //     // double normaPrice = double.parse(val!);
-                  //     double normalPrice;
-                  //     double pacakgingPrice;
-                  //     try {
-                  //       normalPrice = double.parse(normalPriceController.text);
-                  //     } catch (e) {
-                  //       print('Invalid double: ${normalPriceController.text}');
-                  //       normalPrice = 0.0;
-                  //     }
-                  //     try {
-                  //       pacakgingPrice = double.parse(packagindController.text);
-                  //     } catch (e) {
-                  //       print('Invalid double: ${packagindController.text}');
-                  //       pacakgingPrice=0.0;
-                  //     }
-                  //     setState(() {
-                  //       normalFinalPrice =  normalPrice + ((5*normalPrice)/100) + pacakgingPrice;
-                  //       if(_selectedOrderType ==OrderType.normal)
-                  //       {
-                  //         finalPrice = normalFinalPrice;
-                  //       }
-                  //     });
-                  //   },),
-                  // CustomTextField(label: "Preorder price", controller: preorderPriceController,width: 30*fem,
-                  //   onChanged: (val){
-                  //   setState(() {
-                  //     double preorderPrice;
-                  //     double pacakgingPrice;
-                  //     try {
-                  //       preorderPrice = double.parse(preorderPriceController.text);
-                  //     } catch (e) {
-                  //       print('Invalid double: ${preorderPriceController.text}');
-                  //       preorderPrice = 0.0;
-                  //     }
-                  //     try {
-                  //       pacakgingPrice = double.parse(packagindController.text);
-                  //     } catch (e) {
-                  //       print('Invalid double: ${packagindController.text}');
-                  //       pacakgingPrice=0.0;
-                  //     }
-                  //     setState(() {
-                  //       preOrderFinalPrice =  preorderPrice + ((5*preorderPrice)/100) + pacakgingPrice;
-                  //       if(_selectedOrderType ==OrderType.preorder)
-                  //         {
-                  //           finalPrice = preorderPrice;
-                  //         }
-                  //     });
-                  //   });
-                  //   },),
-                  // CustomTextField(label: "Packaging price", controller: packagindController,width: 30*fem,
-                  //   onChanged: (val){
-                  //     double normalPrice;
-                  //     double preOrderPrice;
-                  //     double pacakgingPrice;
-                  //     try {
-                  //       normalPrice = double.parse(normalPriceController.text);
-                  //       preOrderPrice = double.parse(preorderPriceController.text);
-                  //     } catch (e) {
-                  //       print('Invalid double: ${normalPriceController.text}');
-                  //       normalPrice = 0.0;
-                  //       preOrderPrice=0.0;
-                  //     }
-                  //     try {
-                  //       pacakgingPrice = double.parse(packagindController.text);
-                  //     } catch (e) {
-                  //       print('Invalid double: ${packagindController.text}');
-                  //       pacakgingPrice=0.0;
-                  //     }
-                  //     setState(() {
-                  //       if(_selectedOrderType == OrderType.normal)
-                  //         {
-                  //           finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                  //         }
-                  //       else if(_selectedOrderType == OrderType.preorder){
-                  //         finalPrice =  preOrderPrice + ((5*(preOrderPrice+pacakgingPrice))/100) + pacakgingPrice;
-                  //       }
-                  //     });
-                  //   },),
-                  // Column(
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  //   children: [
-                  //     Row(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: [
-                  //         Text("Final Price",style: TextStyle(
-                  //           fontFamily: 'RenogareSoft',
-                  //           fontSize: 14,
-                  //           fontWeight: FontWeight.w500,
-                  //           color: GlobalVariables.textColor,
-                  //         ),),
-                  //         SizedBox(width: 5,),
-                  //         Tooltip(
-                  //           height: 40,
-                  //           decoration: BoxDecoration(
-                  //               color: Colors.grey,
-                  //               border: Border.all(color: Colors.grey),
-                  //               borderRadius: BorderRadius.circular(5)
-                  //           ),
-                  //           textStyle: TextStyle(
-                  //             fontWeight: FontWeight.w300,
-                  //             fontFamily: 'Open Sans',
-                  //             fontSize: 10,
-                  //             color: Colors.white,
-                  //             wordSpacing: 0.23,
-                  //             letterSpacing: 0.23,
-                  //           ),
-                  //           message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
-                  //           child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     SizedBox(height: 2,),
-                  //     Text("\u{20B9} $finalPrice",style: TextStyle(
-                  //       fontFamily: 'RenogareSoft',
-                  //       fontSize: 15,
-                  //       fontWeight: FontWeight.w600,
-                  //       color: GlobalVariables.textColor,
-                  //     ),),
-                  //     SizedBox(height: 2,),
-                  //     // Text("Price + packaging + GST",style: TextStyle(
-                  //     //   fontFamily: 'RenogareSoft',
-                  //     //   fontSize: 12,
-                  //     //   fontWeight: FontWeight.w400,
-                  //     //   color: Colors.grey,
-                  //     // ),),
-                  //     // SizedBox(height: 2,),
-                  //     Row(
-                  //       children: [
-                  //         Checkbox(value:gstPayment, onChanged: (val){
-                  //           double pacakgingPrice;
-                  //           try {
-                  //             pacakgingPrice = double.parse(packagindController.text);
-                  //           } catch (e) {
-                  //             print('Invalid double: ${packagindController.text}');
-                  //             pacakgingPrice=0.0;
-                  //           }
-                  //           setState(() {
-                  //             gstPayment = val!;
-                  //             print("Val $gstPayment");
-                  //
-                  //             if(_selectedOrderType == OrderType.normal)
-                  //               {
-                  //                 if(gstPayment)
-                  //                 {
-                  //                   // finalPrice = finalPrice + pacakgingPrice;
-                  //                   finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
-                  //                 }
-                  //                 else{
-                  //                   // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                  //                   finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
-                  //                 }
-                  //               }
-                  //             else{
-                  //               if(gstPayment)
-                  //               {
-                  //                 // finalPrice = finalPrice + pacakgingPrice;
-                  //                 finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
-                  //               }
-                  //               else{
-                  //                 // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                  //                 finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
-                  //               }
-                  //             }
-                  //
-                  //           });
-                  //         }),
-                  //         SizedBox(width: 5,),
-                  //         Text("Including packing",style:  TextStyle(
-                  //           fontFamily: 'BertSans',
-                  //           fontSize: 12,
-                  //           fontWeight: FontWeight.w600,
-                  //           color: Color(0xff1d1517),
-                  //         ),)
-                  //
-                  //       ],
-                  //     ),
-                  //
-                  //   ],
-                  // ),
+
 
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomTextField(label: "Normal price", controller: normalPriceController,width: 35*fem,
+                      CustomTextField(label: "Normal price", controller: MenuEditorVariables.normalPriceController,width: 35*fem,
                         onChanged: (val){
                           double normalPrice;
                           double pacakgingPrice;
                           try {
-                            normalPrice = double.parse(normalPriceController.text);
+                            normalPrice = double.parse(MenuEditorVariables.normalPriceController.text);
                           } catch (e) {
-                            print('Invalid double: ${normalPriceController.text}');
+                            print('Invalid double: ${MenuEditorVariables.normalPriceController.text}');
                             normalPrice = 0.0;
                           }
                           try {
-                            pacakgingPrice = double.parse(packagindController.text);
+                            pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                           } catch (e) {
-                            print('Invalid double: ${packagindController.text}');
+                            print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                             pacakgingPrice=0.0;
                           }
                           setState(() {
@@ -493,23 +303,23 @@ class _ItemDetailsState extends State<ItemDetails> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomTextField(label: "Packaging price", controller: packagindController,width: 35*fem,
+                      CustomTextField(label: "Packaging price", controller: MenuEditorVariables.packagindController,width: 35*fem,
                         onChanged: (val){
                           double normalPrice;
                           double preOrderPrice;
                           double pacakgingPrice;
                           try {
-                            normalPrice = double.parse(normalPriceController.text);
-                            preOrderPrice = double.parse(preorderPriceController.text);
+                            normalPrice = double.parse(MenuEditorVariables.normalPriceController.text);
+                            preOrderPrice = double.parse(MenuEditorVariables.preorderPriceController.text);
                           } catch (e) {
-                            print('Invalid double: ${normalPriceController.text}');
+                            print('Invalid double: ${MenuEditorVariables.normalPriceController.text}');
                             normalPrice = 0.0;
                             preOrderPrice=0.0;
                           }
                           try {
-                            pacakgingPrice = double.parse(packagindController.text);
+                            pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                           } catch (e) {
-                            print('Invalid double: ${packagindController.text}');
+                            print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                             pacakgingPrice=0.0;
                           }
                           setState(() {
@@ -528,9 +338,9 @@ class _ItemDetailsState extends State<ItemDetails> {
                           Checkbox(value:gstPayment, onChanged: (val){
                             double pacakgingPrice;
                             try {
-                              pacakgingPrice = double.parse(packagindController.text);
+                              pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                             } catch (e) {
-                              print('Invalid double: ${packagindController.text}');
+                              print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                               pacakgingPrice=0.0;
                             }
                             setState(() {
@@ -542,22 +352,22 @@ class _ItemDetailsState extends State<ItemDetails> {
                                 if(gstPayment)
                                 {
                                   // finalPrice = finalPrice + pacakgingPrice;
-                                  finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                  finalPrice = int.parse(MenuEditorVariables.normalPriceController.text) + ((5*(int.parse(MenuEditorVariables.normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
                                 }
                                 else{
                                   // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                                  finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
+                                  finalPrice = int.parse(MenuEditorVariables.normalPriceController.text) + ((5*(int.parse(MenuEditorVariables.normalPriceController.text)))/100);
                                 }
                               }
                               else{
                                 if(gstPayment)
                                 {
                                   // finalPrice = finalPrice + pacakgingPrice;
-                                  finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                  finalPrice = int.parse(MenuEditorVariables.preorderPriceController.text) + ((5*(int.parse(MenuEditorVariables.preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
                                 }
                                 else{
                                   // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                                  finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
+                                  finalPrice = int.parse(MenuEditorVariables.preorderPriceController.text) + ((5*(int.parse(MenuEditorVariables.preorderPriceController.text)))/100);
                                 }
                               }
 
@@ -585,21 +395,21 @@ class _ItemDetailsState extends State<ItemDetails> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomTextField(label: "Preorder price", controller: preorderPriceController,width: 40*fem,
+                      CustomTextField(label: "Preorder price", controller: MenuEditorVariables.preorderPriceController,width: 40*fem,
                         onChanged: (val){
                           setState(() {
                             double preorderPrice;
                             double pacakgingPrice;
                             try {
-                              preorderPrice = double.parse(preorderPriceController.text);
+                              preorderPrice = double.parse(MenuEditorVariables.preorderPriceController.text);
                             } catch (e) {
-                              print('Invalid double: ${preorderPriceController.text}');
+                              print('Invalid double: ${MenuEditorVariables.preorderPriceController.text}');
                               preorderPrice = 0.0;
                             }
                             try {
-                              pacakgingPrice = double.parse(packagindController.text);
+                              pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                             } catch (e) {
-                              print('Invalid double: ${packagindController.text}');
+                              print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                               pacakgingPrice=0.0;
                             }
                             setState(() {
@@ -666,23 +476,23 @@ class _ItemDetailsState extends State<ItemDetails> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CustomTextField(label: "Packaging price", controller: packagindController,width: 40*fem,
+                      CustomTextField(label: "Packaging price", controller: MenuEditorVariables.packagindController,width: 40*fem,
                         onChanged: (val){
                           double normalPrice;
                           double preOrderPrice;
                           double pacakgingPrice;
                           try {
-                            normalPrice = double.parse(normalPriceController.text);
-                            preOrderPrice = double.parse(preorderPriceController.text);
+                            normalPrice = double.parse(MenuEditorVariables.normalPriceController.text);
+                            preOrderPrice = double.parse(MenuEditorVariables.preorderPriceController.text);
                           } catch (e) {
-                            print('Invalid double: ${normalPriceController.text}');
+                            print('Invalid double: ${MenuEditorVariables.normalPriceController.text}');
                             normalPrice = 0.0;
                             preOrderPrice=0.0;
                           }
                           try {
-                            pacakgingPrice = double.parse(packagindController.text);
+                            pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                           } catch (e) {
-                            print('Invalid double: ${packagindController.text}');
+                            print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                             pacakgingPrice=0.0;
                           }
                           setState(() {
@@ -701,9 +511,9 @@ class _ItemDetailsState extends State<ItemDetails> {
               Checkbox(value:gstPayment, onChanged: (val){
                 double pacakgingPrice;
                 try {
-                  pacakgingPrice = double.parse(packagindController.text);
+                  pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                 } catch (e) {
-                  print('Invalid double: ${packagindController.text}');
+                  print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                   pacakgingPrice=0.0;
                 }
                 setState(() {
@@ -715,22 +525,22 @@ class _ItemDetailsState extends State<ItemDetails> {
                     if(gstPayment)
                     {
                       // finalPrice = finalPrice + pacakgingPrice;
-                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                      finalPrice = int.parse(MenuEditorVariables.normalPriceController.text) + ((5*(int.parse(MenuEditorVariables.normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
                     }
                     else{
                       // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
+                      finalPrice = int.parse(MenuEditorVariables.normalPriceController.text) + ((5*(int.parse(MenuEditorVariables.normalPriceController.text)))/100);
                     }
                   }
                   else{
                     if(gstPayment)
                     {
                       // finalPrice = finalPrice + pacakgingPrice;
-                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                      finalPrice = int.parse(MenuEditorVariables.preorderPriceController.text) + ((5*(int.parse(MenuEditorVariables.preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
                     }
                     else{
                       // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
+                      finalPrice = int.parse(MenuEditorVariables.preorderPriceController.text) + ((5*(int.parse(MenuEditorVariables.preorderPriceController.text)))/100);
                     }
                   }
 
@@ -749,9 +559,6 @@ class _ItemDetailsState extends State<ItemDetails> {
                     ],
                   ),
 
-
-
-
                 ],
               ),
               SizedBox(height: 15,),
@@ -769,7 +576,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                         CustomTextField(label: "Display name", controller: ItemDetails.displayNameController,width: 120*fem,onChanged: (val) {
                           ItemDetails.checking = true;
                         },),
-                        CustomTextField(label: "Name", controller: nameController,width: 70*fem,onChanged: (val) {
+                        CustomTextField(label: "Name", controller: MenuEditorVariables.nameController,width: 70*fem,onChanged: (val) {
                           ItemDetails.checking = true;
                         },),
                       ],
@@ -778,15 +585,15 @@ class _ItemDetailsState extends State<ItemDetails> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomTextField(label: "Sub tag", controller: subTagController,width: 45*fem,),
-                        CustomTextField(label: "Price range", controller: budgetController,width: 45*fem,isDropdown: true,dropdownItems: budget,
+                        CustomTextField(label: "Sub tag", controller: MenuEditorVariables.subTagController,width: 45*fem,),
+                        CustomTextField(label: "Price range", controller: MenuEditorVariables.budgetController,width: 45*fem,isDropdown: true,dropdownItems: budget,
                           onChanged: (val) {
                             ItemDetails.checking = true;
                           },),
-                        CustomTextField(label: "Item type", controller: typeController,width: 45*fem,isDropdown: true,dropdownItems: type,onChanged: (val) {
+                        CustomTextField(label: "Item type", controller: MenuEditorVariables.typeController,width: 45*fem,isDropdown: true,dropdownItems: type,onChanged: (val) {
                           ItemDetails.checking = true;
                         },),
-                        CustomTextField(label: "Item subtype", controller: subTypeController,width: 45*fem,isDropdown: true,dropdownItems: subType,
+                        CustomTextField(label: "Item subtype", controller: MenuEditorVariables.subTypeController,width: 45*fem,isDropdown: true,dropdownItems: subType,
                           onChanged: (val) {
                             ItemDetails.checking = true;
                           },),
@@ -798,20 +605,20 @@ class _ItemDetailsState extends State<ItemDetails> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomTextField(label: "Combo type", controller: comboController,width: 45*fem,isDropdown: true,dropdownItems: ['Single','Combo'],
+                        CustomTextField(label: "Combo type", controller: MenuEditorVariables.comboController,width: 45*fem,isDropdown: true,dropdownItems: ['Single','Combo'],
                           onChanged: (val){
                             ItemDetails.checking = false;
                             setState(() {
-                              comboController.text = val!;
+                              MenuEditorVariables.comboController.text = val!;
                             });
                           },
                         ),
-                        CustomTextField(label: "Raw source", controller: rawSourceController,width: 45*fem,isDropdown: true,dropdownItems: rawSource,),
-                        CustomTextField(label: "Category", controller: categoryController,width: 45*fem,isDropdown: true,dropdownItems: category,
+                        CustomTextField(label: "Raw source", controller: MenuEditorVariables.rawSourceController,width: 45*fem,isDropdown: true,dropdownItems: rawSource,),
+                        CustomTextField(label: "Category", controller: MenuEditorVariables.categoryController,width: 45*fem,isDropdown: true,dropdownItems: category,
                           onChanged: (val) {
                             ItemDetails.checking = true;
                           },),
-                        CustomTextField(label: "Sub category", controller: subCategoryController,width: 45*fem,isDropdown: true,dropdownItems: subCategory,
+                        CustomTextField(label: "Sub category", controller: MenuEditorVariables.subCategoryController,width: 45*fem,isDropdown: true,dropdownItems: subCategory,
                           onChanged: (val) {
                             ItemDetails.checking = true;
                           },),
@@ -849,7 +656,7 @@ class _ItemDetailsState extends State<ItemDetails> {
 
                     SizedBox(height: 20,),
                     Visibility(
-                      visible: comboController.text == 'Combo',
+                      visible: MenuEditorVariables.comboController.text == 'Combo',
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -907,7 +714,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                       ),
                     ),
                     Visibility(
-                      visible: comboController.text == 'Combo',
+                      visible: MenuEditorVariables.comboController.text == 'Combo',
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -944,207 +751,24 @@ class _ItemDetailsState extends State<ItemDetails> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // CustomTextField(label: "Normal price", controller: normalPriceController,width: 30*fem,
-                  //   onChanged: (val){
-                  //     // ItemDetails.checking = false;
-                  //     // double normaPrice = double.parse(val!);
-                  //     double normalPrice;
-                  //     double pacakgingPrice;
-                  //     try {
-                  //       normalPrice = double.parse(normalPriceController.text);
-                  //     } catch (e) {
-                  //       print('Invalid double: ${normalPriceController.text}');
-                  //       normalPrice = 0.0;
-                  //     }
-                  //     try {
-                  //       pacakgingPrice = double.parse(packagindController.text);
-                  //     } catch (e) {
-                  //       print('Invalid double: ${packagindController.text}');
-                  //       pacakgingPrice=0.0;
-                  //     }
-                  //     setState(() {
-                  //       normalFinalPrice =  normalPrice + ((5*normalPrice)/100) + pacakgingPrice;
-                  //       if(_selectedOrderType ==OrderType.normal)
-                  //       {
-                  //         finalPrice = normalFinalPrice;
-                  //       }
-                  //     });
-                  //   },),
-                  // CustomTextField(label: "Preorder price", controller: preorderPriceController,width: 30*fem,
-                  //   onChanged: (val){
-                  //   setState(() {
-                  //     double preorderPrice;
-                  //     double pacakgingPrice;
-                  //     try {
-                  //       preorderPrice = double.parse(preorderPriceController.text);
-                  //     } catch (e) {
-                  //       print('Invalid double: ${preorderPriceController.text}');
-                  //       preorderPrice = 0.0;
-                  //     }
-                  //     try {
-                  //       pacakgingPrice = double.parse(packagindController.text);
-                  //     } catch (e) {
-                  //       print('Invalid double: ${packagindController.text}');
-                  //       pacakgingPrice=0.0;
-                  //     }
-                  //     setState(() {
-                  //       preOrderFinalPrice =  preorderPrice + ((5*preorderPrice)/100) + pacakgingPrice;
-                  //       if(_selectedOrderType ==OrderType.preorder)
-                  //         {
-                  //           finalPrice = preorderPrice;
-                  //         }
-                  //     });
-                  //   });
-                  //   },),
-                  // CustomTextField(label: "Packaging price", controller: packagindController,width: 30*fem,
-                  //   onChanged: (val){
-                  //     double normalPrice;
-                  //     double preOrderPrice;
-                  //     double pacakgingPrice;
-                  //     try {
-                  //       normalPrice = double.parse(normalPriceController.text);
-                  //       preOrderPrice = double.parse(preorderPriceController.text);
-                  //     } catch (e) {
-                  //       print('Invalid double: ${normalPriceController.text}');
-                  //       normalPrice = 0.0;
-                  //       preOrderPrice=0.0;
-                  //     }
-                  //     try {
-                  //       pacakgingPrice = double.parse(packagindController.text);
-                  //     } catch (e) {
-                  //       print('Invalid double: ${packagindController.text}');
-                  //       pacakgingPrice=0.0;
-                  //     }
-                  //     setState(() {
-                  //       if(_selectedOrderType == OrderType.normal)
-                  //         {
-                  //           finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                  //         }
-                  //       else if(_selectedOrderType == OrderType.preorder){
-                  //         finalPrice =  preOrderPrice + ((5*(preOrderPrice+pacakgingPrice))/100) + pacakgingPrice;
-                  //       }
-                  //     });
-                  //   },),
-                  // Column(
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  //   children: [
-                  //     Row(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: [
-                  //         Text("Final Price",style: TextStyle(
-                  //           fontFamily: 'RenogareSoft',
-                  //           fontSize: 14,
-                  //           fontWeight: FontWeight.w500,
-                  //           color: GlobalVariables.textColor,
-                  //         ),),
-                  //         SizedBox(width: 5,),
-                  //         Tooltip(
-                  //           height: 40,
-                  //           decoration: BoxDecoration(
-                  //               color: Colors.grey,
-                  //               border: Border.all(color: Colors.grey),
-                  //               borderRadius: BorderRadius.circular(5)
-                  //           ),
-                  //           textStyle: TextStyle(
-                  //             fontWeight: FontWeight.w300,
-                  //             fontFamily: 'Open Sans',
-                  //             fontSize: 10,
-                  //             color: Colors.white,
-                  //             wordSpacing: 0.23,
-                  //             letterSpacing: 0.23,
-                  //           ),
-                  //           message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
-                  //           child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     SizedBox(height: 2,),
-                  //     Text("\u{20B9} $finalPrice",style: TextStyle(
-                  //       fontFamily: 'RenogareSoft',
-                  //       fontSize: 15,
-                  //       fontWeight: FontWeight.w600,
-                  //       color: GlobalVariables.textColor,
-                  //     ),),
-                  //     SizedBox(height: 2,),
-                  //     // Text("Price + packaging + GST",style: TextStyle(
-                  //     //   fontFamily: 'RenogareSoft',
-                  //     //   fontSize: 12,
-                  //     //   fontWeight: FontWeight.w400,
-                  //     //   color: Colors.grey,
-                  //     // ),),
-                  //     // SizedBox(height: 2,),
-                  //     Row(
-                  //       children: [
-                  //         Checkbox(value:gstPayment, onChanged: (val){
-                  //           double pacakgingPrice;
-                  //           try {
-                  //             pacakgingPrice = double.parse(packagindController.text);
-                  //           } catch (e) {
-                  //             print('Invalid double: ${packagindController.text}');
-                  //             pacakgingPrice=0.0;
-                  //           }
-                  //           setState(() {
-                  //             gstPayment = val!;
-                  //             print("Val $gstPayment");
-                  //
-                  //             if(_selectedOrderType == OrderType.normal)
-                  //               {
-                  //                 if(gstPayment)
-                  //                 {
-                  //                   // finalPrice = finalPrice + pacakgingPrice;
-                  //                   finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
-                  //                 }
-                  //                 else{
-                  //                   // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                  //                   finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
-                  //                 }
-                  //               }
-                  //             else{
-                  //               if(gstPayment)
-                  //               {
-                  //                 // finalPrice = finalPrice + pacakgingPrice;
-                  //                 finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
-                  //               }
-                  //               else{
-                  //                 // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                  //                 finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
-                  //               }
-                  //             }
-                  //
-                  //           });
-                  //         }),
-                  //         SizedBox(width: 5,),
-                  //         Text("Including packing",style:  TextStyle(
-                  //           fontFamily: 'BertSans',
-                  //           fontSize: 12,
-                  //           fontWeight: FontWeight.w600,
-                  //           color: Color(0xff1d1517),
-                  //         ),)
-                  //
-                  //       ],
-                  //     ),
-                  //
-                  //   ],
-                  // ),
-
                   Column(
                     children: [
                       Row(
                         children: [
-                          CustomTextField(label: "Normal price", controller: normalPriceController,width: 40*fem,
+                          CustomTextField(label: "Normal price", controller: MenuEditorVariables.normalPriceController,width: 40*fem,
                             onChanged: (val){
                               double normalPrice;
                               double pacakgingPrice;
                               try {
-                                normalPrice = double.parse(normalPriceController.text);
+                                normalPrice = double.parse(MenuEditorVariables.normalPriceController.text);
                               } catch (e) {
-                                print('Invalid double: ${normalPriceController.text}');
+                                print('Invalid double: ${MenuEditorVariables.normalPriceController.text}');
                                 normalPrice = 0.0;
                               }
                               try {
-                                pacakgingPrice = double.parse(packagindController.text);
+                                pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                               } catch (e) {
-                                print('Invalid double: ${packagindController.text}');
+                                print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                                 pacakgingPrice=0.0;
                               }
                               setState(() {
@@ -1156,23 +780,23 @@ class _ItemDetailsState extends State<ItemDetails> {
                               });
                             },),
                           SizedBox(width: 10*fem,),
-                          CustomTextField(label: "Packaging price", controller: packagindController,width: 40*fem,
+                          CustomTextField(label: "Packaging price", controller: MenuEditorVariables.packagindController,width: 40*fem,
                             onChanged: (val){
                               double normalPrice;
                               double preOrderPrice;
                               double pacakgingPrice;
                               try {
-                                normalPrice = double.parse(normalPriceController.text);
-                                preOrderPrice = double.parse(preorderPriceController.text);
+                                normalPrice = double.parse(MenuEditorVariables.normalPriceController.text);
+                                preOrderPrice = double.parse(MenuEditorVariables.preorderPriceController.text);
                               } catch (e) {
-                                print('Invalid double: ${normalPriceController.text}');
+                                print('Invalid double: ${MenuEditorVariables.normalPriceController.text}');
                                 normalPrice = 0.0;
                                 preOrderPrice=0.0;
                               }
                               try {
-                                pacakgingPrice = double.parse(packagindController.text);
+                                pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                               } catch (e) {
-                                print('Invalid double: ${packagindController.text}');
+                                print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                                 pacakgingPrice=0.0;
                               }
                               setState(() {
@@ -1244,9 +868,9 @@ class _ItemDetailsState extends State<ItemDetails> {
                               Checkbox(value:gstPayment, onChanged: (val){
                                 double pacakgingPrice;
                                 try {
-                                  pacakgingPrice = double.parse(packagindController.text);
+                                  pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                                 } catch (e) {
-                                  print('Invalid double: ${packagindController.text}');
+                                  print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                                   pacakgingPrice=0.0;
                                 }
                                 setState(() {
@@ -1258,22 +882,22 @@ class _ItemDetailsState extends State<ItemDetails> {
                                     if(gstPayment)
                                     {
                                       // finalPrice = finalPrice + pacakgingPrice;
-                                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                      finalPrice = int.parse(MenuEditorVariables.normalPriceController.text) + ((5*(int.parse(MenuEditorVariables.normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
                                     }
                                     else{
                                       // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
+                                      finalPrice = int.parse(MenuEditorVariables.normalPriceController.text) + ((5*(int.parse(MenuEditorVariables.normalPriceController.text)))/100);
                                     }
                                   }
                                   else{
                                     if(gstPayment)
                                     {
                                       // finalPrice = finalPrice + pacakgingPrice;
-                                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                      finalPrice = int.parse(MenuEditorVariables.preorderPriceController.text) + ((5*(int.parse(MenuEditorVariables.preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
                                     }
                                     else{
                                       // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
+                                      finalPrice = int.parse(MenuEditorVariables.preorderPriceController.text) + ((5*(int.parse(MenuEditorVariables.preorderPriceController.text)))/100);
                                     }
                                   }
 
@@ -1304,21 +928,21 @@ class _ItemDetailsState extends State<ItemDetails> {
                     children: [
                       Row(
                         children: [
-                          CustomTextField(label: "Preorder price", controller: preorderPriceController,width: 40*fem,
+                          CustomTextField(label: "Preorder price", controller: MenuEditorVariables.preorderPriceController,width: 40*fem,
                             onChanged: (val){
                               setState(() {
                                 double preorderPrice;
                                 double pacakgingPrice;
                                 try {
-                                  preorderPrice = double.parse(preorderPriceController.text);
+                                  preorderPrice = double.parse(MenuEditorVariables.preorderPriceController.text);
                                 } catch (e) {
-                                  print('Invalid double: ${preorderPriceController.text}');
+                                  print('Invalid double: ${MenuEditorVariables.preorderPriceController.text}');
                                   preorderPrice = 0.0;
                                 }
                                 try {
-                                  pacakgingPrice = double.parse(packagindController.text);
+                                  pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                                 } catch (e) {
-                                  print('Invalid double: ${packagindController.text}');
+                                  print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                                   pacakgingPrice=0.0;
                                 }
                                 setState(() {
@@ -1331,23 +955,23 @@ class _ItemDetailsState extends State<ItemDetails> {
                               });
                             },),
                           SizedBox(width: 10*fem,),
-                          CustomTextField(label: "Packaging price", controller: packagindController,width: 40*fem,
+                          CustomTextField(label: "Packaging price", controller: MenuEditorVariables.packagindController,width: 40*fem,
                             onChanged: (val){
                               double normalPrice;
                               double preOrderPrice;
                               double pacakgingPrice;
                               try {
-                                normalPrice = double.parse(normalPriceController.text);
-                                preOrderPrice = double.parse(preorderPriceController.text);
+                                normalPrice = double.parse(MenuEditorVariables.normalPriceController.text);
+                                preOrderPrice = double.parse(MenuEditorVariables.preorderPriceController.text);
                               } catch (e) {
-                                print('Invalid double: ${normalPriceController.text}');
+                                print('Invalid double: ${MenuEditorVariables.normalPriceController.text}');
                                 normalPrice = 0.0;
                                 preOrderPrice=0.0;
                               }
                               try {
-                                pacakgingPrice = double.parse(packagindController.text);
+                                pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                               } catch (e) {
-                                print('Invalid double: ${packagindController.text}');
+                                print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                                 pacakgingPrice=0.0;
                               }
                               setState(() {
@@ -1418,9 +1042,9 @@ class _ItemDetailsState extends State<ItemDetails> {
                               Checkbox(value:gstPayment, onChanged: (val){
                                 double pacakgingPrice;
                                 try {
-                                  pacakgingPrice = double.parse(packagindController.text);
+                                  pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                                 } catch (e) {
-                                  print('Invalid double: ${packagindController.text}');
+                                  print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                                   pacakgingPrice=0.0;
                                 }
                                 setState(() {
@@ -1432,22 +1056,22 @@ class _ItemDetailsState extends State<ItemDetails> {
                                     if(gstPayment)
                                     {
                                       // finalPrice = finalPrice + pacakgingPrice;
-                                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                      finalPrice = int.parse(MenuEditorVariables.normalPriceController.text) + ((5*(int.parse(MenuEditorVariables.normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
                                     }
                                     else{
                                       // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
+                                      finalPrice = int.parse(MenuEditorVariables.normalPriceController.text) + ((5*(int.parse(MenuEditorVariables.normalPriceController.text)))/100);
                                     }
                                   }
                                   else{
                                     if(gstPayment)
                                     {
                                       // finalPrice = finalPrice + pacakgingPrice;
-                                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                      finalPrice = int.parse(MenuEditorVariables.preorderPriceController.text) + ((5*(int.parse(MenuEditorVariables.preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
                                     }
                                     else{
                                       // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
+                                      finalPrice = int.parse(MenuEditorVariables.preorderPriceController.text) + ((5*(int.parse(MenuEditorVariables.preorderPriceController.text)))/100);
                                     }
                                   }
 
@@ -1467,10 +1091,6 @@ class _ItemDetailsState extends State<ItemDetails> {
                       )
                     ],
                   ),
-
-
-
-
                 ],
               ),
               SizedBox(height: 15,),
@@ -1488,7 +1108,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                         CustomTextField(label: "Display name", controller: ItemDetails.displayNameController,width: 120*fem,onChanged: (val) {
                           ItemDetails.checking = true;
                         },),
-                        CustomTextField(label: "Name", controller: nameController,width: 70*fem,onChanged: (val) {
+                        CustomTextField(label: "Name", controller: MenuEditorVariables.nameController,width: 70*fem,onChanged: (val) {
                           ItemDetails.checking = true;
                         },),
                       ],
@@ -1497,15 +1117,15 @@ class _ItemDetailsState extends State<ItemDetails> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomTextField(label: "Sub tag", controller: subTagController,width: 45*fem,),
-                        CustomTextField(label: "Price range", controller: budgetController,width: 45*fem,isDropdown: true,dropdownItems: budget,
+                        CustomTextField(label: "Sub tag", controller: MenuEditorVariables.subTagController,width: 45*fem,),
+                        CustomTextField(label: "Price range", controller: MenuEditorVariables.budgetController,width: 45*fem,isDropdown: true,dropdownItems: budget,
                           onChanged: (val) {
                             ItemDetails.checking = true;
                           },),
-                        CustomTextField(label: "Item type", controller: typeController,width: 45*fem,isDropdown: true,dropdownItems: type,onChanged: (val) {
+                        CustomTextField(label: "Item type", controller: MenuEditorVariables.typeController,width: 45*fem,isDropdown: true,dropdownItems: type,onChanged: (val) {
                           ItemDetails.checking = true;
                         },),
-                        CustomTextField(label: "Item subtype", controller: subTypeController,width: 45*fem,isDropdown: true,dropdownItems: subType,
+                        CustomTextField(label: "Item subtype", controller: MenuEditorVariables.subTypeController,width: 45*fem,isDropdown: true,dropdownItems: subType,
                           onChanged: (val) {
                             ItemDetails.checking = true;
                           },),
@@ -1517,20 +1137,20 @@ class _ItemDetailsState extends State<ItemDetails> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomTextField(label: "Combo type", controller: comboController,width: 45*fem,isDropdown: true,dropdownItems: ['Single','Combo'],
+                        CustomTextField(label: "Combo type", controller: MenuEditorVariables.comboController,width: 45*fem,isDropdown: true,dropdownItems: ['Single','Combo'],
                           onChanged: (val){
                             ItemDetails.checking = false;
                             setState(() {
-                              comboController.text = val!;
+                              MenuEditorVariables.comboController.text = val!;
                             });
                           },
                         ),
-                        CustomTextField(label: "Raw source", controller: rawSourceController,width: 45*fem,isDropdown: true,dropdownItems: rawSource,),
-                        CustomTextField(label: "Category", controller: categoryController,width: 45*fem,isDropdown: true,dropdownItems: category,
+                        CustomTextField(label: "Raw source", controller: MenuEditorVariables.rawSourceController,width: 45*fem,isDropdown: true,dropdownItems: rawSource,),
+                        CustomTextField(label: "Category", controller: MenuEditorVariables.categoryController,width: 45*fem,isDropdown: true,dropdownItems: category,
                           onChanged: (val) {
                             ItemDetails.checking = true;
                           },),
-                        CustomTextField(label: "Sub category", controller: subCategoryController,width: 45*fem,isDropdown: true,dropdownItems: subCategory,
+                        CustomTextField(label: "Sub category", controller: MenuEditorVariables.subCategoryController,width: 45*fem,isDropdown: true,dropdownItems: subCategory,
                           onChanged: (val) {
                             ItemDetails.checking = true;
                           },),
@@ -1565,37 +1185,9 @@ class _ItemDetailsState extends State<ItemDetails> {
                       ],
                     ),
 
-                    // SizedBox(height: 25,),
-                    // Row(
-                    //   crossAxisAlignment: CrossAxisAlignment.center,
-                    //   children: [
-                    //     Container(
-                    //       width: 90*fem,
-                    //       height: 1,
-                    //       color:GlobalVariables.primaryColor.withOpacity(0.8),
-                    //     ),
-                    //     SizedBox(width: 5,),
-                    //     Text("Item pricing",style: TextStyle(
-                    //       fontFamily: 'RenogareSoft',
-                    //       fontSize: 14,
-                    //       fontWeight: FontWeight.w600,
-                    //       color: GlobalVariables.textColor,
-                    //     ),),
-                    //     SizedBox(width: 5,),
-                    //     Container(
-                    //       width: 90*fem,
-                    //       height: 1,
-                    //       color:GlobalVariables.primaryColor.withOpacity(0.8),
-                    //     ),
-                    //   ],
-                    // ),
-
-
-
-
                     SizedBox(height: 20,),
                     Visibility(
-                      visible: comboController.text == 'Combo',
+                      visible: MenuEditorVariables.comboController.text == 'Combo',
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -1653,7 +1245,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                       ),
                     ),
                     Visibility(
-                      visible: comboController.text == 'Combo',
+                      visible: MenuEditorVariables.comboController.text == 'Combo',
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -1743,22 +1335,22 @@ class _ItemDetailsState extends State<ItemDetails> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomTextField(label: "Normal price", controller: normalPriceController,width: 30*fem,
+                  CustomTextField(label: "Normal price", controller: MenuEditorVariables.normalPriceController,width: 30*fem,
                     onChanged: (val){
                       // ItemDetails.checking = false;
                       // double normaPrice = double.parse(val!);
                       double normalPrice;
                       double pacakgingPrice;
                       try {
-                        normalPrice = double.parse(normalPriceController.text);
+                        normalPrice = double.parse(MenuEditorVariables.normalPriceController.text);
                       } catch (e) {
-                        print('Invalid double: ${normalPriceController.text}');
+                        print('Invalid double: ${MenuEditorVariables.normalPriceController.text}');
                         normalPrice = 0.0;
                       }
                       try {
-                        pacakgingPrice = double.parse(packagindController.text);
+                        pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                       } catch (e) {
-                        print('Invalid double: ${packagindController.text}');
+                        print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                         pacakgingPrice=0.0;
                       }
                       setState(() {
@@ -1769,21 +1361,21 @@ class _ItemDetailsState extends State<ItemDetails> {
                         }
                       });
                     },),
-                  CustomTextField(label: "Preorder price", controller: preorderPriceController,width: 30*fem,
+                  CustomTextField(label: "Preorder price", controller: MenuEditorVariables.preorderPriceController,width: 30*fem,
                     onChanged: (val){
                       setState(() {
                         double preorderPrice;
                         double pacakgingPrice;
                         try {
-                          preorderPrice = double.parse(preorderPriceController.text);
+                          preorderPrice = double.parse(MenuEditorVariables.preorderPriceController.text);
                         } catch (e) {
-                          print('Invalid double: ${preorderPriceController.text}');
+                          print('Invalid double: ${MenuEditorVariables.preorderPriceController.text}');
                           preorderPrice = 0.0;
                         }
                         try {
-                          pacakgingPrice = double.parse(packagindController.text);
+                          pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                         } catch (e) {
-                          print('Invalid double: ${packagindController.text}');
+                          print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                           pacakgingPrice=0.0;
                         }
                         setState(() {
@@ -1795,23 +1387,23 @@ class _ItemDetailsState extends State<ItemDetails> {
                         });
                       });
                     },),
-                  CustomTextField(label: "Packaging price", controller: packagindController,width: 30*fem,
+                  CustomTextField(label: "Packaging price", controller: MenuEditorVariables.packagindController,width: 30*fem,
                     onChanged: (val){
                       double normalPrice;
                       double preOrderPrice;
                       double pacakgingPrice;
                       try {
-                        normalPrice = double.parse(normalPriceController.text);
-                        preOrderPrice = double.parse(preorderPriceController.text);
+                        normalPrice = double.parse(MenuEditorVariables.normalPriceController.text);
+                        preOrderPrice = double.parse(MenuEditorVariables.preorderPriceController.text);
                       } catch (e) {
-                        print('Invalid double: ${normalPriceController.text}');
+                        print('Invalid double: ${MenuEditorVariables.normalPriceController.text}');
                         normalPrice = 0.0;
                         preOrderPrice=0.0;
                       }
                       try {
-                        pacakgingPrice = double.parse(packagindController.text);
+                        pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                       } catch (e) {
-                        print('Invalid double: ${packagindController.text}');
+                        print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                         pacakgingPrice=0.0;
                       }
                       setState(() {
@@ -1877,9 +1469,9 @@ class _ItemDetailsState extends State<ItemDetails> {
                           Checkbox(value:gstPayment, onChanged: (val){
                             double pacakgingPrice;
                             try {
-                              pacakgingPrice = double.parse(packagindController.text);
+                              pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                             } catch (e) {
-                              print('Invalid double: ${packagindController.text}');
+                              print('Invalid double: ${MenuEditorVariables.packagindController.text}');
                               pacakgingPrice=0.0;
                             }
                             setState(() {
@@ -1891,22 +1483,22 @@ class _ItemDetailsState extends State<ItemDetails> {
                                 if(gstPayment)
                                 {
                                   // finalPrice = finalPrice + pacakgingPrice;
-                                  finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                  finalPrice = int.parse(MenuEditorVariables.normalPriceController.text) + ((5*(int.parse(MenuEditorVariables.normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
                                 }
                                 else{
                                   // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                                  finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
+                                  finalPrice = int.parse(MenuEditorVariables.normalPriceController.text) + ((5*(int.parse(MenuEditorVariables.normalPriceController.text)))/100);
                                 }
                               }
                               else{
                                 if(gstPayment)
                                 {
                                   // finalPrice = finalPrice + pacakgingPrice;
-                                  finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
+                                  finalPrice = int.parse(MenuEditorVariables.preorderPriceController.text) + ((5*(int.parse(MenuEditorVariables.preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
                                 }
                                 else{
                                   // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                                  finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
+                                  finalPrice = int.parse(MenuEditorVariables.preorderPriceController.text) + ((5*(int.parse(MenuEditorVariables.preorderPriceController.text)))/100);
                                 }
                               }
 
@@ -1944,7 +1536,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                         CustomTextField(label: "Display name", controller: ItemDetails.displayNameController,width: 120*fem,onChanged: (val) {
                           ItemDetails.checking = true;
                         },),
-                        CustomTextField(label: "Name", controller: nameController,width: 70*fem,onChanged: (val) {
+                        CustomTextField(label: "Name", controller: MenuEditorVariables.nameController,width: 70*fem,onChanged: (val) {
                           ItemDetails.checking = true;
                         },),
                       ],
@@ -1953,15 +1545,15 @@ class _ItemDetailsState extends State<ItemDetails> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomTextField(label: "Sub tag", controller: subTagController,width: 45*fem,),
-                        CustomTextField(label: "Price range", controller: budgetController,width: 45*fem,isDropdown: true,dropdownItems: budget,
+                        CustomTextField(label: "Sub tag", controller: MenuEditorVariables.subTagController,width: 45*fem,),
+                        CustomTextField(label: "Price range", controller: MenuEditorVariables.budgetController,width: 45*fem,isDropdown: true,dropdownItems: budget,
                           onChanged: (val) {
                             ItemDetails.checking = true;
                           },),
-                        CustomTextField(label: "Item type", controller: typeController,width: 45*fem,isDropdown: true,dropdownItems: type,onChanged: (val) {
+                        CustomTextField(label: "Item type", controller: MenuEditorVariables.typeController,width: 45*fem,isDropdown: true,dropdownItems: type,onChanged: (val) {
                           ItemDetails.checking = true;
                         },),
-                        CustomTextField(label: "Item subtype", controller: subTypeController,width: 45*fem,isDropdown: true,dropdownItems: subType,
+                        CustomTextField(label: "Item subtype", controller: MenuEditorVariables.subTypeController,width: 45*fem,isDropdown: true,dropdownItems: subType,
                           onChanged: (val) {
                             ItemDetails.checking = true;
                           },),
@@ -1973,20 +1565,20 @@ class _ItemDetailsState extends State<ItemDetails> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomTextField(label: "Combo type", controller: comboController,width: 45*fem,isDropdown: true,dropdownItems: ['Single','Combo'],
+                        CustomTextField(label: "Combo type", controller: MenuEditorVariables.comboController,width: 45*fem,isDropdown: true,dropdownItems: ['Single','Combo'],
                           onChanged: (val){
                             ItemDetails.checking = false;
                             setState(() {
-                              comboController.text = val!;
+                              MenuEditorVariables.comboController.text = val!;
                             });
                           },
                         ),
-                        CustomTextField(label: "Raw source", controller: rawSourceController,width: 45*fem,isDropdown: true,dropdownItems: rawSource,),
-                        CustomTextField(label: "Category", controller: categoryController,width: 45*fem,isDropdown: true,dropdownItems: category,
+                        CustomTextField(label: "Raw source", controller: MenuEditorVariables.rawSourceController,width: 45*fem,isDropdown: true,dropdownItems: rawSource,),
+                        CustomTextField(label: "Category", controller: MenuEditorVariables.categoryController,width: 45*fem,isDropdown: true,dropdownItems: category,
                           onChanged: (val) {
                             ItemDetails.checking = true;
                           },),
-                        CustomTextField(label: "Sub category", controller: subCategoryController,width: 45*fem,isDropdown: true,dropdownItems: subCategory,
+                        CustomTextField(label: "Sub category", controller: MenuEditorVariables.subCategoryController,width: 45*fem,isDropdown: true,dropdownItems: subCategory,
                           onChanged: (val) {
                             ItemDetails.checking = true;
                           },),
@@ -2021,37 +1613,9 @@ class _ItemDetailsState extends State<ItemDetails> {
                       ],
                     ),
 
-                    // SizedBox(height: 25,),
-                    // Row(
-                    //   crossAxisAlignment: CrossAxisAlignment.center,
-                    //   children: [
-                    //     Container(
-                    //       width: 90*fem,
-                    //       height: 1,
-                    //       color:GlobalVariables.primaryColor.withOpacity(0.8),
-                    //     ),
-                    //     SizedBox(width: 5,),
-                    //     Text("Item pricing",style: TextStyle(
-                    //       fontFamily: 'RenogareSoft',
-                    //       fontSize: 14,
-                    //       fontWeight: FontWeight.w600,
-                    //       color: GlobalVariables.textColor,
-                    //     ),),
-                    //     SizedBox(width: 5,),
-                    //     Container(
-                    //       width: 90*fem,
-                    //       height: 1,
-                    //       color:GlobalVariables.primaryColor.withOpacity(0.8),
-                    //     ),
-                    //   ],
-                    // ),
-
-
-
-
                     SizedBox(height: 20,),
                     Visibility(
-                      visible: comboController.text == 'Combo',
+                      visible: MenuEditorVariables.comboController.text == 'Combo',
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -2109,7 +1673,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                       ),
                     ),
                     Visibility(
-                      visible: comboController.text == 'Combo',
+                      visible: MenuEditorVariables.comboController.text == 'Combo',
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

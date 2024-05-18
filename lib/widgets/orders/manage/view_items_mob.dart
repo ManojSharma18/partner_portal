@@ -119,7 +119,7 @@ class ViewItemsMobile extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap:(){
-                      context.read<OrderBloc>().add(OrderRejectEvent(state.orderList, index,state.closedList));
+                      context.read<OrderBloc>().add(OrderRejectEvent(state.orderList, index,state.closedList,''));
                       Navigator.pop(context);
                     },
                     child: Container(

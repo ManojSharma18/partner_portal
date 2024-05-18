@@ -12,3 +12,8 @@ class ItemHeightEvent extends ForeCastEvent {
   final List<double> rowHeights;
   const ItemHeightEvent(this.index,this.rowHeights);
 }
+
+class ExpandAllEvent extends ForeCastEvent {
+  final bool isExpanded;
+  const ExpandAllEvent(this.isExpanded);
+}
