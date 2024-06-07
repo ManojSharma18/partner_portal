@@ -2,15 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
 import 'package:partner_admin_portal/widgets/responsive_builder.dart';
 import 'package:partner_admin_portal/screens/dashboard_screen.dart';
-
+import 'dart:html' as html;
 import '../constants/utils.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
 
+  String getVersion() {
+    final metaTags = html.document.getElementsByTagName('meta');
+    for (final metaTag in metaTags) {
+      if (metaTag is html.MetaElement && metaTag.name == 'version') {
+        return metaTag.content ?? 'Unknown';
+      }
+    }
+    return 'Unknown';
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
+    final version = getVersion();
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
     return ResponsiveBuilder(mobileBuilder: (BuildContext context,BoxConstraints constraints){
@@ -220,7 +233,15 @@ class LoginScreen extends StatelessWidget {
                                   ]
                               ),
 
-                            )
+                            ),
+                            SizedBox(height: 30,),
+                            Text("Version number $version",style:
+                            SafeGoogleFont(
+                              'Poppins',
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color:GlobalVariables.textColor,
+                            ),),
 
                           ],
                         ),
@@ -442,7 +463,15 @@ class LoginScreen extends StatelessWidget {
                                 ]
                             ),
 
-                          )
+                          ),
+                          SizedBox(height: 30,),
+                          Text("Version number $version",style:
+                          SafeGoogleFont(
+                            'Poppins',
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color:GlobalVariables.textColor,
+                          ),),
 
                         ],
                       ),
@@ -660,7 +689,16 @@ class LoginScreen extends StatelessWidget {
                         ]
                       ),
 
-                    )
+                    ),
+
+                    SizedBox(height: 30,),
+                    Text("Version number $version",style:
+                    SafeGoogleFont(
+                      'Poppins',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color:GlobalVariables.textColor,
+                    ),),
 
                   ],
                 ),

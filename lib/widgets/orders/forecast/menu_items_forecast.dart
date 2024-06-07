@@ -76,7 +76,12 @@ class _MenuItemWidgetState extends State<MenuItemWidget> {
             children: [
               Padding(
                 padding: EdgeInsets.only(left: 10*fem,top: 5),
-                child: Container(width :75*fem,child: Text("${widget.index+1}. ${widget.item.name}",style: GlobalVariables.dataItemStyle,)),
+                child: Container(width :5*fem,child: Text("${widget.index+1}",style: GlobalVariables.dataItemStyle,)),
+              ),
+              Container(width: 1,color: GlobalVariables.textColor.withOpacity(0.5),),
+              Padding(
+                padding: EdgeInsets.only(left: 10*fem,top: 5),
+                child: Container(width :75*fem,child: Text("${widget.item.dname}",style: GlobalVariables.dataItemStyle,)),
               ),
               Container(width: 1,color: GlobalVariables.textColor.withOpacity(0.5),),
 

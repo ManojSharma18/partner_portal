@@ -112,7 +112,7 @@ class _ManageSettingState extends State<ManageSetting> with SingleTickerProvider
             //     )
             // ),
             SizedBox(width: 50,),
-            SearchBars(hintText: "Search....", width: MediaQuery.of(context).size.width/3,height: 75,),
+            SearchBars(hintText: "Search....", width: MediaQuery.of(context).size.width/3,height: 45,),
           ],
         ),
         backgroundColor: Color(0xfffbb830),
@@ -130,23 +130,21 @@ class _ManageSettingState extends State<ManageSetting> with SingleTickerProvider
       body:  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 5,),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 5),
-                    color: GlobalVariables.whiteColor,
-                    child: DefaultTabController(
-                      length: 2,
-                      child: Scaffold(
-                        appBar:AppBar(
-                          toolbarHeight: 0,
-                          backgroundColor:Colors.grey.shade50,
-                          bottom: TabBar(
+          Container(
+            height: 50,
+            child: DefaultTabController(
+              length: 2,
+              child: Scaffold(
+                appBar:AppBar(
+                  toolbarHeight: 0,
+                  backgroundColor:GlobalVariables.primaryColor.withOpacity(0.2),
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(50.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(width: 400,
+                          child: TabBar(
                             controller: _tabController,
                             indicatorSize: TabBarIndicatorSize.tab,
                             labelPadding: EdgeInsets.symmetric(horizontal: 5),
@@ -166,6 +164,30 @@ class _ManageSettingState extends State<ManageSetting> with SingleTickerProvider
                             ],
                           ),
                         ),
+                        Container(
+                          color: Colors.black45,
+                          width: 10,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 5),
+                    color: GlobalVariables.whiteColor,
+                    child: DefaultTabController(
+                      length: 2,
+                      child: Scaffold(
+
                         body: TabBarView(
                           controller: _tabController,
                           children: [

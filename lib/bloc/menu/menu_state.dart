@@ -9,6 +9,8 @@ import '../../models/live_menu_model.dart';
 abstract class MenuState extends Equatable{}
 
 class MenuLoadingState extends MenuState{
+  final MenuLoadedState? menuLoadedState;
+  MenuLoadingState({this.menuLoadedState});
   @override
   List<Object?> get props => [];
 }

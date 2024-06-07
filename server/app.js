@@ -14,8 +14,11 @@ app.use(express.urlencoded({
   extended: true
 })); 
 
-const myMenuRouter = require('./routs/my_menus'); 
+const myMenuRouter = require('./routs/my_menus');  
 app.use('/mymenu',myMenuRouter) 
+
+const menuEditorRouter = require('./routs/menu_editor');
+app.use('/menuEditor',menuEditorRouter)
 
 const orderRouter = require('./routs/orders');
 app.use('/orders',orderRouter)

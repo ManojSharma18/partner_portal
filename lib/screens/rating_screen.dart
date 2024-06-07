@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
 import 'package:partner_admin_portal/widgets/meal_rating.dart';
 import 'package:partner_admin_portal/widgets/month_rating.dart';
@@ -187,248 +188,269 @@ class _RatingState extends State<Rating> {
           SizedBox(width: 20,)
         ],
       ),
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
         children: [
-          Expanded(
-            flex: 3,
-            child: Container(
-              margin: EdgeInsets.only(left: 5),
-              color: Colors.white,
-              child: DefaultTabController(
-                length: 2, // Number of tabs
-                child: Scaffold(
-                  appBar: AppBar(
-                    backgroundColor: lighterColor,
-                    toolbarHeight: 1,
-                    bottom: PreferredSize(
-                      preferredSize: Size.fromHeight(50.0),
-                      child: Container(
-                        child: TabBar(
-                          labelPadding: EdgeInsets.symmetric(horizontal: 5),
-                          indicatorWeight: 5, // Adjust the indicator weight
-                          indicatorColor: Color(0xfffbb830),
-                          unselectedLabelColor: Colors.black54,
-                          labelColor: Color(0xFF363563),
-                          labelStyle: SafeGoogleFont(
-                            'Poppins',
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF363563),
+          Container(
+            height: 51,
+            child: DefaultTabController(
+              length: 2, // Number of tabs
+              child: Scaffold(
+                appBar: AppBar(
+                  backgroundColor: lighterColor,
+                  toolbarHeight: 1,
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(50.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 400,
+                          child: TabBar(
+                            labelPadding: EdgeInsets.symmetric(horizontal: 5),
+                            indicatorWeight: 5, // Adjust the indicator weight
+                            indicatorColor: Color(0xfffbb830),
+                            unselectedLabelColor: Colors.black54,
+                            labelColor: Color(0xFF363563),
+                            labelStyle: SafeGoogleFont(
+                              'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF363563),
+                            ),
+                            tabs: [
+                              Tab(text: 'For orders'),
+                              Tab(text: 'Subscriptions'),
+                            ],
                           ),
-                          tabs: [
-                            Tab(text: 'For orders'),
-                            Tab(text: 'Subscriptions'),
-                          ],
                         ),
-                      ),
+                      ],
                     ),
-                  ),
-                  body: TabBarView(
-                    children: [
-                      Column(
-                        children: [
-                          SizedBox(height: 10,),
-                          Container(
-                            margin: EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                buildMealTimeButton(MealTime.All, 'All'),
-                                buildMealTimeButton(MealTime.Breakfast, 'Breakfast'),
-                                buildMealTimeButton(MealTime.Lunch, 'Lunch'),
-                                buildMealTimeButton(MealTime.Dinner, 'Dinner'),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 15,),
-
-                          SizedBox(height: 0,),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: foods.length,
-                              itemBuilder: (context, index) {
-
-                                return InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedItem = foods[index];
-                                    });
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        margin: EdgeInsets.only(top: 5, bottom: 5),
-                                        child: ListTile(
-                                          title: Text(
-                                            foods[index], style: SafeGoogleFont(
-                                            'Poppins',
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: selectedItem == foods[index] ? GlobalVariables.textColor :  GlobalVariables.textColor.withOpacity(0.5),
-                                          ),),
-                                          leading:  Container(
-                                            margin: EdgeInsets.fromLTRB(0, 0*fem, 2, 1.5),
-                                            padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
-                                            width: 15,
-                                            height: 15,
-                                            decoration: BoxDecoration (
-                                              border: Border.all(color: Color(0xff3d9414)),
-                                              color: Color(0xffffffff),
-                                              borderRadius: BorderRadius.circular(2),
-                                            ),
-                                            child: Center(
-                                              // rectangle1088pGR (946:2202)
-                                              child: SizedBox(
-                                                height: 5,
-                                                width:5,
-                                                child: Container(
-                                                  decoration: BoxDecoration (
-                                                    borderRadius: BorderRadius.circular(2),
-                                                    border: Border.all(color: Color(0xff3d9414)),
-                                                    color: Color(0xff3d9414),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          // leading: Icon(Icons.grid_view_rounded, size: 10, color: selectedCategory == category
-                                          //     ? Colors.white
-                                          //     : GlobalVariables.textColor,),
-
-                                        ),
-                                      ),
-                                      // Visibility(
-                                      //   visible: selectedCategory == category,
-                                      //   child: Column(
-                                      //     crossAxisAlignment: CrossAxisAlignment
-                                      //         .start,
-                                      //     mainAxisAlignment: MainAxisAlignment
-                                      //         .start,
-                                      //     children: _buildItemsList(category,items),
-                                      //   ),
-                                      // ),
-                                      //
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          SizedBox(height: 10,),
-                          Container(
-                            margin: EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                buildMealTimeButton(MealTime.All, 'All'),
-                                buildMealTimeButton(MealTime.Breakfast, 'Breakfast'),
-                                buildMealTimeButton(MealTime.Lunch, 'Lunch'),
-                                buildMealTimeButton(MealTime.Dinner, 'Dinner'),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 15,),
-
-                          SizedBox(height: 0,),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: foods.length,
-                              itemBuilder: (context, index) {
-
-                                return InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedItem = foods[index];
-                                    });
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        margin: EdgeInsets.only(top: 5, bottom: 5),
-                                        child: ListTile(
-                                          title: Text(
-                                            foods[index], style: SafeGoogleFont(
-                                            'Poppins',
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: selectedItem == foods[index] ? GlobalVariables.textColor :  GlobalVariables.textColor.withOpacity(0.5),
-                                          ),),
-                                          leading:  Container(
-                                            margin: EdgeInsets.fromLTRB(0, 0*fem, 2, 1.5),
-                                            padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
-                                            width: 15,
-                                            height: 15,
-                                            decoration: BoxDecoration (
-                                              border: Border.all(color: Color(0xff3d9414)),
-                                              color: Color(0xffffffff),
-                                              borderRadius: BorderRadius.circular(2),
-                                            ),
-                                            child: Center(
-                                              // rectangle1088pGR (946:2202)
-                                              child: SizedBox(
-                                                height: 5,
-                                                width:5,
-                                                child: Container(
-                                                  decoration: BoxDecoration (
-                                                    borderRadius: BorderRadius.circular(2),
-                                                    border: Border.all(color: Color(0xff3d9414)),
-                                                    color: Color(0xff3d9414),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          // leading: Icon(Icons.grid_view_rounded, size: 10, color: selectedCategory == category
-                                          //     ? Colors.white
-                                          //     : GlobalVariables.textColor,),
-
-                                        ),
-                                      ),
-                                      // Visibility(
-                                      //   visible: selectedCategory == category,
-                                      //   child: Column(
-                                      //     crossAxisAlignment: CrossAxisAlignment
-                                      //         .start,
-                                      //     mainAxisAlignment: MainAxisAlignment
-                                      //         .start,
-                                      //     children: _buildItemsList(category,items),
-                                      //   ),
-                                      // ),
-                                      //
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      // MealRating(),
-                    ],
                   ),
                 ),
               ),
             ),
           ),
-          Container(
-            color: Colors.black26,
-            width: 1,
-          ),
-
-          Container(
-            color: Colors.black26,
-            width: 1,
-          ),
           Expanded(
-            flex: 6,
-            child:  MonthRating(),
-          ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 5),
+                    color: Colors.white,
+                    child: DefaultTabController(
+                      length: 2, // Number of tabs
+                      child: Scaffold(
+                        body: TabBarView(
+                          children: [
+                            Column(
+                              children: [
+                                SizedBox(height: 10,),
+                                Container(
+                                  margin: EdgeInsets.all(10),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      buildMealTimeButton(MealTime.All, 'All'),
+                                      buildMealTimeButton(MealTime.Breakfast, 'Breakfast'),
+                                      buildMealTimeButton(MealTime.Lunch, 'Lunch'),
+                                      buildMealTimeButton(MealTime.Dinner, 'Dinner'),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 15,),
+            
+                                SizedBox(height: 0,),
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: foods.length,
+                                    itemBuilder: (context, index) {
+            
+                                      return InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedItem = foods[index];
+                                          });
+                                        },
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.only(top: 5, bottom: 5),
+                                              child: ListTile(
+                                                title: Text(
+                                                  foods[index], style: SafeGoogleFont(
+                                                  'Poppins',
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: selectedItem == foods[index] ? GlobalVariables.textColor :  GlobalVariables.textColor.withOpacity(0.5),
+                                                ),),
+                                                leading:  Container(
+                                                  margin: EdgeInsets.fromLTRB(0, 0*fem, 2, 1.5),
+                                                  padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
+                                                  width: 15,
+                                                  height: 15,
+                                                  decoration: BoxDecoration (
+                                                    border: Border.all(color: Color(0xff3d9414)),
+                                                    color: Color(0xffffffff),
+                                                    borderRadius: BorderRadius.circular(2),
+                                                  ),
+                                                  child: Center(
+                                                    // rectangle1088pGR (946:2202)
+                                                    child: SizedBox(
+                                                      height: 5,
+                                                      width:5,
+                                                      child: Container(
+                                                        decoration: BoxDecoration (
+                                                          borderRadius: BorderRadius.circular(2),
+                                                          border: Border.all(color: Color(0xff3d9414)),
+                                                          color: Color(0xff3d9414),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                // leading: Icon(Icons.grid_view_rounded, size: 10, color: selectedCategory == category
+                                                //     ? Colors.white
+                                                //     : GlobalVariables.textColor,),
+            
+                                              ),
+                                            ),
+                                            // Visibility(
+                                            //   visible: selectedCategory == category,
+                                            //   child: Column(
+                                            //     crossAxisAlignment: CrossAxisAlignment
+                                            //         .start,
+                                            //     mainAxisAlignment: MainAxisAlignment
+                                            //         .start,
+                                            //     children: _buildItemsList(category,items),
+                                            //   ),
+                                            // ),
+                                            //
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                SizedBox(height: 10,),
+                                Container(
+                                  margin: EdgeInsets.all(10),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      buildMealTimeButton(MealTime.All, 'All'),
+                                      buildMealTimeButton(MealTime.Breakfast, 'Breakfast'),
+                                      buildMealTimeButton(MealTime.Lunch, 'Lunch'),
+                                      buildMealTimeButton(MealTime.Dinner, 'Dinner'),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 15,),
+            
+                                SizedBox(height: 0,),
+                                Expanded(
+                                  child: ListView.builder(
+                                    itemCount: foods.length,
+                                    itemBuilder: (context, index) {
+            
+                                      return InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedItem = foods[index];
+                                          });
+                                        },
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              margin: EdgeInsets.only(top: 5, bottom: 5),
+                                              child: ListTile(
+                                                title: Text(
+                                                  foods[index], style: SafeGoogleFont(
+                                                  'Poppins',
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: selectedItem == foods[index] ? GlobalVariables.textColor :  GlobalVariables.textColor.withOpacity(0.5),
+                                                ),),
+                                                leading:  Container(
+                                                  margin: EdgeInsets.fromLTRB(0, 0*fem, 2, 1.5),
+                                                  padding: EdgeInsets.fromLTRB(2, 2, 2, 2),
+                                                  width: 15,
+                                                  height: 15,
+                                                  decoration: BoxDecoration (
+                                                    border: Border.all(color: Color(0xff3d9414)),
+                                                    color: Color(0xffffffff),
+                                                    borderRadius: BorderRadius.circular(2),
+                                                  ),
+                                                  child: Center(
+                                                    // rectangle1088pGR (946:2202)
+                                                    child: SizedBox(
+                                                      height: 5,
+                                                      width:5,
+                                                      child: Container(
+                                                        decoration: BoxDecoration (
+                                                          borderRadius: BorderRadius.circular(2),
+                                                          border: Border.all(color: Color(0xff3d9414)),
+                                                          color: Color(0xff3d9414),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                // leading: Icon(Icons.grid_view_rounded, size: 10, color: selectedCategory == category
+                                                //     ? Colors.white
+                                                //     : GlobalVariables.textColor,),
+            
+                                              ),
+                                            ),
+                                            // Visibility(
+                                            //   visible: selectedCategory == category,
+                                            //   child: Column(
+                                            //     crossAxisAlignment: CrossAxisAlignment
+                                            //         .start,
+                                            //     mainAxisAlignment: MainAxisAlignment
+                                            //         .start,
+                                            //     children: _buildItemsList(category,items),
+                                            //   ),
+                                            // ),
+                                            //
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+            
+                            // MealRating(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  color: Colors.black26,
+                  width: 1,
+                ),
+            
+                Container(
+                  color: Colors.black26,
+                  width: 1,
+                ),
+                Expanded(
+                  flex: 6,
+                  child:  MonthRating(),
+                ),
+              ],
+            ),
+          )
+
         ],
       ),
     );

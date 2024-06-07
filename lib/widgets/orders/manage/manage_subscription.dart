@@ -365,22 +365,23 @@ class _ManageSubscriptionState extends State<ManageSubscription> with SingleTick
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 5,),
-                Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          margin: EdgeInsets.only(left: 5),
-                          color: GlobalVariables.whiteColor,
-                          child: DefaultTabController(
-                            length: 2,
-                            child: Scaffold(
-                              appBar:AppBar(
-                                toolbarHeight: 0,backgroundColor:Colors.grey.shade50,
-                                bottom: TabBar(
+                Container(
+                  height: 50,
+                  child: DefaultTabController(
+                    length: 2,
+                    child: Scaffold(
+                      appBar:AppBar(
+                        toolbarHeight: 0,
+                        backgroundColor:GlobalVariables.lightColor,
+                        bottom: PreferredSize(
+                          preferredSize: Size.fromHeight(50.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                width: 400,
+                                height: 50,
+                                child: TabBar(
                                   //controller: GlobalVariables.getSubscriptionTabController(),
                                   isScrollable: false,
                                   indicatorSize: TabBarIndicatorSize.tab,
@@ -403,6 +404,26 @@ class _ManageSubscriptionState extends State<ManageSubscription> with SingleTick
                                   ],
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          margin: EdgeInsets.only(left: 5),
+                          color: GlobalVariables.whiteColor,
+                          child: DefaultTabController(
+                            length: 2,
+                            child: Scaffold(
                               body: TabBarView(
                                 controller: _tabController,
                                 physics: NeverScrollableScrollPhysics(),

@@ -54,9 +54,7 @@ class OrdersBloc extends Bloc<OrdersEvent,OrdersState>{
         }
         GlobalVariables.loadFirstTime = false;
 
-        emit(OrdersLoadedState(
-            orders, GlobalVariables.orders, GlobalVariables.inprogress,
-            GlobalVariables.closed));
+        emit(OrdersLoadedState(orders, GlobalVariables.orders, GlobalVariables.inprogress, GlobalVariables.closed));
       } catch (e) {
         emit(OrderErrorState(e.toString()));
       }
@@ -85,8 +83,7 @@ class OrdersBloc extends Bloc<OrdersEvent,OrdersState>{
         } else {
           print('Order with ID ${event.ordId} not found.');
         }
-        emit(OrdersLoadedState(
-            [], deleteOrderList, addOrderList, event.closedList));
+        emit(OrdersLoadedState([], deleteOrderList, addOrderList, event.closedList));
       } catch (e) {
         emit(OrderErrorState(e.toString()));
       }

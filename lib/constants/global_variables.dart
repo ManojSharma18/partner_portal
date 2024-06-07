@@ -4,13 +4,14 @@ import 'package:partner_admin_portal/constants/utils.dart';
 
 import '../models/live_menu_model.dart';
 import '../models/restaurant_menu.dart';
-import '../widgets/small_custom_textfield.dart';
-import 'live_menu_constants/live_menu_variables.dart';
+
+final String apiUrl = 'http://slys.in:4000';
 
 class GlobalVariables {
   static const primaryColor =  Color(0xfffbb830);
   static const textColor =  Color(0xFF363563);
   static const whiteColor = Color(0xffffffff);
+  static  Color lightColor = Color(0xFF363563).withOpacity(0.07);
 
   static final headingStyle = SafeGoogleFont(
     'Poppins',

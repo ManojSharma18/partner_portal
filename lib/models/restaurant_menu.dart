@@ -234,6 +234,7 @@ class Mymenu {
   String itemType;
   bool availability;
   int totalCount;
+  String itemTag;
   String itemSubType;
   String comboType;
   String rawSource;
@@ -253,6 +254,7 @@ class Mymenu {
     required this.itemType,
     required this.availability,
     required this.totalCount,
+    required this.itemTag,
     required this.itemSubType,
     required this.comboType,
     required this.rawSource,
@@ -280,6 +282,7 @@ class Mymenu {
       dname: json['std_itm_dispname'],
       subTag: json['std_itm_subTag'],
       priceRange: json['std_itm_priceRange'],
+      itemTag: json['std_itm_tag'],
       itemType: json['std_itm_itemType'],
       availability: json['std_itm_availability'],
       totalCount: json['totalCount'],
@@ -306,6 +309,7 @@ class Mymenu {
       'std_itm_itemType': itemType,
       'std_itm_availability': availability,
       'totalCount' : totalCount,
+      'std_itm_tag' : itemTag,
       'std_itm_itemSubType': itemSubType,
       'std_itm_comboType': comboType,
       'std_itm_rawSource': rawSource,
@@ -334,6 +338,7 @@ class Mymenu {
       subTag: map['std_itm_subTag'],
       priceRange: map['std_itm_priceRange'],
       itemType: map['std_itm_itemType'],
+      itemTag: map['std_itm_tag'],
       availability: map['std_itm_availability'],
       totalCount: map['totalCount'],
       itemSubType: map['std_itm_itemSubType'],
@@ -359,6 +364,7 @@ class Mymenu {
       'std_itm_itemType': itemType,
       'std_itm_availability': availability,
       'totalCount' : totalCount,
+      'std_itm_tag' : itemTag,
       'std_itm_itemSubType': itemSubType,
       'std_itm_comboType': comboType,
       'std_itm_rawSource': rawSource,

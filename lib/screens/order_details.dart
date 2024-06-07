@@ -2,15 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:partner_admin_portal/bloc/manage_orders/order_bloc.dart';
-import 'package:partner_admin_portal/bloc/manage_orders/order_event.dart';
 import 'package:partner_admin_portal/bloc/manage_orders/order_state.dart';
 import 'package:partner_admin_portal/bloc/orders/orders_bloc.dart';
 import 'package:partner_admin_portal/bloc/orders/orders_state.dart';
-import 'package:partner_admin_portal/bloc/subscription_order/subscription_order_bloc.dart';
-import 'package:partner_admin_portal/bloc/subscription_order/subscription_order_state.dart';
-import 'package:partner_admin_portal/constants/order_constants/order_funtions.dart';
 import 'package:partner_admin_portal/constants/order_constants/order_variables.dart';
-import 'package:partner_admin_portal/constants/order_constants/subscription_variables.dart';
 import 'package:partner_admin_portal/widgets/orders/manage/manage_subscription.dart';
 import 'package:partner_admin_portal/widgets/responsive_builder.dart';
 import 'package:partner_admin_portal/widgets/orders/forecast/analyse_orders.dart';
@@ -18,7 +13,6 @@ import 'package:partner_admin_portal/widgets/orders/manage/manage_orderes.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/orders/orders_event.dart';
-import '../bloc/subscription_order/subscription_order_event.dart';
 import '../constants/global_variables.dart';
 import '../constants/search_bar.dart';
 import '../constants/utils.dart';
@@ -418,14 +412,15 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
               return Scaffold(
                 appBar: AppBar(
                   // toolbarHeight: 80,
-
+                  leadingWidth: 0,
+                  leading: Container(),
                   title: Row(
                     children: [
-                      SizedBox(width: 5*fem,),
+
                       Container(
                         width: 30*fem,
                           child: Padding(
-                            padding: const EdgeInsets.all(4.0),
+                            padding: const EdgeInsets.only(right: 4.0,bottom: 4.0,top: 4.0),
                             child: Center(child: Text("${dayProvider.selectedDay}",style: SafeGoogleFont(
                               'Poppins',
                               fontSize: 14,
@@ -522,7 +517,7 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
                   length: 2, // Number of tabs
                   child: Scaffold(
                     appBar: AppBar(
-                      backgroundColor: lighterColor,
+                      backgroundColor: GlobalVariables.primaryColor.withOpacity(0.2),
                       toolbarHeight: 1,
                       bottom: PreferredSize(
                         preferredSize: Size.fromHeight(50.0),
@@ -556,22 +551,25 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
                               children: [
                                 InkWell(
                                   onTap: (){
-                                    context.read<OrdersBloc>().add(CancelAllOrderEvent(orderState.ordersList, orderState.inprogressList, orderState.closedList, OrderVariables.filteredOrders));
+                                    //context.read<OrdersBloc>().add(CancelAllOrderEvent(orderState.ordersList, orderState.inprogressList, orderState.closedList, OrderVariables.filteredOrders));
                                   },
                                   child: Container(
+                                    width: 20*fem,
                                     decoration: BoxDecoration(
-                                        color: Colors.red,
+                                        color: Colors.white,
                                         borderRadius: BorderRadius.circular(5)
 
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text("Cancel All",style: SafeGoogleFont(
-                                        'Poppins',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: GlobalVariables.whiteColor,
-                                      ),),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text("All",style: SafeGoogleFont(
+                                          'Poppins',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: GlobalVariables.textColor,
+                                        ),),
+                                      ),
                                     ),
                                   ),
                                 ),

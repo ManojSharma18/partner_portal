@@ -3,16 +3,15 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:partner_admin_portal/models/subscription_order_model.dart';
 
+import '../constants/global_variables.dart';
 import '../models/order_model.dart';
 
 class OrderService {
 
-  final String apiUrl = 'http://slys.in:4000/';
-
   Future<List<OrderModel>> fetchOrders() async {
     try {
       final response = await http.get(
-          Uri.parse('http://slys.in:4000/orders/order/'));
+          Uri.parse('$apiUrl/orders/order/'));
 
       if (response.statusCode == 200) {
         // If the request is successful, parse the JSON response into a list of OrderModel
@@ -33,7 +32,7 @@ class OrderService {
   Future<List<SubscriptionOrderModel>> fetchSubscriptionOrders() async {
     try {
       final response = await http.get(
-          Uri.parse('http://slys.in:4000/subscriptionOrders/subscriptionOrder/'));
+          Uri.parse('$apiUrl/subscriptionOrders/subscriptionOrder/'));
 
       print(response.statusCode);
       print(response.body);
@@ -55,11 +54,11 @@ class OrderService {
   }
 
   Future<void> updateOrder(String id,Map<String,dynamic> requestBody) async {
-    String apiUrl = "http://slys.in:4000/orders/order/$id";
+    String url = "$apiUrl/orders/order/$id";
 
     try {
       final response = await http.put(
-        Uri.parse(apiUrl),
+        Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

@@ -11,8 +11,13 @@ class MenuEditorBloc extends Bloc<MenuEditorEvent,MenuEditorState> {
     on<LoadMenuEditorEvent>((event, emit) async {
       emit(MenuEditorLoadingState());
       try {
-
-
+        print("Coming here");
+        
+        // MenuEditorVariables.selectedCategories = Set<String>();
+        //
+        // MenuEditorVariables.selectedCategories.add(MenuEditorVariables.tagController.text);
+        //
+        // MenuEditorVariables.selectedItem = "";
 
         emit(MenuEditorLoadedState(MenuEditorVariables.selectedCategories, MenuEditorVariables.menuFoodCategories, MenuEditorVariables.selectedItem,MenuEditorVariables.daysMealSession));
       } catch (e) {
@@ -24,13 +29,17 @@ class MenuEditorBloc extends Bloc<MenuEditorEvent,MenuEditorState> {
     on<SelectMenuCategoryEvent>((event, emit) async {
       emit(MenuEditorLoadingState());
       try {
-        Set<String> updatedCategories = Set.from(event.selectedCategories); // Create a new set instance
-        print(updatedCategories);
+        MenuEditorVariables.tagController.text = event.categoryName;
+        Set<String> updatedCategories = Set<String>();
+
         if (updatedCategories.contains(event.categoryName)) {
-          updatedCategories.remove(event.categoryName);
+          updatedCategories.remove(event.categoryName); // This removes the category if it already exists
         } else {
-          updatedCategories.add(event.categoryName);
+          updatedCategories = {event.categoryName}; // This will reset the set to contain only the new category
         }
+
+        print(updatedCategories);
+
 
         emit(MenuEditorLoadedState(updatedCategories, event.foodCategories, event.categoryName,MenuEditorVariables.daysMealSession));
       } catch (e) {

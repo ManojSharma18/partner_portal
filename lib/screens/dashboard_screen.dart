@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
 import 'package:partner_admin_portal/widgets/orders/manage/manage_subscription_mob.dart';
 import 'package:partner_admin_portal/widgets/responsive_builder.dart';
-import 'package:partner_admin_portal/screens/boost_screen.dart';
 import 'package:partner_admin_portal/screens/help_screen.dart';
 import 'package:partner_admin_portal/screens/manage_setting.dart';
 import 'package:partner_admin_portal/screens/menu_details.dart';
@@ -13,12 +12,10 @@ import 'package:partner_admin_portal/screens/order_details.dart';
 import 'package:partner_admin_portal/screens/payout_screen.dart';
 import 'package:partner_admin_portal/screens/rating_screen.dart';
 import 'package:partner_admin_portal/screens/report.dart';
-
 import '../bloc/menu/menu_bloc.dart';
 import '../bloc/menu/menu_event.dart';
 import '../constants/utils.dart';
 import '../widgets/navbar.dart';
-import '../widgets/orders/forecast/analyse_orders.dart';
 import '../widgets/orders/forecast/analyse_orders_mob.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -514,44 +511,53 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                           height: 600,
                           child: SingleChildScrollView(
                             child: Column(
-                              children: [
-                                MouseRegion(
-                                  onEnter: (_){
+                              children: [ NavBarItem(icon: "assets/images/list_819860.png",
+                                  text: "Manage",
+                                  touched: (){
                                     setState(() {
-                                      isHovered = true;
-                                    });
-                                    if(isHovered)
-                                    {
                                       select(0);
-                                      // _selectedIndex = 1;
-                                      // menuIndex = 1;
-                                      showPopupMenu(context);
-                                    }
-                                  },
-                                  onExit: (_){
-                                    setState(() {
-                                      isHovered = false;
+                                      _selectedIndex = 0;
                                     });
-                                    print("Hovered $isHovered");
-                                    if(!isHovered)
-                                    {
-                                      Container();
-                                    }
                                   },
-                                  child: NavBarItem(icon: "assets/images/list_819860.png",
-                                      text: "Manage",
-                                      hover: (val){
+                                  active: selected[0]),
 
-                                      },
-                                      touched: () {
-                                        // showPopupMenu(context);
-                                        setState(() {
-
-                                          // _selectedIndex = 0;
-                                        });
-                                      },
-                                      active: selected[0]),
-                                ),
+                                // MouseRegion(
+                                //   onEnter: (_){
+                                //     setState(() {
+                                //       isHovered = true;
+                                //     });
+                                //     if(isHovered)
+                                //     {
+                                //       select(0);
+                                //       // _selectedIndex = 1;
+                                //       // menuIndex = 1;
+                                //       showPopupMenu(context);
+                                //     }
+                                //   },
+                                //   onExit: (_){
+                                //     setState(() {
+                                //       isHovered = false;
+                                //     });
+                                //     print("Hovered $isHovered");
+                                //     if(!isHovered)
+                                //     {
+                                //       Container();
+                                //     }
+                                //   },
+                                //   child: NavBarItem(icon: "assets/images/list_819860.png",
+                                //       text: "Manage",
+                                //       hover: (val){
+                                //
+                                //       },
+                                //       touched: () {
+                                //         // showPopupMenu(context);
+                                //         setState(() {
+                                //
+                                //           // _selectedIndex = 0;
+                                //         });
+                                //       },
+                                //       active: selected[0]),
+                                // ),
                                 MouseRegion(
                                   onEnter: (_){
                                     setState(() {

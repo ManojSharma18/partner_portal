@@ -50,9 +50,13 @@ const mealSchema = new mongoose.Schema(
 
 
 const mymenuSchema = new mongoose.Schema({
+    std_itm_UId: { 
+        type: String,
+        required: true,
+        unique: true  
+    },
     std_itm_name: { 
         type: String,
-        required: true
     },
     std_itm_dispname: { 
         type: String,
@@ -60,7 +64,6 @@ const mymenuSchema = new mongoose.Schema({
     },
     std_itm_subTag: { 
         type: String,
-        required: true  
     },
     totalCount: { 
         type: Number,
@@ -68,48 +71,46 @@ const mymenuSchema = new mongoose.Schema({
     },
     std_itm_priceRange: { 
         type: String,
-        required: true
     }, 
     std_itm_itemType: {  
         type: String,   
-        required: true
     },
     std_itm_availability :{
         type:Boolean,
-        required: true
+    
     }, 
     std_itm_itemSubType: {   
         type: String,
-        required: true
+        
     },
     std_itm_comboType: { 
         type: String,
-        required: true
+        
     },
     std_itm_rawSource: { 
         type: String,
-        required: true
+       
     },
     std_itm_category: { 
         type: String,
-        required: true
+       
     },
     std_itm_subCategory: { 
         type: String,
-        required: true
+        
     },
     std_itm_cuisine: { 
         type: String,
-        required: true
+        
     },
     std_itm_regional: { 
         type: String,
-        required: true
+        
     },
 
     std_itm_normalPrice: {
         type: Number,
-        required: true
+        
     },
     std_itm_packagePrice: {
         type: Number,
@@ -118,6 +119,10 @@ const mymenuSchema = new mongoose.Schema({
     std_itm_preorderPrice: {
         type: Number,
         default:0
+    },
+    std_itm_tag :{
+        type: String,
+        required: true
     },
 
     fp_unit_avail_days_and_meals: {

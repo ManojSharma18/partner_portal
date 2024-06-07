@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:partner_admin_portal/bloc/live_menu/live_menu_event.dart';
@@ -212,14 +213,14 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                     return Container();
                   },
 
-                  desktopBuilder: (BuildContext context,BoxConstraints constraints){
+                  desktopBuilder: (BuildContext context,BoxConstraints constraints) {
                     query = widget.searchQuery;
                     if (query != "") {
                       filteredFoodCategory = {}; // Reset filteredFoodCategory outside the loop
 
                       foodCategories.forEach((cuisine, items) {
                         List<Map<String, dynamic>> matchingItems = items
-                            .where((item) => item['name'].toLowerCase().contains(query.toLowerCase()))
+                            .where((item) => item['disName'].toLowerCase().contains(query.toLowerCase()))
                             .toList();
 
                         if (matchingItems.isNotEmpty) {
@@ -241,7 +242,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
 
                       subscriptionFoodCategories.forEach((cuisine, items) {
                         List<Map<String, dynamic>> matchingItems = items
-                            .where((item) => item['name'].toLowerCase().contains(query.toLowerCase()))
+                            .where((item) => item['disName'].toLowerCase().contains(query.toLowerCase()))
                             .toList();
 
                         if (matchingItems.isNotEmpty) {
@@ -264,7 +265,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                       print("Food cateogeries in live menu ${LiveMenuFunctions.selectedMealTime}");
                       foodCategories.forEach((cuisine, items) {
                         List<Map<String, dynamic>> matchingItems = items
-                            .where((item) => item['friBreakfastSession1'] == true)
+                            .where((item) => item['monBreakfastSession1'] == true || item['monBreakfastSession2'] == true || item['monBreakfastSession3'] == true || item['satBreakfastSession4'] == true)
                             .toList();
 
                         if (matchingItems.isNotEmpty) {
@@ -275,11 +276,27 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                           filteredFoodCategory[cuisine] = matchingItems;
                         }
                       });
-                    } else if(GlobalFunction.selectedMealTime == MealTime.Lunch) {
+                    } 
+                    else if(GlobalFunction.selectedMealTime == MealTime.Lunch) {
                       print("Food cateogeries in live menu ${LiveMenuFunctions.selectedMealTime}");
                       foodCategories.forEach((cuisine, items) {
                         List<Map<String, dynamic>> matchingItems = items
-                            .where((item) => item['friLunchSession1'] == true)
+                            .where((item) => item['monLunchSession1'] == true || item['monLunchSession2'] == true || item['monLunchSession3'] == true || item['satLunchSession4'] == true)
+                             .toList();
+
+                        if (matchingItems.isNotEmpty) {
+                          LiveMenuVariables.selectedCategories.add(cuisine);
+                          // selectedItem = query;
+
+                          // Add the matching items to filteredFoodCategory
+                          filteredFoodCategory[cuisine] = matchingItems;
+                        }
+                      });
+                    } else if(GlobalFunction.selectedMealTime == MealTime.Dinner) {
+                      print("Food cateogeries in live menu ${LiveMenuFunctions.selectedMealTime}");
+                      foodCategories.forEach((cuisine, items) {
+                        List<Map<String, dynamic>> matchingItems = items
+                            .where((item) => item['monDinnerSession1'] == true || item['monDinnerSession2'] == true || item['monDinnerSession3'] == true || item['monDinnerSession4'] == true)
                             .toList();
 
                         if (matchingItems.isNotEmpty) {
@@ -290,7 +307,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                           filteredFoodCategory[cuisine] = matchingItems;
                         }
                       });
-                    } else  
+                    }
                     return BlocBuilder<LiveMenuBloc,LiveMenuState>(builder: (BuildContext context, Lstate) {
                       return Container(
                         decoration: BoxDecoration(
@@ -299,7 +316,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                          SizedBox(height: 5,),
+
                         Expanded(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,13 +324,13 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  margin: EdgeInsets.only(left: 5),
                                   color: Colors.white,
                                   child: DefaultTabController(
                                     length: 2,
                                     child: Scaffold(
                                       appBar:AppBar(
-                                        toolbarHeight: 0,backgroundColor:GlobalVariables.primaryColor.withOpacity(0.2),
+                                        toolbarHeight: 0,
+                                        backgroundColor:GlobalVariables.primaryColor.withOpacity(0.2),
                                         bottom: PreferredSize(
                                           preferredSize: Size.fromHeight(50.0),
                                           child: Row(
@@ -336,78 +353,12 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                                                     color: Color(0xFF363563),
                                                   ),
                                                   tabs: [
-                                                    Tab(text: 'Orders'),
-                                                    Tab(text: 'Subscription'),
+                                                    Tab(text: 'Live menu'),
+                                                    Tab(text: 'Forecast'),
                                                   ],
                                                 ),
                                               ),
-                                              Container(
-                                                margin: EdgeInsets.only(right: 15),
-                                                height: 40,
-                                                width: 200,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(25),
-                                                  border: Border.all(color: GlobalVariables.textColor.withOpacity(0.5)),
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          isLiveMenuSelected = true;
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
 
-                                                          borderRadius: BorderRadius.circular(20),
-                                                        ),
-                                                        width: 98,
-                                                        child: Center(
-                                                          child: Text(
-                                                            "Live menu",
-                                                            style: SafeGoogleFont(
-                                                              'Poppins',
-                                                              fontSize: 14,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: isLiveMenuSelected
-                                                                  ? GlobalVariables.textColor
-                                                                  : GlobalVariables.textColor.withOpacity(0.5),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                      color: GlobalVariables.textColor.withOpacity(0.5),
-                                                      width: 2,
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          isLiveMenuSelected = false;
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        width: 98,
-                                                        child: Center(
-                                                          child: Text(
-                                                            "Forecast",
-                                                            style: SafeGoogleFont(
-                                                              'Poppins',
-                                                              fontSize: 14,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: !isLiveMenuSelected
-                                                                  ? GlobalVariables.textColor
-                                                                  : GlobalVariables.textColor.withOpacity(0.5),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              )
                                             ],
                                           ),
                                         ),
@@ -415,1021 +366,343 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                                       body: TabBarView(
                                         controller: _menuController,
                                         children: [
-                                          isLiveMenuSelected == true ? Row(
-                                            children: [
-                                              Container(
-                                                width:450,
-                                                child: Column(
-                                                  children: [
-                                                    SizedBox(height: 10,),
-                                                    Container(
-                                                      margin: EdgeInsets.all(10),
-                                                      child: Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          GlobalFunction.buildMealButton(context,MealTime.All,'All'),
-                                                          GlobalFunction.buildMealButton(context,MealTime.Breakfast,'Breakfast'),
-                                                          GlobalFunction.buildMealButton(context,MealTime.Lunch,'Lunch'),
-                                                          GlobalFunction.buildMealButton(context,MealTime.Dinner,'Dinner'),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 15,),
 
-                                                    SizedBox(height: 0,),
-                                                    Expanded(
-                                                      child: ReorderableListView.builder(
-                                                        buildDefaultDragHandles: false,
-                                                        primary: true,
-                                                        shrinkWrap: true,
-                                                        itemCount: filteredFoodCategory.length == 0
-                                                            ? foodCategories.length
-                                                            : filteredFoodCategory.length,
-                                                        itemBuilder: (context, index) {
-                                                          String category = filteredFoodCategory.length == 0
-                                                              ? foodCategories.keys.elementAt(index)
-                                                              : filteredFoodCategory.keys.elementAt(index);
-                                                          List<Map<String, dynamic>> itemsList = filteredFoodCategory.length == 0
-                                                              ? foodCategories[category]!
-                                                              : filteredFoodCategory[category]!;
-                                                          List<String> items = itemsList.map((item) => item['name'] as String).toList();
 
-                                                          bool categoryContainsMatch = items.any((item) => item.toLowerCase().contains(widget.searchQuery.toLowerCase()));
-
-                                                          return ReorderableDragStartListener(
-                                                            enabled: true,
-                                                            key: Key(category),
-                                                            index: index,
-                                                            child: InkWell(
-                                                              onTap: () {
-                                                                context.read<LiveMenuBloc>().add(SelectCategoryEvent(Lstate.selectedCategories, category));
-                                                              },
-                                                              child: Column(
-                                                                key: Key('$category'),
-                                                                children: [
-                                                                  Container(
-                                                                    margin: EdgeInsets.only(top: 5, bottom: 5),
-                                                                    color:  Lstate.selectedCategories.contains(category)
-                                                                        ? Color(0xFF363563)
-                                                                        : null,
-                                                                    child: ListTile(
-                                                                      title: Text(
-                                                                        category,
-                                                                        style: TextStyle(
-                                                                          fontSize: 12,
-                                                                          fontWeight: FontWeight.bold,
-                                                                          color:  Lstate.selectedCategories.contains(category)
-                                                                              ? Colors.white
-                                                                              : Colors.black,
-                                                                        ),
-                                                                      ),
-                                                                      leading: Icon(
-                                                                        Icons.grid_view_rounded,
-                                                                        size: 10,
-                                                                        color:  Lstate.selectedCategories.contains(category)
-                                                                            ? Colors.white
-                                                                            : Colors.black,
-                                                                      ),
-                                                                      trailing: Row(
-                                                                        mainAxisSize: MainAxisSize.min,
-                                                                        children: [
-                                                                          InkWell(
-                                                                            onTap: () {
-                                                                              _showAddItemDialog();
-                                                                            },
-                                                                            child: Row(
-                                                                              mainAxisSize: MainAxisSize.min,
-                                                                              children: [
-                                                                                SizedBox(width: 5),
-                                                                                Icon(
-                                                                                  Icons.add,
-                                                                                  size: 15,
-                                                                                  color: GlobalVariables.primaryColor,
-                                                                                ),
-                                                                                SizedBox(width: 5),
-                                                                                Text(
-                                                                                  'ADD ITEM',
-                                                                                  style: TextStyle(
-                                                                                    fontSize: 12,
-                                                                                    fontWeight: FontWeight.bold,
-                                                                                    color: GlobalVariables.primaryColor,
-                                                                                  ),
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  Visibility(
-                                                                    visible:  Lstate.selectedCategories.contains(category),
-                                                                    child: Column(
-                                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                                      children: _buildItemsList(category, itemsList,Lstate.selectedCategories),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
+                                          Container(
+                                            color: Colors.white,
+                                            child: DefaultTabController(
+                                              length: 2,
+                                              child: Scaffold(
+                                                appBar:AppBar(
+                                                  toolbarHeight: 0,
+                                                  backgroundColor:GlobalVariables.lightColor,
+                                                  bottom: PreferredSize(
+                                                    preferredSize: Size.fromHeight(50.0),
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Container(
+                                                          width: 400,
+                                                          child: TabBar(
+                                                            isScrollable: false,
+                                                            indicatorSize: TabBarIndicatorSize.tab,
+                                                            labelPadding: EdgeInsets.symmetric(horizontal: 5),
+                                                            indicatorColor: GlobalVariables.textColor,
+                                                            unselectedLabelColor: Colors.black54,
+                                                            labelColor: GlobalVariables.primaryColor,
+                                                            labelStyle: SafeGoogleFont(
+                                                              'Poppins',
+                                                              fontSize: 14,
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Color(0xFF363563),
                                                             ),
-                                                          );
-                                                        },
-                                                        onReorder: (oldIndex, newIndex) {
-                                                          setState(() {
-                                                            if (oldIndex < newIndex) {
-                                                              newIndex -= 1;
-                                                            }
-                                                            List<MapEntry<String, List<Map<String, dynamic>>>> entries =
-                                                            filteredFoodCategory.length == 0
-                                                                ? foodCategories.entries.toList()
-                                                                : filteredFoodCategory.entries.toList();
-                                                            MapEntry<String, List<Map<String, dynamic>>> removedEntry =
-                                                            entries.removeAt(oldIndex);
-                                                            entries.insert(newIndex, removedEntry);
-
-                                                            // Convert the List back to a Map
-                                                            if (filteredFoodCategory.length == 0) {
-                                                              foodCategories = Map.fromEntries(entries);
-                                                            } else {
-                                                              filteredFoodCategory = Map.fromEntries(entries);
-                                                            }
-                                                          });
-                                                        },
-                                                      ),
-
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 5,
-                                                child: TabBarView(
-                                                  controller:_menuController,
-                                                  children: [
-                                                    DefaultTabController(
-                                                      length: 1, // Number of tabs
-                                                      child: selectedItem == '' ? Container()  :
-                                                      Scaffold(
-                                                        appBar: AppBar(
-                                                          toolbarHeight: 0,backgroundColor:Colors.grey.shade200,
-                                                          bottom: PreferredSize(
-
-                                                            preferredSize: Size.fromHeight(50),
-                                                            child: Row(
-                                                              children: [
-                                                                Container(
-                                                                  width:100,
-                                                                  child: TabBar(
-                                                                    controller: _tabController,
-                                                                    isScrollable: false,
-                                                                    labelPadding: EdgeInsets.symmetric(horizontal: 5),
-                                                                    indicatorWeight: 1, // Adjust the indicator weight
-                                                                    indicatorColor: Color(0xfffbb830),
-                                                                    unselectedLabelColor: Colors.black54,
-                                                                    labelColor: Color(0xFF363563),
-                                                                    labelStyle: SafeGoogleFont(
-                                                                      'Poppins',
-                                                                      fontSize: 14,
-                                                                      fontWeight: FontWeight.bold,
-                                                                      color: Color(0xFF363563),
-                                                                    ),
-                                                                    tabs: [
-                                                                      Tab(text: "Live menu",)
-
-                                                                    ],
-                                                                    onTap: (index) {
-                                                                      dateProvider.updateSelectedDay('${DateFormat('E').format(DateTime.now().add(Duration(days: index)))} : ${DateFormat('dd MMM').format(DateTime.now().add(Duration(days: index)))}');
-                                                                    },
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        body: TabBarView(
-                                                          controller: _tabController,
-                                                          physics: NeverScrollableScrollPhysics(),
-                                                          children: [
-                                                            // Content for Tab 1
-                                                            // Content for Tab 1
-
-                                                            Row(
-                                                              children: [
-                                                                Container(
-                                                                  margin: EdgeInsets.all(20),
-                                                                  child: Column(
-                                                                    children: [
-
-                                                                      Visibility(
-                                                                        visible: isCountBased,
-                                                                        child: Column(
-                                                                          children: [
-                                                                            Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                                              children: [
-                                                                                Row(
-                                                                                  children: [
-                                                                                    Checkbox(value:allMeal('Breakfast'), onChanged: (val){
-                                                                                      setMeal('Breakfast', allMeal('Breakfast'));
-                                                                                    }),
-                                                                                    SizedBox(width: 10,),
-                                                                                    Text("Breakfast : ",style:  SafeGoogleFont(
-                                                                                      'Poppins',
-                                                                                      fontSize: 12,
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color:GlobalVariables.textColor,
-                                                                                    ),),
-                                                                                    SizedBox(width: 10,),
-                                                                                    Row(
-                                                                                      children: [
-                                                                                        session("S1","Breakfast",context),
-                                                                                        session("S2","Breakfast",context),
-                                                                                        session("S3","Breakfast",context)
-                                                                                      ],
-                                                                                    )
-                                                                                  ],
-                                                                                ),
-                                                                                SizedBox(width:25),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    Checkbox(value: allMeal('Lunch'), onChanged: (val){
-                                                                                      setMeal("Lunch", allMeal("Lunch"));
-                                                                                    }),
-                                                                                    SizedBox(width: 10,),
-                                                                                    Text("Lunch : ",style:  SafeGoogleFont(
-                                                                                      'Poppins',
-                                                                                      fontSize: 12,
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color:GlobalVariables.textColor,
-                                                                                    ),),
-                                                                                    SizedBox(width: 10,),
-                                                                                    Row(
-                                                                                      children: [
-                                                                                        session("S1","Lunch",context),
-                                                                                        session("S2","Lunch",context),
-                                                                                        session("S3","Lunch",context)
-                                                                                      ],
-                                                                                    )
-                                                                                  ],
-                                                                                ),
-                                                                                SizedBox(width:25),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    Checkbox(value: allMeal('Dinner'), onChanged: (val){
-                                                                                      setMeal("Dinner", allMeal('Dinner'));
-                                                                                    }),
-                                                                                    SizedBox(width: 10,),
-                                                                                    Text("Dinner : ",style:  SafeGoogleFont(
-                                                                                      'Poppins',
-                                                                                      fontSize: 12,
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color:GlobalVariables.textColor,
-                                                                                    ),),
-                                                                                    SizedBox(width: 10,),
-                                                                                    Row(
-                                                                                      children: [
-                                                                                        session("S1","Dinner",context),
-                                                                                        session("S2","Dinner",context),
-                                                                                        session("S3","Dinner",context)
-                                                                                      ],
-                                                                                    )
-                                                                                  ],
-                                                                                )
-                                                                              ],
-                                                                            ),
-                                                                            SizedBox(height: 20,),
-
-                                                                            Row(
-                                                                              children: [
-                                                                                Row(
-                                                                                  children: [
-                                                                                    Checkbox(value: provider['Deliver'], onChanged: (val){
-                                                                                      setState(() {
-                                                                                        provider['Deliver'] = val!;
-                                                                                      });
-
-                                                                                    }),
-                                                                                    SizedBox(width: 10,),
-                                                                                    Text("Deliver",style: SafeGoogleFont(
-                                                                                      'Poppins',
-                                                                                      fontSize: 12,
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color:GlobalVariables.textColor,
-                                                                                    ),)
-                                                                                  ],
-                                                                                ),
-                                                                                SizedBox(width: 30,),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    Checkbox(value: provider['Dine in'], onChanged: (val){
-                                                                                      setState(() {
-                                                                                        provider['Dine in'] = val!;
-                                                                                      });
-
-                                                                                    }),
-                                                                                    SizedBox(width: 10,),
-                                                                                    Text("Dine in",style: SafeGoogleFont(
-                                                                                      'Poppins',
-                                                                                      fontSize: 12,
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color:GlobalVariables.textColor,
-                                                                                    ),)
-                                                                                  ],
-                                                                                ),
-                                                                                SizedBox(width: 30,),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    Checkbox(value: provider['Pick up'], onChanged: (val){
-                                                                                      setState(() {
-                                                                                        provider['Pick up'] = val!;
-                                                                                      });
-
-                                                                                    }),
-                                                                                    SizedBox(width: 10,),
-                                                                                    Text("Pick up",style: SafeGoogleFont(
-                                                                                      'Poppins',
-                                                                                      fontSize: 12,
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      color:GlobalVariables.textColor,
-                                                                                    ),)
-                                                                                  ],
-                                                                                )
-                                                                              ],
-                                                                            ),
-
-                                                                            SizedBox(height: 50,),
-
-                                                                          ],
-                                                                        ),
-                                                                      ),
-
-                                                                      Visibility(
-                                                                        visible: !isCountBased,
-                                                                        child: Container(
-                                                                          child: Column(
-                                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                                            children: [
-                                                                              Column(
-                                                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                                                children: [
-                                                                                  Row(
-                                                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                                                    children: [
-
-                                                                                      Text("Total : ",style: SafeGoogleFont(
-                                                                                        'Poppins',
-                                                                                        fontSize: 15,
-                                                                                        fontWeight: FontWeight.bold,
-                                                                                        color:GlobalVariables.textColor,
-                                                                                      ),),
-                                                                                      SizedBox(width:20),
-                                                                                      Container(
-                                                                                        width:70,
-                                                                                        height: 40,
-                                                                                        child: SmallCustomTextField(
-                                                                                          textEditingController: LiveMenuVariables.total,height: 30,
-                                                                                          onChanged: (text){
-
-                                                                                            int reminder = (int.parse(text!)) % 3;
-                                                                                            LiveMenuVariables.breakfastTotal.text = (int.parse(text)/3).toInt().toString();
-                                                                                            LiveMenuVariables.lunchTotal.text = (int.parse(text)/3).toInt().toString();
-                                                                                            LiveMenuVariables.dinnerTotal.text = ((int.parse(text)/3).toInt()+ reminder).toString();
-                                                                                            int reminderBreakfast = (int.parse(LiveMenuVariables.breakfastTotal.text)) % 4;
-                                                                                            LiveMenuVariables.bfSession1Controller.text = (int.parse(LiveMenuVariables.breakfastTotal.text)/4).toInt().toString();
-                                                                                            LiveMenuVariables.bfSession2Controller.text = (int.parse(LiveMenuVariables.breakfastTotal.text)/4).toInt().toString();
-                                                                                            LiveMenuVariables.bfSession3Controller.text = (int.parse(LiveMenuVariables.breakfastTotal.text)/4).toInt().toString();
-                                                                                            LiveMenuVariables.bfSession4Controller.text = ((int.parse(LiveMenuVariables.breakfastTotal.text)/4).toInt()+ reminderBreakfast).toString();
-
-                                                                                            int reminderLunch = (int.parse(LiveMenuVariables.lunchTotal.text)) % 4;
-                                                                                            LiveMenuVariables.lnSession1Controller.text = (int.parse(LiveMenuVariables.lunchTotal.text)/4).toInt().toString();
-                                                                                            LiveMenuVariables.lnSession2Controller.text = (int.parse(LiveMenuVariables.lunchTotal.text)/4).toInt().toString();
-                                                                                            LiveMenuVariables.lnSession3Controller.text = (int.parse(LiveMenuVariables.lunchTotal.text)/4).toInt().toString();
-                                                                                            LiveMenuVariables.lnSession4Controller.text = ((int.parse(LiveMenuVariables.lunchTotal.text)/4).toInt()+ reminderLunch).toString();
-
-                                                                                            int reminderDinner = (int.parse(LiveMenuVariables.dinnerTotal.text)) % 4;
-                                                                                            LiveMenuVariables.dnSession1Controller.text = (int.parse(LiveMenuVariables.dinnerTotal.text)/4).toInt().toString();
-                                                                                            LiveMenuVariables.dnSession2Controller.text = (int.parse(LiveMenuVariables.dinnerTotal.text)/4).toInt().toString();
-                                                                                            LiveMenuVariables.dnSession3Controller.text = (int.parse(LiveMenuVariables.dinnerTotal.text)/4).toInt().toString();
-                                                                                            LiveMenuVariables.dnSession4Controller.text = ((int.parse(LiveMenuVariables.dinnerTotal.text)/4).toInt()+ reminderDinner).toString();
-                                                                                            if(int.parse(LiveMenuVariables.total.text) > 9999)
-                                                                                            {
-                                                                                              _showExceedLimitAlertDialog(context);
-                                                                                            }
-                                                                                          }, min: 10,max:9999
-                                                                                          ,
-                                                                                        ),
-                                                                                      ),
-                                                                                      SizedBox(width:10),
-
-                                                                                      InkWell(
-                                                                                        onTap:(){
-                                                                                          initialValue();
-                                                                                        },
-                                                                                        child: Padding(
-                                                                                          padding: const EdgeInsets.all(10.0),
-                                                                                          child: Icon(Icons.refresh,size: 22,color: GlobalVariables.textColor,),
-                                                                                        ),
-                                                                                      )
-                                                                                    ],
-                                                                                  ),
-
-                                                                                  SizedBox(height:30),
-
-                                                                                  SingleChildScrollView(
-                                                                                    scrollDirection: Axis.horizontal,
-                                                                                    child: Row(
-                                                                                      children: [
-                                                                                        DataTable(
-                                                                                          columnSpacing: 50,
-                                                                                          headingRowHeight: 80,
-                                                                                          columns:<DataColumn> [
-                                                                                            DataColumn(label: Row(
-                                                                                              children: [
-                                                                                                Text(" ",style:SafeGoogleFont(
-                                                                                                  'Poppins',
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color:GlobalVariables.textColor,
-                                                                                                ),),
-                                                                                              ],
-                                                                                            )),
-                                                                                            DataColumn(label: Column(
-                                                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                                                              children: [
-                                                                                                Text("Breakfast",style: SafeGoogleFont(
-                                                                                                  'Poppins',
-                                                                                                  fontSize: 11,
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color:GlobalVariables.textColor,
-                                                                                                ),),
-                                                                                                SizedBox(height: 10,),
-                                                                                                Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                    textEditingController: LiveMenuVariables.breakfastTotal,height: 30,fontSize: 11,
-                                                                                                    min: 0,max:9999,
-                                                                                                    onChanged: (text){
-
-                                                                                                      LiveMenuVariables.total.text = (int.parse(text!) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                      int reminderBreakfast = (int.parse(text!)) % 4;
-                                                                                                      LiveMenuVariables.bfSession1Controller.text = (int.parse(text)/4).toInt().toString();
-                                                                                                      LiveMenuVariables.bfSession2Controller.text = (int.parse(text)/4).toInt().toString();
-                                                                                                      LiveMenuVariables.bfSession3Controller.text = (int.parse(text)/4).toInt().toString();
-                                                                                                      LiveMenuVariables.bfSession4Controller.text = ((int.parse(text)/4).toInt()+ reminderBreakfast).toString();
-                                                                                                      if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                      {
-                                                                                                        _showExceedLimitAlertDialog(context);
-                                                                                                      }
-                                                                                                    },
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            )),
-                                                                                            DataColumn(label: Column(
-                                                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                                                              children: [
-                                                                                                Text("Lunch",style: SafeGoogleFont(
-                                                                                                  'Poppins',
-                                                                                                  fontSize: 11,
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color:GlobalVariables.textColor,
-                                                                                                ),),
-                                                                                                SizedBox(height: 10,),
-                                                                                                Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                    textEditingController: LiveMenuVariables.lunchTotal,height: 30,fontSize: 11,min: 0,max:9999,
-                                                                                                    onChanged: (text){
-
-                                                                                                      LiveMenuVariables.total.text = (int.parse(text!) + int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                      int reminderLunch = (int.parse(text)) % 4;
-                                                                                                      LiveMenuVariables.lnSession1Controller.text = (int.parse(text)/4).toInt().toString();
-                                                                                                      LiveMenuVariables.lnSession2Controller.text = (int.parse(text)/4).toInt().toString();
-                                                                                                      LiveMenuVariables.lnSession3Controller.text = (int.parse(text)/4).toInt().toString();
-                                                                                                      LiveMenuVariables.lnSession4Controller.text = ((int.parse(text)/4).toInt()+ reminderLunch).toString();
-
-                                                                                                      if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                      {
-                                                                                                        _showExceedLimitAlertDialog(context);
-                                                                                                      }
-                                                                                                    },
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            )),
-                                                                                            DataColumn(label: Column(
-                                                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                              children: [
-                                                                                                Text("Dinner",style: SafeGoogleFont(
-                                                                                                  'Poppins',
-                                                                                                  fontSize: 11,
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color:GlobalVariables.textColor,
-                                                                                                ),),
-                                                                                                SizedBox(height: 10,),
-                                                                                                Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                    textEditingController: LiveMenuVariables.dinnerTotal,height: 30,fontSize: 11,min: 0,max:9999,
-                                                                                                    onChanged: (text){
-
-                                                                                                      LiveMenuVariables.total.text = (int.parse(text!) + int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text)).toString();
-                                                                                                      int reminderDinner = (int.parse(text)) % 4;
-                                                                                                      LiveMenuVariables.dnSession1Controller.text = (int.parse(text)/4).toInt().toString();
-                                                                                                      LiveMenuVariables.dnSession2Controller.text = (int.parse(text)/4).toInt().toString();
-                                                                                                      LiveMenuVariables.dnSession3Controller.text = (int.parse(text)/4).toInt().toString();
-                                                                                                      LiveMenuVariables.dnSession4Controller.text = ((int.parse(text)/4).toInt()+ reminderDinner).toString();
-                                                                                                      if(int.parse(LiveMenuVariables.total.text) >= 1000)
-                                                                                                      {
-                                                                                                        _showExceedLimitAlertDialog(context);
-                                                                                                      }
-                                                                                                    },
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ), )
-                                                                                          ],
-                                                                                          rows: <DataRow> [
-                                                                                            DataRow(cells: <DataCell> [
-                                                                                              DataCell(Center(
-                                                                                                child: Text("S1 : ",style: SafeGoogleFont(
-                                                                                                  'Poppins',
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color:GlobalVariables.textColor,
-                                                                                                ),),
-                                                                                              ),),
-                                                                                              DataCell(Center(
-                                                                                                child: Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                      textEditingController: LiveMenuVariables.bfSession1Controller,height: 30,fontSize: 11,
-                                                                                                      min: 0,max:9999,
-                                                                                                      onChanged:(text){
-
-                                                                                                        LiveMenuVariables.breakfastTotal.text = (int.parse(text!) + int.parse(LiveMenuVariables.bfSession2Controller.text) + int.parse(LiveMenuVariables.bfSession3Controller.text) + int.parse(LiveMenuVariables.bfSession4Controller.text) ).toString();
-                                                                                                        LiveMenuVariables.total.text = (int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                        if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                        {
-                                                                                                          _showExceedLimitAlertDialog(context);
-                                                                                                        }
-                                                                                                      }
-                                                                                                  ),
-                                                                                                ),
-                                                                                              )),
-                                                                                              DataCell(Center(
-                                                                                                child: Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                      textEditingController: LiveMenuVariables.lnSession1Controller,height: 30,fontSize: 11,
-                                                                                                      min: 0,max:9999,
-                                                                                                      onChanged:(text){
-
-                                                                                                        LiveMenuVariables.lunchTotal.text = (int.parse(text!) + int.parse(LiveMenuVariables.lnSession2Controller.text) + int.parse(LiveMenuVariables.lnSession3Controller.text) + int.parse(LiveMenuVariables.lnSession4Controller.text) ).toString();
-                                                                                                        LiveMenuVariables.total.text = (int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                        if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                        {
-                                                                                                          _showExceedLimitAlertDialog(context);
-                                                                                                        }
-                                                                                                      }
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),),
-                                                                                              DataCell(Center(
-                                                                                                child: Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                      textEditingController: LiveMenuVariables.dnSession1Controller,height: 30,fontSize: 11,
-                                                                                                      min: 0,max:9999,
-                                                                                                      onChanged:(text){
-
-                                                                                                        LiveMenuVariables.dinnerTotal.text = (int.parse(text!) + int.parse(LiveMenuVariables.dnSession2Controller.text) + int.parse(LiveMenuVariables.dnSession3Controller.text) + int.parse(LiveMenuVariables.dnSession4Controller.text) ).toString();
-                                                                                                        LiveMenuVariables.total.text = (int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                        if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                        {
-                                                                                                          _showExceedLimitAlertDialog(context);
-                                                                                                        }
-                                                                                                      }
-
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),)
-                                                                                            ]),
-                                                                                            DataRow(cells: <DataCell> [
-                                                                                              DataCell(Center(
-                                                                                                child: Text("S2 : ",style: SafeGoogleFont(
-                                                                                                  'Poppins',
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color:GlobalVariables.textColor,
-                                                                                                ),),
-                                                                                              ),),
-                                                                                              DataCell(Center(
-                                                                                                child: Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                      textEditingController: LiveMenuVariables.bfSession2Controller,height: 30,fontSize: 11,
-                                                                                                      min: 0,max:9999,
-                                                                                                      onChanged:(text){
-                                                                                                        LiveMenuVariables.breakfastTotal.text = (int.parse(text!) + int.parse(LiveMenuVariables.bfSession1Controller.text) + int.parse(LiveMenuVariables.bfSession3Controller.text) + int.parse(LiveMenuVariables.bfSession4Controller.text) ).toString();
-                                                                                                        LiveMenuVariables.total.text = (int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                        if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                        {
-                                                                                                          _showExceedLimitAlertDialog(context);
-                                                                                                        }
-                                                                                                      }
-                                                                                                  ),
-                                                                                                ),
-                                                                                              )),
-                                                                                              DataCell(Center(
-                                                                                                child: Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                      textEditingController: LiveMenuVariables.lnSession2Controller,height: 30,fontSize: 11,
-                                                                                                      min: 0,max:9999,
-                                                                                                      onChanged:(text){
-                                                                                                        LiveMenuVariables.lunchTotal.text = (int.parse(text!) + int.parse(LiveMenuVariables.lnSession1Controller.text) + int.parse(LiveMenuVariables.lnSession3Controller.text) + int.parse(LiveMenuVariables.lnSession4Controller.text) ).toString();
-                                                                                                        LiveMenuVariables.total.text = (int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                        if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                        {
-                                                                                                          _showExceedLimitAlertDialog(context);
-                                                                                                        }
-                                                                                                      }
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),),
-                                                                                              DataCell(Center(
-                                                                                                child: Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                      textEditingController: LiveMenuVariables.dnSession2Controller,height: 30,fontSize: 11,
-                                                                                                      min: 0,max:9999,
-                                                                                                      onChanged:(text){
-                                                                                                        LiveMenuVariables.dinnerTotal.text = (int.parse(text!) + int.parse(LiveMenuVariables.dnSession4Controller.text) + int.parse(LiveMenuVariables.dnSession3Controller.text) + int.parse(LiveMenuVariables.dnSession1Controller.text) ).toString();
-                                                                                                        LiveMenuVariables.total.text = (int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                        if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                        {
-                                                                                                          _showExceedLimitAlertDialog(context);
-                                                                                                        }
-                                                                                                      }
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),)
-                                                                                            ]),
-                                                                                            DataRow(cells: <DataCell> [
-                                                                                              DataCell(Center(
-                                                                                                child: Text("S3 : ",style: SafeGoogleFont(
-                                                                                                  'Poppins',
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color:GlobalVariables.textColor,
-                                                                                                ),),
-                                                                                              ),),
-                                                                                              DataCell(Center(
-                                                                                                child: Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                      textEditingController: LiveMenuVariables.bfSession3Controller,height: 30,fontSize: 11,
-                                                                                                      min: 0,max:9999,
-                                                                                                      onChanged:(text){
-
-                                                                                                        LiveMenuVariables.breakfastTotal.text = (int.parse(text!) + int.parse(LiveMenuVariables.bfSession2Controller.text) + int.parse(LiveMenuVariables.bfSession1Controller.text) + int.parse(LiveMenuVariables.bfSession4Controller.text) ).toString();
-                                                                                                        LiveMenuVariables.total.text = (int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                        if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                        {
-                                                                                                          _showExceedLimitAlertDialog(context);
-                                                                                                        }
-                                                                                                      }
-                                                                                                  ),
-                                                                                                ),
-                                                                                              )),
-                                                                                              DataCell(Center(
-                                                                                                child: Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                      textEditingController: LiveMenuVariables.lnSession3Controller,height: 30,fontSize: 11,
-                                                                                                      min: 0,max:9999,
-                                                                                                      onChanged:(text){
-                                                                                                        LiveMenuVariables.lunchTotal.text = (int.parse(text!) + int.parse(LiveMenuVariables.lnSession2Controller.text) + int.parse(LiveMenuVariables.lnSession1Controller.text) + int.parse(LiveMenuVariables.lnSession4Controller.text) ).toString();
-                                                                                                        LiveMenuVariables.total.text = (int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                        if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                        {
-                                                                                                          _showExceedLimitAlertDialog(context);
-                                                                                                        }
-                                                                                                      }
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),),
-                                                                                              DataCell(Center(
-                                                                                                child: Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                      textEditingController: LiveMenuVariables.dnSession3Controller,height: 30,fontSize: 11,
-                                                                                                      min: 0,max:9999,
-                                                                                                      onChanged:(text){
-                                                                                                        LiveMenuVariables.dinnerTotal.text = (int.parse(text!) + int.parse(LiveMenuVariables.dnSession2Controller.text) + int.parse(LiveMenuVariables.dnSession4Controller.text) + int.parse(LiveMenuVariables.dnSession1Controller.text) ).toString();
-                                                                                                        LiveMenuVariables.total.text = (int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                        if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                        {
-                                                                                                          _showExceedLimitAlertDialog(context);
-                                                                                                        }
-                                                                                                      }
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),),
-                                                                                            ]),
-                                                                                            DataRow(cells: <DataCell> [
-                                                                                              DataCell(Center(
-                                                                                                child: Text("S4 : ",style: SafeGoogleFont(
-                                                                                                  'Poppins',
-                                                                                                  fontSize: 12,
-                                                                                                  fontWeight: FontWeight.bold,
-                                                                                                  color:GlobalVariables.textColor,
-                                                                                                ),),
-                                                                                              ),),
-                                                                                              DataCell(Center(
-                                                                                                child: Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                      textEditingController: LiveMenuVariables.bfSession4Controller,height: 30,fontSize: 11,
-                                                                                                      min: 0,max:9999,
-                                                                                                      onChanged:(text){
-                                                                                                        LiveMenuVariables.breakfastTotal.text = (int.parse(text!) + int.parse(LiveMenuVariables.bfSession2Controller.text) + int.parse(LiveMenuVariables.bfSession3Controller.text) + int.parse(LiveMenuVariables.bfSession1Controller.text) ).toString();
-                                                                                                        LiveMenuVariables.total.text = (int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                        if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                        {
-                                                                                                          _showExceedLimitAlertDialog(context);
-                                                                                                        }
-                                                                                                      }
-                                                                                                  ),
-                                                                                                ),
-                                                                                              )),
-                                                                                              DataCell(Center(
-                                                                                                child: Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                      textEditingController: LiveMenuVariables.lnSession4Controller,height: 30,fontSize: 11,
-                                                                                                      min: 0,max:9999,
-                                                                                                      onChanged:(text){
-
-                                                                                                        LiveMenuVariables.lunchTotal.text = (int.parse(text!) + int.parse(LiveMenuVariables.lnSession2Controller.text) + int.parse(LiveMenuVariables.lnSession3Controller.text) + int.parse(LiveMenuVariables.lnSession1Controller.text) ).toString();
-                                                                                                        LiveMenuVariables.total.text = (int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                        if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                        {
-                                                                                                          _showExceedLimitAlertDialog(context);
-                                                                                                        }
-                                                                                                      }
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),),
-                                                                                              DataCell(Center(
-                                                                                                child: Container(
-                                                                                                  width:70,
-                                                                                                  height: 40,
-                                                                                                  child: SmallCustomTextField(
-                                                                                                      textEditingController: LiveMenuVariables.dnSession4Controller,height: 30,fontSize: 11,
-                                                                                                      min: 0,max:9999,
-                                                                                                      onChanged:(text){
-
-                                                                                                        LiveMenuVariables.dinnerTotal.text = (int.parse(text!) + int.parse(LiveMenuVariables.dnSession2Controller.text) + int.parse(LiveMenuVariables.dnSession3Controller.text) + int.parse(LiveMenuVariables.dnSession1Controller.text) ).toString();
-                                                                                                        LiveMenuVariables.total.text = (int.parse(LiveMenuVariables.breakfastTotal.text) + int.parse(LiveMenuVariables.lunchTotal.text) + int.parse(LiveMenuVariables.dinnerTotal.text)).toString();
-                                                                                                        if(int.parse(LiveMenuVariables.total.text) >= 10000)
-                                                                                                        {
-                                                                                                          _showExceedLimitAlertDialog(context);
-                                                                                                        }
-                                                                                                      }
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),)
-                                                                                            ])
-                                                                                          ],
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
-                                                                                  ),
-
-                                                                                ],
-                                                                              ),
-
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-
-                                                            // Content for Tab 2
-                                                          ],
-                                                        ),
-                                                        bottomNavigationBar: Padding(
-                                                          padding:  EdgeInsets.only(right: 16.0,left: 50*fem),
-                                                          child: BottomNavigationBar(
-                                                            elevation: 0,
-                                                            type: BottomNavigationBarType.fixed,
-                                                            items: [
-
-                                                              BottomNavigationBarItem(
-                                                                icon: InkWell(
-                                                                  onTap:(){
-                                                                    initialValue();
-                                                                  },
-                                                                  child: Container(
-                                                                    width: 100,
-                                                                    padding: EdgeInsets.all(10),
-                                                                    decoration: BoxDecoration(
-                                                                      color: Colors.white,
-                                                                      borderRadius: BorderRadius.circular(5),
-                                                                      border: Border.all(color: Colors.black54),
-                                                                    ),
-                                                                    child: Center(
-                                                                      child: Text(
-                                                                        "Cancel",
-                                                                        style: TextStyle(
-                                                                          fontSize: 12,
-                                                                          fontWeight: FontWeight.bold,
-                                                                          color: Colors.black54,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                label: '',
-                                                              ),
-
-                                                              BottomNavigationBarItem(
-                                                                icon: InkWell(
-                                                                  onTap:(){
-                                                                    print("id is ${state.item['_id']}");
-
-                                                                    Map<String, dynamic> requestBody = {
-                                                                      "totalCount":int.parse(LiveMenuVariables.total.text),
-                                                                      "fp_unit_sessions": {
-                                                                        "Breakfast": {
-                                                                          "Default": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.breakfastTotal.text),
-                                                                          },
-                                                                          "Session1": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.bfSession1Controller.text),
-                                                                          },
-                                                                          "Session2": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.bfSession2Controller.text),
-                                                                          },
-                                                                          "Session3": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.bfSession3Controller.text),
-                                                                          },
-                                                                          "Session4": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.bfSession4Controller.text),
-                                                                          },
-                                                                        },
-                                                                        "Lunch": {
-                                                                          "Default": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.lunchTotal.text),
-                                                                          },
-                                                                          "Session1": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.lnSession1Controller.text),
-                                                                          },
-                                                                          "Session2": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.lnSession2Controller.text),
-                                                                          },
-                                                                          "Session3": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.lnSession3Controller.text),
-                                                                          },
-                                                                          "Session4": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.lnSession4Controller.text),
-                                                                          },
-                                                                        },
-                                                                        "Dinner": {
-                                                                          "Default": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.dinnerTotal.text),
-                                                                          },
-                                                                          "Session1": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.dnSession1Controller.text),
-                                                                          },
-                                                                          "Session2": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.dnSession2Controller.text),
-                                                                          },
-                                                                          "Session3": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.dnSession3Controller.text),
-                                                                          },
-                                                                          "Session4": {
-                                                                            "Enabled": true,
-                                                                            "availableCount": int.parse(LiveMenuVariables.dnSession4Controller.text),
-                                                                          },
-                                                                        },
-                                                                      },
-                                                                    };
-
-                                                                    int totalCount = int.parse(LiveMenuVariables.total.text);
-                                                                    if(totalCount > 9999)
-                                                                    {
-                                                                      _showExceedLimitAlertDialog(context);
-
-                                                                    }
-                                                                    else if(totalCount<9)
-                                                                    {
-                                                                      _showExceedLimitAlertDialog1(context);
-                                                                    }
-                                                                    else {
-                                                                      MenuService menuService = MenuService();
-                                                                      menuService.updateLiveMenu(state.item['_id'] , requestBody);
-                                                                      _showConfirm(context);
-                                                                    }
-                                                                  },
-                                                                  child: Container(
-                                                                    width: 100,
-                                                                    padding: EdgeInsets.all(10),
-                                                                    decoration: BoxDecoration(
-                                                                      color: GlobalVariables.primaryColor, // Replace with your primary color
-                                                                      borderRadius: BorderRadius.circular(5),
-                                                                    ),
-                                                                    child: Center(
-                                                                      child: Text(
-                                                                        "Confirm",
-                                                                        style: TextStyle(
-                                                                          fontSize: 12,
-                                                                          fontWeight: FontWeight.bold,
-                                                                          color: Colors.white,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                label: '',
-
-                                                              ),
+                                                            tabs: [
+                                                              Tab(text: 'Orders'),
+                                                              Tab(text: 'Subscriptions'),
                                                             ],
                                                           ),
                                                         ),
+
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                body: TabBarView(
+
+                                                  children: [
+
+                                                    Container(
+                                                      width:1200,
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          SizedBox(height: 10,),
+                                                          Container(
+                                                            width:400,
+                                                            margin: EdgeInsets.all(10),
+                                                            child: Row(
+                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                              children: [
+                                                                GlobalFunction.buildMealButton(context,MealTime.All,'All'),
+                                                                GlobalFunction.buildMealButton(context,MealTime.Breakfast,'Breakfast'),
+                                                                GlobalFunction.buildMealButton(context,MealTime.Lunch,'Lunch'),
+                                                                GlobalFunction.buildMealButton(context,MealTime.Dinner,'Dinner'),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 15,),
+
+                                                          SizedBox(height: 0,),
+                                                          Expanded(
+                                                            child: SingleChildScrollView(
+                                                              child: Container(
+                                                                width: 1200,
+                                                                child: LayoutBuilder(
+                                                                  builder: (context, constraints) {
+                                                                    int columns = 1;
+                                                                    if (foodCategories.length > 5 && foodCategories.length <= 10) {
+                                                                      columns = 2;
+                                                                    } else if(foodCategories.length > 10){
+                                                                      columns = 3;
+                                                                    }
+
+                                                                    double columnWidth = (constraints.maxWidth - (columns - 1) * 5) / columns;
+
+                                                                    return Column(
+                                                                      mainAxisSize: MainAxisSize.min,
+                                                                      children: [
+                                                                        Wrap(
+                                                                          spacing: 5, // spacing between columns
+                                                                          runSpacing: 5, // spacing between rows
+                                                                          children: List.generate(
+                                                                            filteredFoodCategory.length == 0
+                                                                                ? foodCategories.length
+                                                                                : filteredFoodCategory.length,
+                                                                                (index) {
+                                                                              String category = filteredFoodCategory.length == 0
+                                                                                  ? foodCategories.keys.elementAt(index)
+                                                                                  : filteredFoodCategory.keys.elementAt(index);
+                                                                              List<Map<String, dynamic>> itemsList = filteredFoodCategory.length == 0
+                                                                                  ? foodCategories[category]!
+                                                                                  : filteredFoodCategory[category]!;
+                                                                              List<String> items = itemsList.map((item) => item['disName'] as String).toList();
+
+                                                                              bool categoryContainsMatch = items.any((item) => item.toLowerCase().contains(widget.searchQuery.toLowerCase()));
+
+                                                                              return Container(
+                                                                                width: columnWidth,
+                                                                                child: InkWell(
+                                                                                  onTap: () {
+                                                                                    context.read<LiveMenuBloc>().add(SelectCategoryEvent(Lstate.selectedCategories, category));
+                                                                                  },
+                                                                                  child: Column(
+                                                                                    key: Key('$category'),
+                                                                                    children: [
+                                                                                      Container(
+                                                                                        margin: EdgeInsets.only(top: 5, bottom: 5),
+                                                                                        color: Lstate.selectedCategories.contains(category)
+                                                                                            ? Color(0xFF363563)
+                                                                                            : null,
+                                                                                        child: ListTile(
+                                                                                          title: Text(
+                                                                                            category,
+                                                                                            style: TextStyle(
+                                                                                              fontSize: 12,
+                                                                                              fontWeight: FontWeight.bold,
+                                                                                              color: Lstate.selectedCategories.contains(category)
+                                                                                                  ? Colors.white
+                                                                                                  : Colors.black,
+                                                                                            ),
+                                                                                          ),
+                                                                                          leading: Icon(
+                                                                                            Icons.grid_view_rounded,
+                                                                                            size: 10,
+                                                                                            color: Lstate.selectedCategories.contains(category)
+                                                                                                ? Colors.white
+                                                                                                : Colors.black,
+                                                                                          ),
+                                                                                          trailing: Row(
+                                                                                            mainAxisSize: MainAxisSize.min,
+                                                                                            children: [],
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                      Visibility(
+                                                                                        visible: Lstate.selectedCategories.contains(category),
+                                                                                        child: Column(
+                                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                                                          children: _buildItemsList(category, itemsList, Lstate.selectedCategories),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              );
+                                                                            },
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    );
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          )
+
+
+
+
+
+                                                        ],
                                                       ),
                                                     ),
-                                                    Column()
+                                                    Container(
+                                                      color: GlobalVariables.lightColor,
+                                                      width:450,
+                                                      child: Column(
+                                                        children: [
+                                                          SizedBox(height: 10,),
+                                                          Container(
+
+                                                            margin: EdgeInsets.all(10),
+                                                            child: Row(
+                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                              children: [
+                                                                GlobalFunction.buildMealButton(context,MealTime.All,'All'),
+                                                                GlobalFunction.buildMealButton(context,MealTime.Breakfast,'Breakfast'),
+                                                                GlobalFunction.buildMealButton(context,MealTime.Lunch,'Lunch'),
+                                                                GlobalFunction.buildMealButton(context,MealTime.Dinner,'Dinner'),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 15,),
+
+                                                          SizedBox(height: 0,),
+                                                          Expanded(
+                                                            child: ReorderableListView.builder(
+                                                              buildDefaultDragHandles: false,
+                                                              primary: true,
+                                                              shrinkWrap: true,
+                                                              itemCount: filteredFoodCategory.length == 0
+                                                                  ? foodCategories.length
+                                                                  : filteredFoodCategory.length,
+                                                              itemBuilder: (context, index) {
+                                                                String category = filteredFoodCategory.length == 0
+                                                                    ? foodCategories.keys.elementAt(index)
+                                                                    : filteredFoodCategory.keys.elementAt(index);
+                                                                List<Map<String, dynamic>> itemsList = filteredFoodCategory.length == 0
+                                                                    ? foodCategories[category]!
+                                                                    : filteredFoodCategory[category]!;
+                                                                List<String> items = itemsList.map((item) => item['disName'] as String).toList();
+
+                                                                bool categoryContainsMatch = items.any((item) => item.toLowerCase().contains(widget.searchQuery.toLowerCase()));
+
+                                                                return ReorderableDragStartListener(
+                                                                  enabled: true,
+                                                                  key: Key(category),
+                                                                  index: index,
+                                                                  child: InkWell(
+                                                                    onTap: () {
+                                                                      context.read<LiveMenuBloc>().add(SelectCategoryEvent(Lstate.selectedCategories, category));
+                                                                    },
+                                                                    child: Column(
+                                                                      key: Key('$category'),
+                                                                      children: [
+                                                                        Container(
+                                                                          margin: EdgeInsets.only(top: 5, bottom: 5),
+                                                                          color:  Lstate.selectedCategories.contains(category)
+                                                                              ? Color(0xFF363563)
+                                                                              : null,
+                                                                          child: ListTile(
+                                                                            title: Text(
+                                                                              category,
+                                                                              style: TextStyle(
+                                                                                fontSize: 12,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                color:  Lstate.selectedCategories.contains(category)
+                                                                                    ? Colors.white
+                                                                                    : Colors.black,
+                                                                              ),
+                                                                            ),
+                                                                            leading: Icon(
+                                                                              Icons.grid_view_rounded,
+                                                                              size: 10,
+                                                                              color:  Lstate.selectedCategories.contains(category)
+                                                                                  ? Colors.white
+                                                                                  : Colors.black,
+                                                                            ),
+                                                                            trailing: Row(
+                                                                              mainAxisSize: MainAxisSize.min,
+                                                                              children: [
+                                                                                InkWell(
+                                                                                  onTap: () {
+                                                                                    _showAddItemDialog();
+                                                                                  },
+                                                                                  child: Row(
+                                                                                    mainAxisSize: MainAxisSize.min,
+                                                                                    children: [
+                                                                                      SizedBox(width: 5),
+                                                                                      Icon(
+                                                                                        Icons.add,
+                                                                                        size: 15,
+                                                                                        color: GlobalVariables.primaryColor,
+                                                                                      ),
+                                                                                      SizedBox(width: 5),
+                                                                                      Text(
+                                                                                        'ADD ITEM',
+                                                                                        style: TextStyle(
+                                                                                          fontSize: 12,
+                                                                                          fontWeight: FontWeight.bold,
+                                                                                          color: GlobalVariables.primaryColor,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        Visibility(
+                                                                          visible:  Lstate.selectedCategories.contains(category),
+                                                                          child: Column(
+                                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                                            children: _buildItemsList(category, itemsList,Lstate.selectedCategories),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              onReorder: (oldIndex, newIndex) {
+                                                                setState(() {
+                                                                  if (oldIndex < newIndex) {
+                                                                    newIndex -= 1;
+                                                                  }
+                                                                  List<MapEntry<String, List<Map<String, dynamic>>>> entries =
+                                                                  filteredFoodCategory.length == 0
+                                                                      ? foodCategories.entries.toList()
+                                                                      : filteredFoodCategory.entries.toList();
+                                                                  MapEntry<String, List<Map<String, dynamic>>> removedEntry =
+                                                                  entries.removeAt(oldIndex);
+                                                                  entries.insert(newIndex, removedEntry);
+
+                                                                  // Convert the List back to a Map
+                                                                  if (filteredFoodCategory.length == 0) {
+                                                                    foodCategories = Map.fromEntries(entries);
+                                                                  } else {
+                                                                    filteredFoodCategory = Map.fromEntries(entries);
+                                                                  }
+                                                                });
+                                                              },
+                                                            ),
+
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+
+
                                                   ],
                                                 ),
-
                                               ),
-                                            ],
-                                          ) : Column(
+                                            ),
+                                          ),
+
+                                          Column(
                                             children: [
                                               Container(
                                                 height: 60,
                                                 color: Colors.grey.shade100,
                                                 child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  mainAxisAlignment: MainAxisAlignment.start,
                                                   children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        SizedBox(width: 15,),
-                                                        GlobalFunction.buildMealButton(context,MealTime.All,'All'),
-                                                        SizedBox(width: 15,),
-                                                        GlobalFunction.buildMealButton(context,MealTime.Breakfast,'Breakfast'),
-                                                        SizedBox(width: 15,),
-                                                        GlobalFunction.buildMealButton(context,MealTime.Lunch,'Lunch'),
-                                                        SizedBox(width: 15,),
-                                                        GlobalFunction.buildMealButton(context,MealTime.Dinner,'Dinner'),
-                                                        SizedBox(width: 15,),
 
-                                                      ],
-                                                    ),
 
-                                                    Container(
-                                                      width: 2,
-                                                      color: GlobalVariables.primaryColor.withOpacity(0.3),
-                                                    ),
+
 
                                                     Row(
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1442,11 +715,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                                                         SizedBox(width: 15,),
                                                       ],
                                                     ),
-
-                                                    Container(
-                                                      width: 2,
-                                                      color: GlobalVariables.primaryColor.withOpacity(0.3),
-                                                    ),
+                                                    SizedBox(width: 30,),
 
                                                     Row(
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1467,160 +736,8 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                                               ),
                                               Expanded(child: ItemDetailsTable(loaded: true,)),
                                             ],
-                                          ),
-
-
-                                          Column(
-                                            children: [
-                                              SizedBox(height: 10,),
-                                              Container(
-                                                margin: EdgeInsets.all(10),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                  children: [
-                                                    buildMealTimeButtonSubscription(MealTime.Breakfast, 'Breakfast'),
-                                                    buildMealTimeButtonSubscription(MealTime.Lunch, 'Lunch'),
-                                                    buildMealTimeButtonSubscription(MealTime.Dinner, 'Dinner'),
-                                                  ],
-                                                ),
-                                              ),
-
-                                              SizedBox(height: 15,),
-
-                                              SizedBox(height: 0,),
-                                              Expanded(
-                                                child: ReorderableListView.builder(
-                                                  buildDefaultDragHandles: false,
-                                                  primary: true,
-                                                  shrinkWrap: true,
-                                                  itemCount: filteredSubscriptionCategory.length == 0
-                                                      ? subscriptionFoodCategories.length
-                                                      : filteredSubscriptionCategory.length,
-                                                  itemBuilder: (context, index) {
-                                                    String category = filteredSubscriptionCategory.length == 0
-                                                        ? subscriptionFoodCategories.keys.elementAt(index)
-                                                        : filteredSubscriptionCategory.keys.elementAt(index);
-                                                    List<Map<String, dynamic>> itemsList = filteredSubscriptionCategory.length == 0
-                                                        ? subscriptionFoodCategories[category]!
-                                                        : filteredSubscriptionCategory[category]!;
-                                                    List<String> items = itemsList.map((item) => item['name'] as String).toList();
-
-                                                    bool categoryContainsMatch = items.any((item) =>
-                                                        item.toLowerCase().contains(widget.searchQuery.toLowerCase()));
-
-                                                    return ReorderableDragStartListener(
-                                                      enabled: true,
-                                                      key: Key(category),
-                                                      index: index,
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            if (categoryContainsMatch) {
-                                                              if (selectedSubscription.contains(category)) {
-                                                                selectedSubscription.remove(category);
-                                                              } else {
-                                                                selectedSubscription.add(category);
-                                                              }
-                                                            }
-                                                          });
-                                                        },
-                                                        child: Column(
-                                                          key: Key('$category'),
-                                                          children: [
-                                                            Container(
-                                                              margin: EdgeInsets.only(top: 5, bottom: 5),
-                                                              color: selectedSubscription.contains(category)
-                                                                  ? Color(0xFF363563)
-                                                                  : null,
-                                                              child: ListTile(
-                                                                title: Text(
-                                                                  category,
-                                                                  style: TextStyle(
-                                                                    fontSize: 12,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    color: selectedSubscription.contains(category)
-                                                                        ? Colors.white
-                                                                        : Colors.black,
-                                                                  ),
-                                                                ),
-                                                                leading: Icon(
-                                                                  Icons.grid_view_rounded,
-                                                                  size: 10,
-                                                                  color: selectedSubscription.contains(category)
-                                                                      ? Colors.white
-                                                                      : Colors.black,
-                                                                ),
-                                                                trailing: Row(
-                                                                  mainAxisSize: MainAxisSize.min,
-                                                                  children: [
-                                                                    InkWell(
-                                                                      onTap: () {
-                                                                        _showAddItemDialogSubscription();
-                                                                      },
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.min,
-                                                                        children: [
-                                                                          SizedBox(width: 5),
-                                                                          Icon(
-                                                                            Icons.add,
-                                                                            size: 15,
-                                                                            color: GlobalVariables.primaryColor,
-                                                                          ),
-                                                                          SizedBox(width: 5),
-                                                                          Text(
-                                                                            'ADD ITEM',
-                                                                            style: TextStyle(
-                                                                              fontSize: 12,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: GlobalVariables.primaryColor,
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Visibility(
-                                                              visible: selectedSubscription.contains(category),
-                                                              child: Column(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                                children: _buildItemsListSubscription(category, itemsList),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                  onReorder: (oldIndex, newIndex) {
-                                                    setState(() {
-                                                      if (oldIndex < newIndex) {
-                                                        newIndex -= 1;
-                                                      }
-                                                      List<MapEntry<String, List<Map<String, dynamic>>>> entries =
-                                                      filteredSubscriptionCategory.length == 0
-                                                          ? subscriptionFoodCategories.entries.toList()
-                                                          : filteredSubscriptionCategory.entries.toList();
-                                                      MapEntry<String, List<Map<String, dynamic>>> removedEntry =
-                                                      entries.removeAt(oldIndex);
-                                                      entries.insert(newIndex, removedEntry);
-
-                                                      // Convert the List back to a Map
-                                                      if (filteredSubscriptionCategory.length == 0) {
-                                                        subscriptionFoodCategories = Map.fromEntries(entries);
-                                                      } else {
-                                                        filteredSubscriptionCategory = Map.fromEntries(entries);
-                                                      }
-                                                    });
-                                                  },
-                                                ),
-
-                                              ),
-                                            ],
                                           )
+
                                         ],
                                       ),
                                     ),
@@ -1939,7 +1056,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
     print( "Selected CAtegories ${selectedCategory.length}");
     if ( selectedCategories.isNotEmpty && selectedCategories.contains(category)) {
       return itemsList.map((item) {
-        String itemName = item['name'] as String;
+        String itemName = item['disName'] as String;
         bool availability = item['availability'] as bool;
         Map<String, dynamic> itemDetails = item;
         print( "Selected CAtegories ${itemName}  ${availability}");
@@ -1959,7 +1076,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
 
     if (selectedSubscription.isNotEmpty && selectedSubscription.contains(category)) {
       return itemsList.map((item) {
-        String itemName = item['name'] as String;
+        String itemName = item['disName'] as String;
         bool availability = item['availability'] as bool;
         Map<String, dynamic> itemDetails = item;
         return _buildDismissibleItemSubscription(

@@ -7,16 +7,18 @@ class MenuEditorVariables {
 
   static Set<String> selectedCategories = Set();
 
-  static String selectedItem = '';
+  static String selectedItem = "";
 
   static Map<String, List<Map<String,dynamic>>> menuFoodCategories = {};
 
   static Map<String, dynamic> selectItem = {};
 
   static TextEditingController nameController = TextEditingController();
+  static TextEditingController displayNameController = TextEditingController();
   static TextEditingController categoryController = TextEditingController();
   static TextEditingController subCategoryController = TextEditingController();
   static TextEditingController subTagController = TextEditingController();
+  static TextEditingController tagController = TextEditingController();
   static TextEditingController budgetController = TextEditingController();
   static TextEditingController typeController = TextEditingController();
   static TextEditingController subTypeController = TextEditingController();
@@ -83,5 +85,19 @@ class MenuEditorVariables {
   };
 
   static int selectedOption = 1;
+
+  static  Map<String, Map<String, bool>> mealData = {
+    'Sun': {'Breakfast': true,  'Lunch':  true, 'Dinner': true},
+    'Mon': {'Breakfast': false, 'Lunch': false, 'Dinner': false},
+    'Tue': {'Breakfast': false, 'Lunch': false, 'Dinner': false},
+    'Wed': {'Breakfast': false, 'Lunch': false, 'Dinner': false},
+    'Thu': {'Breakfast': false, 'Lunch': false, 'Dinner': false},
+    'Fri': {'Breakfast': false, 'Lunch': false, 'Dinner': false},
+    'Sat': {'Breakfast': false, 'Lunch': false, 'Dinner': false},
+  };
+
+  static List<String> tags = [];
+
+  static List<String> items = [];
 
 }

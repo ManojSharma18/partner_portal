@@ -60,9 +60,7 @@ class ItemDetailsTable extends StatelessWidget {
                         color:Color(0xFF363563).withOpacity(0.9),
                         child: Row(
                           children: [
-                            Container(
-                              padding: EdgeInsets.only(left: 10*fem),
-                              width:100*fem,child: Text("ItemName",style: GlobalVariables.headingStyle,),),
+                            Container(padding: EdgeInsets.only(left: 10*fem), width:100*fem,child: Text("ItemName",style: GlobalVariables.headingStyle,),),
                             Container(width: 50*fem,child: Center(child: Text("Total",style: GlobalVariables.headingStyle,))),
                             Container(width: 60*fem,child: Center(child: Text("Breakfast",style: GlobalVariables.headingStyle,))),
                             Container(width: 60*fem,child: Center(child: Text("Lunch",style: GlobalVariables.headingStyle,))),
@@ -84,7 +82,7 @@ class ItemDetailsTable extends StatelessWidget {
                                     height:GlobalVariables.rowHeights[index],
                                     child: Row(
                                       children: [
-                                        Container(  padding: EdgeInsets.only(left: 10*fem),width : 100*fem,child: Text("${index} ${item.name}",style: GlobalVariables.dataItemStyle,)),
+                                        Container(  padding: EdgeInsets.only(left: 10*fem),width : 100*fem,child: Text("${index} ${item.dname}",style: GlobalVariables.dataItemStyle,)),
                                         Container(width: 1,color: GlobalVariables.textColor.withOpacity(0.5),),
                                         Container(width: 50*fem,
                                             child: Column(
@@ -835,7 +833,8 @@ class ItemDetailsTable extends StatelessWidget {
                         children: [
                           Container(
                             padding: EdgeInsets.only(left: 10*fem),
-                            width:75*fem,child: Text("ItemName",style: GlobalVariables.headingStyle,),),
+                            width:15*fem,child: Text("Sl no",style: GlobalVariables.headingStyle,),),
+                          Container(padding: EdgeInsets.only(left: 10*fem), width:75*fem,child: Text("ItemName",style: GlobalVariables.headingStyle,),),
                           Container(width: 50*fem,child: Center(child: Text("Total",style: GlobalVariables.headingStyle,))),
                           Container(width: 60*fem,child: Center(child: Text("Breakfast",style: GlobalVariables.headingStyle,))),
                           Container(width: 60*fem,child: Center(child: Text("Lunch",style: GlobalVariables.headingStyle,))),

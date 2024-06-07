@@ -57,7 +57,7 @@ class _MonthRatingState extends State<MonthRating> {
               children: [
                 Container(
                   width: 170*fem,
-                  height: 500,
+                  height: 450,
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: LineChart(

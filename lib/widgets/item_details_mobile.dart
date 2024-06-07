@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:partner_admin_portal/constants/menu_editor_constants/menu_editor_variables.dart';
 
 import 'custom_textfield.dart';
 import '../constants/global_variables.dart';
@@ -112,7 +113,7 @@ class _ItemDetailsMobState extends State<ItemDetailsMob> {
     double baseWidth = 375;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     double ffem = fem * 0.97;
-    ItemDetails.displayNameController.text = widget.name;
+    MenuEditorVariables.displayNameController.text = widget.name;
     nameController.text = widget.name;
     return Scaffold(
 
@@ -504,7 +505,7 @@ class _ItemDetailsMobState extends State<ItemDetailsMob> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
 
-                      CustomTextField(label: "Display name", controller: ItemDetails.displayNameController,width: 350*fem,onChanged: (val) {
+                      CustomTextField(label: "Display name", controller: MenuEditorVariables.displayNameController,width: 350*fem,onChanged: (val) {
 
                       },),
                       SizedBox(height: 20,),
