@@ -37,11 +37,17 @@ class _DashboardScreenState extends State<DashboardScreen>  {
 
   int menuIndex = 1;
 
+  int settingsIndex = 1;
+
   bool isHovered = false;
+
+  OverlayEntry? _overlayEntry;
 
   List<bool> selected = [true,false,false,false,false,false,false];
 
   bool expandMeanu = false;
+
+  bool expandSettings = false;
 
   bool expandOrder = false;
 
@@ -81,7 +87,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
 
                     ],
                   )),
-                 ListTile(
+                  ListTile(
                    title: Column(
                      children: [
                        Row(
@@ -129,20 +135,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                                  },
                                ),
                              ),
-                             Container(
-                               margin: EdgeInsets.only(left: 30),
-                               child: ListTile(
-                                 title: Text("Forecast",style: SafeGoogleFont(
-                                   'Poppins',
-                                   fontSize: 12,
-                                   fontWeight: FontWeight.bold,
-                                   color:GlobalVariables.textColor,
-                                 ),),
-                                 onTap: (){
-                                   Navigator.push(context, MaterialPageRoute(builder: (context) => AnalyseOrdersMobile()));
-                                 },
-                               ),
-                             )
+
                            ],
                          ),
                        )
@@ -193,7 +186,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                               Container(
                                 margin: EdgeInsets.only(left: 30),
                                 child: ListTile(
-                                  title: Text("Menu editor",style: SafeGoogleFont(
+                                  title: Text("Menu editor 1",style: SafeGoogleFont(
                                     'Poppins',
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
@@ -203,7 +196,36 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                                     Navigator.push(context, MaterialPageRoute(builder: (context) =>  MenuDetails(index: 2,),));
                                   },
                                 ),
-                              )
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(left: 30),
+                                child: ListTile(
+                                  title: Text("Menu editor 2",style: SafeGoogleFont(
+                                    'Poppins',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color:GlobalVariables.textColor,
+                                  ),),
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  MenuDetails(index: 3,),));
+                                  },
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(left: 30),
+                                child: ListTile(
+                                  title: Text("Forecast",style: SafeGoogleFont(
+                                    'Poppins',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color:GlobalVariables.textColor,
+                                  ),),
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => AnalyseOrdersMobile()));
+                                  },
+                                ),
+                              ),
+
                             ],
                           ),
                         )
@@ -259,18 +281,63 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                   ),
 
                   ListTile(
-                    title: Row(
+                    title: Column(
                       children: [
-                        Image(image: AssetImage("assets/images/settings.png"),width: 20,height: 20,color: GlobalVariables.primaryColor,),
-                        SizedBox(width: 10,),
-                        Text("Manage settings",style: SafeGoogleFont(
-                          'Poppins',
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color:GlobalVariables.textColor,
-                        ),),
+                        Row(
+                          children: [
+                            Image(image: AssetImage("assets/images/settings.png"),width: 20,height: 20,color: GlobalVariables.primaryColor,),
+                            SizedBox(width: 10,),
+                            Text("Settings",style: SafeGoogleFont(
+                              'Poppins',
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color:GlobalVariables.textColor,
+                            ),),
+                          ],
+                        ),
+                        SizedBox(height: 10,),
+                        Visibility(
+                          visible: expandSettings,
+                          child: Column(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(left: 30),
+                                child: ListTile(
+                                  title: Text("Outlet",style: SafeGoogleFont(
+                                    'Poppins',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color:GlobalVariables.textColor,
+                                  ),),
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  ManageSetting(index: settingsIndex,)));
+                                  },
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(left: 30),
+                                child: ListTile(
+                                  title: Text("Staff",style: SafeGoogleFont(
+                                    'Poppins',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color:GlobalVariables.textColor,
+                                  ),),
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  ManageSetting(index: settingsIndex,)));
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
                       ],
                     ),
+                    onTap: (){
+                      setState(() {
+                        expandSettings = !expandSettings;
+                      });
+                    },
                   ),
                   ListTile(
                     title: Row(
@@ -346,24 +413,17 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                                     NavBarItem(icon: "assets/images/list_819860.png",
                                         text: "Orders",
                                         hover: (val){
-                                          if(val)
-                                          {
-                                            showPopupMenu(context);
-                                          }
-                                          else{
-                                            Container();
-                                          }
+
                                         },
                                         touched: () {
-                                          showPopupMenu(context);
                                           setState(() {
-                                            // select(0);
-                                            // _selectedIndex = 0;
+                                            select(0);
+                                            _selectedIndex = 0;
                                           });
                                         },
                                         active: selected[0]),
                                     NavBarItem(icon: "assets/images/restaurant_685352.png",
-                                        text: "Manage",
+                                        text: "Menu",
                                         hover: (val){
                                           if(val)
                                           {
@@ -409,7 +469,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                                         },
                                         active: selected[4]),
                                     NavBarItem(icon: "assets/images/settings.png",
-                                        text: "Manage\nSettings",
+                                        text: "Settings",
                                         touched: (){
                                           setState(() {
                                             select(5);
@@ -448,7 +508,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                       Report(),
                       // Boost(),
                       Payout(),
-                      ManageSetting(),
+                      ManageSetting(index: settingsIndex,),
                       Help()
                       // Add more sections as needed
                     ],
@@ -512,7 +572,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                           child: SingleChildScrollView(
                             child: Column(
                               children: [ NavBarItem(icon: "assets/images/list_819860.png",
-                                  text: "Manage",
+                                  text: "Orders",
                                   touched: (){
                                     setState(() {
                                       select(0);
@@ -559,6 +619,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                                 //       active: selected[0]),
                                 // ),
                                 MouseRegion(
+
                                   onEnter: (_){
                                     setState(() {
                                       isHovered = true;
@@ -575,7 +636,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                                     setState(() {
                                       isHovered = false;
                                     });
-                                    print("Hovered $isHovered");
+
                                     if(!isHovered)
                                       {
                                         Container();
@@ -588,6 +649,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                                         showPopupMenu1(context);
 
                                       },
+
                                       active: selected[1]),
                                 ),
                                 NavBarItem(icon: "assets/images/ratings-removebg-preview.png",
@@ -597,7 +659,9 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                                         select(2);
                                         _selectedIndex = 2;
                                       });
+
                                     },
+
                                     active: selected[2]),
                                 NavBarItem(icon: "assets/images/high-wifi-signal_63686.png",
                                     text: "Reports",
@@ -617,15 +681,44 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                                       });
                                     },
                                     active: selected[4]),
-                                NavBarItem(icon: "assets/images/settings.png",
-                                    text: "Manage\nSettings",
-                                    touched: (){
-                                      setState(() {
-                                        select(5);
-                                        _selectedIndex = 5;
-                                      });
-                                    },
-                                    active: selected[5]),
+                                // NavBarItem(icon: "assets/images/settings.png",
+                                //     text: "Settings",
+                                //     touched: (){
+                                //       setState(() {
+                                //         select(5);
+                                //         _selectedIndex = 5;
+                                //       });
+                                //     },
+                                //     active: selected[5]),
+                                MouseRegion(
+                                  onEnter: (_){
+                                    setState(() {
+                                      isHovered = true;
+                                    });
+                                    if(isHovered)
+                                    {
+                                      select(5);
+                                      showPopupMenuSettings(context);
+                                    }
+                                  },
+                                  onExit: (_){
+                                    setState(() {
+                                      isHovered = false;
+                                    });
+                                    if(!isHovered)
+                                    {
+                                      Container();
+                                    }
+                                  },
+                                  child: NavBarItem(icon: "assets/images/settings.png",
+                                      text: "Settings",
+
+                                      touched: () {
+                                        showPopupMenu1(context);
+
+                                      },
+                                      active: selected[5]),
+                                ),
                                 NavBarItem(icon: "assets/images/help.jpg",
                                     text: "Help",
                                     touched: (){
@@ -657,7 +750,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
                   Report(),
                   // Boost(),
                   Payout(),
-                  ManageSetting(),
+                  ManageSetting(index: settingsIndex,),
                   Help()
                 ],
               ),
@@ -671,6 +764,136 @@ class _DashboardScreenState extends State<DashboardScreen>  {
   }
 
   void showPopupMenu1(BuildContext context) {
+    showMenu(
+      context: context,
+      color: GlobalVariables.whiteColor,
+      elevation: 2,
+      constraints: const BoxConstraints(
+        minWidth:100,
+        maxWidth:200,
+      ),
+      popUpAnimationStyle: AnimationStyle(
+        duration: Duration(milliseconds: 500),
+        reverseDuration: Duration(milliseconds: 500),
+        curve: Curves.linear
+      ),
+
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      position: RelativeRect.fromLTRB(100, 180, 100, 0), // Adjust the position as needed
+      items: [
+        PopupMenuItem(
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                select(1);
+                _selectedIndex = 1;
+                menuIndex = 1;
+              });
+
+              Navigator.pop(context);
+            },
+            child: Row(
+              children: [
+                Icon(Icons.live_tv, color: GlobalVariables.textColor,size: 15,),
+                SizedBox(width: 10),
+                Text(
+                  'Live menu',
+                  style: GlobalVariables.dataItemStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        PopupMenuItem(
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                menuIndex = 2;
+                select(1);
+                _selectedIndex = 1;
+              });
+
+              Navigator.pop(context);
+            },
+            child: Row(
+              children: [
+                Icon(Icons.edit, color: GlobalVariables.textColor,size: 15,),
+                SizedBox(width: 10),
+                Text(
+                  'Menu editor 1',
+                  style: GlobalVariables.dataItemStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                menuIndex = 3;
+                select(1);
+                _selectedIndex = 1;
+              });
+              Navigator.pop(context);
+            },
+            child: Row(
+              children: [
+                Icon(Icons.history, color: GlobalVariables.textColor,size: 15,),
+                SizedBox(width: 10),
+                Text(
+                  'Menu editor 2',
+                  style: GlobalVariables.dataItemStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        PopupMenuItem (
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                select(1);
+                _selectedIndex = 1;
+                menuIndex = 4;
+              });
+
+              Navigator.pop(context);
+            },
+            child: Row(
+              children: [
+                Icon(Icons.live_tv, color: GlobalVariables.textColor,size: 15,),
+                SizedBox(width: 10),
+                Text(
+                  'Forecast',
+                  style: GlobalVariables.dataItemStyle.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+      ],
+    );
+  }
+
+
+  void showPopupMenuSettings(BuildContext context) {
     {
       showMenu(
         context: context,
@@ -679,31 +902,33 @@ class _DashboardScreenState extends State<DashboardScreen>  {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
-        position: RelativeRect.fromLTRB(100, 215, 100, 0), // Adjust the position as needed
+        position: RelativeRect.fromLTRB(100, 540, 100, 0), // Adjust the position as needed
         items: [
           PopupMenuItem(
-            child: ListTile(
-              title: Text('Live menu'),
-              onTap: () {
-                setState(() {
-                  select(1);
-                  _selectedIndex = 1;
-                  menuIndex = 1;
-                });
+            child: Container(
+              color: Colors.white10, // Ensure the background is transparent
+              child: ListTile(
+                title: Text('Outlet'),
+                onTap: () {
+                  setState(() {
+                    select(5);
+                    _selectedIndex = 5;
+                    settingsIndex = 1;
+                  });
 
-                Navigator.pop(context); // Close the popup menu
-
-              },
+                  Navigator.pop(context); // Close the popup menu
+                },
+              ),
             ),
           ),
           PopupMenuItem(
             child: ListTile(
-              title: Text('Menu editor'),
+              title: Text('Preference'),
               onTap: () {
                 setState(() {
-                  menuIndex = 2;
-                  select(1);
-                  _selectedIndex = 1;
+                  settingsIndex = 2;
+                  select(5);
+                  _selectedIndex = 5;
 
                 });
 
@@ -712,14 +937,15 @@ class _DashboardScreenState extends State<DashboardScreen>  {
               },
             ),
           ),
+
           PopupMenuItem(
             child: ListTile(
-              title: Text('Menu history'),
+              title: Text('Staff'),
               onTap: () {
                 setState(() {
-                  menuIndex = 3;
-                  select(1);
-                  _selectedIndex = 1;
+                  settingsIndex = 3;
+                  select(5);
+                  _selectedIndex = 5;
 
                 });
 
@@ -728,6 +954,7 @@ class _DashboardScreenState extends State<DashboardScreen>  {
               },
             ),
           ),
+
         ],
       );
     }

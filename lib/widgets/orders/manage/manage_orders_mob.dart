@@ -42,6 +42,7 @@ class ManageOrdersMob extends StatelessWidget {
                         child: Scaffold(
                           appBar:AppBar(
                             toolbarHeight: 0,
+
                             backgroundColor:GlobalVariables.primaryColor.withOpacity(0.2),
                             bottom: TabBar(
                               controller: tabController,
@@ -101,7 +102,7 @@ class ManageOrdersMob extends StatelessWidget {
                                         ),
                                         SizedBox(height: 5,),
                                         SearchBars(
-                                          hintText: "Search name or number or OID",
+                                          hintText: "Search number or OID",
                                           width: 350 * fem,
                                           height: 45,
                                           onChanged: (query) {

@@ -123,378 +123,255 @@ class _ItemDetailsMobState extends State<ItemDetailsMob> {
           children: [
             SizedBox(height: 20,),
             Container(
-              margin: EdgeInsets.only(left: 10*fem,right: 10*fem),
+              margin: EdgeInsets.only(left: 15*fem,right: 15*fem),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
                     children: [
-                      CustomTextField(
-                        label: "Normal price", controller: normalPriceController,width: 150*fem,
-                        onChanged: (val){
-                          // ItemDetails.checking = false;
-                          // double normaPrice = double.parse(val!);
-                          double normalPrice;
-                          double pacakgingPrice;
-                          try {
-                            normalPrice = double.parse(normalPriceController.text);
-                          } catch (e) {
-                            print('Invalid double: ${normalPriceController.text}');
-                            normalPrice = 0.0;
-                          }
-                          try {
-                            pacakgingPrice = double.parse(packagindController.text);
-                          } catch (e) {
-                            print('Invalid double: ${packagindController.text}');
-                            pacakgingPrice=0.0;
-                          }
-                          setState(() {
-                            normalFinalPrice =  normalPrice + ((5*normalPrice)/100) + pacakgingPrice;
-                            if(_selectedOrderType ==OrderType.normal)
-                            {
-                              finalPrice = normalFinalPrice;
-                            }
-                          });
-                        },),
-                      CustomTextField(label: "Packaging price", controller: packagindController,width: 150*fem,
-                        onChanged: (val){
-                          double normalPrice;
-                          double preOrderPrice;
-                          double pacakgingPrice;
-                          try {
-                            normalPrice = double.parse(normalPriceController.text);
-                            preOrderPrice = double.parse(preorderPriceController.text);
-                          } catch (e) {
-                            print('Invalid double: ${normalPriceController.text}');
-                            normalPrice = 0.0;
-                            preOrderPrice=0.0;
-                          }
-                          try {
-                            pacakgingPrice = double.parse(packagindController.text);
-                          } catch (e) {
-                            print('Invalid double: ${packagindController.text}');
-                            pacakgingPrice=0.0;
-                          }
-                          setState(() {
-                            if(_selectedOrderType == OrderType.normal)
-                            {
-                              finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                            }
-                            else if(_selectedOrderType == OrderType.preorder){
-                              finalPrice =  preOrderPrice + ((5*(preOrderPrice+pacakgingPrice))/100) + pacakgingPrice;
-                            }
-                          });
-                        },),
-                    ],
-                  ),
-                  SizedBox(height: 20,),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width:150*fem,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Final Price",style: TextStyle(
-                                  fontFamily: 'RenogareSoft',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: GlobalVariables.textColor,
-                                ),),
-                                SizedBox(width: 5,),
-                                Tooltip(
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(5)
-                                  ),
-                                  textStyle: TextStyle(
-                                    fontWeight: FontWeight.w300,
-                                    fontFamily: 'Open Sans',
-                                    fontSize: 10,
-                                    color: Colors.white,
-                                    wordSpacing: 0.23,
-                                    letterSpacing: 0.23,
-                                  ),
-                                  message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
-                                  child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 2,),
-                            Text("\u{20B9} $finalPrice",style: TextStyle(
-                              fontFamily: 'RenogareSoft',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: GlobalVariables.textColor,
-                            ),),
-                            SizedBox(height: 2,),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(width: 50*fem,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
+                          CustomTextField(
+                            label: "Normal price",
+                            controller: MenuEditorVariables.halfNormalPriceController,
+                            width: 200 * fem,
+                            onlyDigits: true,
+                            onChanged: (val) {
+
+                            },
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Checkbox(value:gstPayment, onChanged: (val){
-                                double pacakgingPrice;
-                                try {
-                                  pacakgingPrice = double.parse(packagindController.text);
-                                } catch (e) {
-                                  print('Invalid double: ${packagindController.text}');
-                                  pacakgingPrice=0.0;
-                                }
-                                setState(() {
-                                  gstPayment = val!;
-                                  print("Val $gstPayment");
-
-                                  if(_selectedOrderType == OrderType.normal)
-                                  {
-                                    if(gstPayment)
-                                    {
-                                      // finalPrice = finalPrice + pacakgingPrice;
-                                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
-                                    }
-                                    else{
-                                      // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
-                                    }
-                                  }
-                                  else{
-                                    if(gstPayment)
-                                    {
-                                      // finalPrice = finalPrice + pacakgingPrice;
-                                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
-                                    }
-                                    else{
-                                      // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
-                                    }
-                                  }
-
-                                });
-                              }),
-                              SizedBox(width: 5,),
-                              Text("Including\npacking",style:  TextStyle(
-                                fontFamily: 'BertSans',
-                                fontSize: 10,
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Final Price",style: TextStyle(
+                                    fontFamily: 'RenogareSoft',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: GlobalVariables.textColor,
+                                  ),),
+                                  SizedBox(width: 5,),
+                                  Tooltip(
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(5)
+                                    ),
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                      fontFamily: 'Open Sans',
+                                      fontSize: 10,
+                                      color: Colors.white,
+                                      wordSpacing: 0.23,
+                                      letterSpacing: 0.23,
+                                    ),
+                                    message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
+                                    child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 2,),
+                              Text("\u{20B9} ${MenuEditorVariables.halfNormalFinalPrice}", style: TextStyle(
+                                fontFamily: 'RenogareSoft',
+                                fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xff1d1517),
-                              ),)
+                                color: GlobalVariables.textColor,
+                              ),),
+                              SizedBox(height: 2,),
 
                             ],
                           ),
-
                         ],
                       ),
+                      SizedBox(height: 10,),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomTextField(label: "Preorder price", controller: MenuEditorVariables.halfPreorderPriceController,width: 200*fem,
+                            onlyDigits: true,
+                            onChanged: (val){
+                              if (val!.isEmpty) {
+                                MenuEditorVariables.halfPreorderPriceController.text = '0';
+                                val = '0';
+                              } else if (val.startsWith('.')) {
+                                MenuEditorVariables.halfPreorderPriceController.text = '0$val';
+                                val = '0$val';
+                              }
+                              setState(() {
+                                double halfPreorderPrice;
+                                double pacakgingPrice;
+                                try {
+                                  halfPreorderPrice = double.parse(MenuEditorVariables.halfPreorderPriceController.text);
+                                  pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
+                                } catch (e) {
+                                  halfPreorderPrice = 0.0;
+                                  pacakgingPrice = 0.0;
+                                }
+
+                                setState(() {
+                                  if(MenuEditorVariables.gstPayment){
+                                    MenuEditorVariables.halfPreOrderFinalPrice =  (halfPreorderPrice + pacakgingPrice) + ((5*(halfPreorderPrice  + pacakgingPrice))/100);
+                                    MenuEditorVariables.halfPreOrderFinalPrice = double.parse(MenuEditorVariables.halfPreOrderFinalPrice.toStringAsFixed(2));
+                                  }else {
+                                    MenuEditorVariables.halfPreOrderFinalPrice = (halfPreorderPrice  + pacakgingPrice) + ((halfPreorderPrice  * 5)/100);
+                                    MenuEditorVariables.halfPreOrderFinalPrice = double.parse(MenuEditorVariables.halfPreOrderFinalPrice.toStringAsFixed(2));
+                                  }
+                                });
+
+                              });
+                            },),
+
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Final Price",style: TextStyle(
+                                    fontFamily: 'RenogareSoft',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: GlobalVariables.textColor,
+                                  ),),
+                                  SizedBox(width: 5,),
+                                  Tooltip(
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(5)
+                                    ),
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                      fontFamily: 'Open Sans',
+                                      fontSize: 10,
+                                      color: Colors.white,
+                                      wordSpacing: 0.23,
+                                      letterSpacing: 0.23,
+                                    ),
+                                    message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
+                                    child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 2,),
+                              Text("\u{20B9} ${MenuEditorVariables.halfPreOrderFinalPrice}",
+                                style: TextStyle(
+                                  fontFamily: 'RenogareSoft',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: GlobalVariables.textColor,
+                                ),),
+                              SizedBox(height: 2,),
+
+                            ],
+                          ),
+                        ],
+                      ),
+
                     ],
                   ),
-
-
-
-                ],
-              ),
-            ),
-            SizedBox(height: 10,),
-            Container(height: 1,color: GlobalVariables.primaryColor,),
-            SizedBox(height: 10,),
-            SizedBox(height: 10,),
-            Container(
-              margin: EdgeInsets.only(left: 10*fem,right: 10*fem),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                  SizedBox(height: 10,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CustomTextField(label: "Preorder price", controller: preorderPriceController,width: 150*fem,
-                        onChanged: (val){
-                          setState(() {
-                            double preorderPrice;
+                      Row(
+                        children: [
+
+                          CustomTextField(label: "Packaging price", controller: MenuEditorVariables.packagindController,width: 150*fem,
+                            onlyDigits: true,
+                            onChanged: (val) {
+
+                              if (val!.isEmpty) {
+                                MenuEditorVariables.packagindController.text = '0';
+                                val = '0';
+                              } else if (val.startsWith('.')) {
+                                MenuEditorVariables.packagindController.text = '0$val';
+                                val = '0$val';
+                              }
+                              double normalPrice;
+                              double preOrderPrice;
+                              double pacakgingPrice;
+                              try {
+                                normalPrice = double.parse(MenuEditorVariables.normalPriceController.text);
+                                preOrderPrice = double.parse(MenuEditorVariables.preorderPriceController.text);
+                                pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
+                              } catch (e) {
+                                normalPrice = 0.0;
+                                preOrderPrice=0.0;
+                                pacakgingPrice=0.0;
+                              }
+
+                              setState(() {
+                                if(MenuEditorVariables.gstPayment)
+                                {
+                                  MenuEditorVariables.normalFinalPrice = (normalPrice+pacakgingPrice) + ((5*(normalPrice+pacakgingPrice))/100);
+                                  MenuEditorVariables.preOrderFinalPrice =  (preOrderPrice+pacakgingPrice) + ((5*(preOrderPrice+pacakgingPrice))/100);
+                                  MenuEditorVariables.normalFinalPrice = double.parse(MenuEditorVariables.normalFinalPrice.toStringAsFixed(2));
+                                  MenuEditorVariables.preOrderFinalPrice = double.parse(MenuEditorVariables.preOrderFinalPrice.toStringAsFixed(2));
+                                } else {
+                                  MenuEditorVariables.normalFinalPrice =    normalPrice + ((5*(normalPrice))/100) + pacakgingPrice;
+                                  MenuEditorVariables.preOrderFinalPrice =  preOrderPrice + ((5*(preOrderPrice))/100) + pacakgingPrice;
+                                  MenuEditorVariables.normalFinalPrice = double.parse(MenuEditorVariables.normalFinalPrice.toStringAsFixed(2));
+                                  MenuEditorVariables.preOrderFinalPrice = double.parse(MenuEditorVariables.preOrderFinalPrice.toStringAsFixed(2));
+                                }
+                              });
+
+                            },),
+                        ],
+                      ),
+
+                      Row(
+                        children: [
+                          Checkbox(value:MenuEditorVariables.gstPayment, onChanged: (val){
                             double pacakgingPrice;
                             try {
-                              preorderPrice = double.parse(preorderPriceController.text);
+                              pacakgingPrice = double.parse(MenuEditorVariables.packagindController.text);
                             } catch (e) {
-                              print('Invalid double: ${preorderPriceController.text}');
-                              preorderPrice = 0.0;
-                            }
-                            try {
-                              pacakgingPrice = double.parse(packagindController.text);
-                            } catch (e) {
-                              print('Invalid double: ${packagindController.text}');
                               pacakgingPrice=0.0;
                             }
                             setState(() {
-                              preOrderFinalPrice =  preorderPrice + ((5*preorderPrice)/100) + pacakgingPrice;
-                              if(_selectedOrderType ==OrderType.preorder)
+                              MenuEditorVariables.gstPayment = val!;
+                              if(MenuEditorVariables.gstPayment)
                               {
-                                finalPrice = preorderPrice;
+
+                                MenuEditorVariables.normalFinalPrice = (int.parse(MenuEditorVariables.normalPriceController.text) +  pacakgingPrice) + ((5*(int.parse(MenuEditorVariables.normalPriceController.text)+pacakgingPrice))/100);
+                                MenuEditorVariables.preOrderFinalPrice = (int.parse(MenuEditorVariables.preorderPriceController.text) +  pacakgingPrice) + ((5*(int.parse(MenuEditorVariables.preorderPriceController.text)+pacakgingPrice))/100);
                               }
+                              else{
+                                MenuEditorVariables.normalFinalPrice = (int.parse(MenuEditorVariables.normalPriceController.text) +  pacakgingPrice) + ((5*(int.parse(MenuEditorVariables.normalPriceController.text)))/100);
+                                MenuEditorVariables.preOrderFinalPrice = (int.parse(MenuEditorVariables.preorderPriceController.text) +  pacakgingPrice) + ((5*(int.parse(MenuEditorVariables.preorderPriceController.text)))/100) ;
+                              }
+
+
                             });
-                          });
-                        },),
-                      CustomTextField(label: "Packaging price", controller: packagindController,width: 150*fem,
-                        onChanged: (val){
-                          double normalPrice;
-                          double preOrderPrice;
-                          double pacakgingPrice;
-                          try {
-                            normalPrice = double.parse(normalPriceController.text);
-                            preOrderPrice = double.parse(preorderPriceController.text);
-                          } catch (e) {
-                            print('Invalid double: ${normalPriceController.text}');
-                            normalPrice = 0.0;
-                            preOrderPrice=0.0;
-                          }
-                          try {
-                            pacakgingPrice = double.parse(packagindController.text);
-                          } catch (e) {
-                            print('Invalid double: ${packagindController.text}');
-                            pacakgingPrice=0.0;
-                          }
-                          setState(() {
-                            if(_selectedOrderType == OrderType.normal)
-                            {
-                              finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                            }
-                            else if(_selectedOrderType == OrderType.preorder){
-                              finalPrice =  preOrderPrice + ((5*(preOrderPrice+pacakgingPrice))/100) + pacakgingPrice;
-                            }
-                          });
-                        },),
-                    ],
-                  ),
-                  SizedBox(height: 20,),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width:150*fem,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Final Price",style: TextStyle(
-                                  fontFamily: 'RenogareSoft',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: GlobalVariables.textColor,
-                                ),),
-                                SizedBox(width: 5,),
-                                Tooltip(
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(5)
-                                  ),
-                                  textStyle: TextStyle(
-                                    fontWeight: FontWeight.w300,
-                                    fontFamily: 'Open Sans',
-                                    fontSize: 10,
-                                    color: Colors.white,
-                                    wordSpacing: 0.23,
-                                    letterSpacing: 0.23,
-                                  ),
-                                  message:  'Please ensure the item price matches the price in your menu', // Provide a default value if widget.suffixTooltip is null
-                                  child: Icon(Icons.info, color: Colors.blueGrey, size: 15,),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 2,),
-                            Text("\u{20B9} $finalPrice",style: TextStyle(
-                              fontFamily: 'RenogareSoft',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: GlobalVariables.textColor,
-                            ),),
-                            SizedBox(height: 2,),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(width: 50*fem,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Checkbox(value:gstPayment, onChanged: (val){
-                                double pacakgingPrice;
-                                try {
-                                  pacakgingPrice = double.parse(packagindController.text);
-                                } catch (e) {
-                                  print('Invalid double: ${packagindController.text}');
-                                  pacakgingPrice=0.0;
-                                }
-                                setState(() {
-                                  gstPayment = val!;
-                                  print("Val $gstPayment");
-
-                                  if(_selectedOrderType == OrderType.normal)
-                                  {
-                                    if(gstPayment)
-                                    {
-                                      // finalPrice = finalPrice + pacakgingPrice;
-                                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
-                                    }
-                                    else{
-                                      // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                                      finalPrice = int.parse(normalPriceController.text) + ((5*(int.parse(normalPriceController.text)))/100);
-                                    }
-                                  }
-                                  else{
-                                    if(gstPayment)
-                                    {
-                                      // finalPrice = finalPrice + pacakgingPrice;
-                                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)+pacakgingPrice))/100) +  pacakgingPrice;
-                                    }
-                                    else{
-                                      // finalPrice =  normalPrice + ((5*(normalPrice+pacakgingPrice))/100) + pacakgingPrice;
-                                      finalPrice = int.parse(preorderPriceController.text) + ((5*(int.parse(preorderPriceController.text)))/100);
-                                    }
-                                  }
-
-                                });
-                              }),
-                              SizedBox(width: 5,),
-                              Text("Including\npacking",style:  TextStyle(
-                                fontFamily: 'BertSans',
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xff1d1517),
-                              ),)
-
-                            ],
-                          ),
+                          }),
+                          SizedBox(width: 5,),
+                          Text("Including packing",style:  TextStyle(
+                            fontFamily: 'BertSans',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xff1d1517),
+                          ),)
 
                         ],
                       ),
                     ],
                   ),
-
-
-
                 ],
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(height: 10,),
             Container(height: 1,color: GlobalVariables.primaryColor,),
+            SizedBox(height: 10,),
+            SizedBox(height: 10,),
+
             SizedBox(height: 20,),
             Container(
               margin: EdgeInsets.only(left: 10*fem,right: 10*fem),
@@ -507,7 +384,7 @@ class _ItemDetailsMobState extends State<ItemDetailsMob> {
 
                       CustomTextField(label: "Display name", controller: MenuEditorVariables.displayNameController,width: 350*fem,onChanged: (val) {
 
-                      },),
+                      },displayCount: true,),
                       SizedBox(height: 20,),
                       CustomTextField(label: "Name", controller: nameController,width: 350*fem,onChanged: (val) {
 

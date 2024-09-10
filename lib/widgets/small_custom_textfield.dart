@@ -11,6 +11,8 @@ class SmallCustomTextField extends StatefulWidget {
   final int max;
   final Function(String?)? onChanged;
   final Function()? onClicked;
+  final VoidCallback? onTap;
+  final bool readOnly;
   final TextEditingController textEditingController;
 
   SmallCustomTextField( {
@@ -20,7 +22,8 @@ class SmallCustomTextField extends StatefulWidget {
     this.onChanged,
     this.onClicked,
     required this.textEditingController,
-    this.fontSize = 10, required this.min, required this.max
+    this.fontSize = 10, required this.min, required this.max,
+    this.onTap,this.readOnly = false
   } );
 
   @override
@@ -44,6 +47,7 @@ class _SmallCustomTextFieldState extends State<SmallCustomTextField> {
           cursorHeight: 20,
           textAlign: TextAlign.justify,
           keyboardType: TextInputType.number,
+          readOnly: widget.readOnly,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
             // RangeTextInputFormatter(min: 10, max:9999),
@@ -55,11 +59,11 @@ class _SmallCustomTextFieldState extends State<SmallCustomTextField> {
               }
             });
                 },
-          // onTap: (){
-          //   if (widget.onClicked != null) {
-          //     widget.onClicked;
-          //   }
-          // },
+          onTap: (){
+            if (widget.onClicked != null) {
+              widget.onTap?.call();
+            }
+          },
 
           decoration:InputDecoration(
                 fillColor: GlobalVariables.whiteColor,

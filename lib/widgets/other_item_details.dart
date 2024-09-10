@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:partner_admin_portal/constants/menu_editor_constants/menu_editor_variables.dart';
 
 import 'custom_textfield.dart';
 import '../constants/global_variables.dart';
 import '../constants/utils.dart';
 
 class OtherItemDetails extends StatefulWidget {
-  const OtherItemDetails({Key? key}) : super(key: key);
+  final Map<String, dynamic> item;
+  const OtherItemDetails({Key? key, required this.item}) : super(key: key);
 
   @override
   State<OtherItemDetails> createState() => _OtherItemDetailsState();
 }
 
 class _OtherItemDetailsState extends State<OtherItemDetails> {
-  TextEditingController regionalController = TextEditingController();
+
   TextEditingController rawSourceController = TextEditingController();
+  TextEditingController regionalController = TextEditingController();
   TextEditingController cuisineDescriptionController = TextEditingController();
   TextEditingController subTagController = TextEditingController();
 
-  List<String> regional = ["Coastal karnataka","Punjabi"];
+
 
   List<String> rawSource = ["Organic","Non organic"];
 
@@ -56,9 +59,11 @@ class _OtherItemDetailsState extends State<OtherItemDetails> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomTextField(label: "Sub tag", controller: subTagController,width: 50*fem,),
-                  CustomTextField(label: "Regional", controller: regionalController,width: 50*fem,isDropdown: true,dropdownItems: regional,),
-                  CustomTextField(label: "Raw source", controller: rawSourceController,width: 50*fem,isDropdown: true,dropdownItems: rawSource,),
+                  CustomTextField(label: "Raw source", controller: MenuEditorVariables.rawSourceController,width: 45*fem,isDropdown: true,dropdownItems: rawSource,
+                    selectedValue: MenuEditorVariables.rawSourceController.text,
+                  ),
+                  CustomTextField(label: "Regional", controller: regionalController,width: 50*fem,isDropdown: true,dropdownItems: MenuEditorVariables.regional,showSearchBox1: true,),
+                  CustomTextField(label: "Cuisine", controller: MenuEditorVariables.cuisineController,width: 50*fem,isDropdown: true,dropdownItems: MenuEditorVariables.cuisine,showSearchBox1: true,),
 
                 ],
               ),

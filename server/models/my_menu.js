@@ -2,127 +2,154 @@ const mongoose = require('mongoose');
 
 const mealSchema = new mongoose.Schema(
     {
-      Breakfast: { type: Boolean, default: false ,},
-      Lunch: { type: Boolean, default: false },
-      Dinner: { type: Boolean, default: false },
-      BreakfastSession1 : {type: Boolean, default: false},
-      BreakfastSession2 : {type: Boolean, default: false},
-      BreakfastSession3 : {type: Boolean, default: false},
-      BreakfastSession4 : {type: Boolean, default: false},
-      LunchSession1 : {type: Boolean, default: false},
-      LunchSession2 : {type: Boolean, default: false},
-      LunchSession3 : {type: Boolean, default: false},
-      LunchSession4 : {type: Boolean, default: false},
-      DinnerSession1 : {type: Boolean, default: false},
-      DinnerSession2 : {type: Boolean, default: false},
-      DinnerSession3 : {type: Boolean, default: false}, 
-      DinnerSession4 : {type: Boolean, default: false},
-    },
-    { _id: false } 
-  );
-
-  const sessionSchema = new mongoose.Schema(
-    {
-      StartTime: { type: String },
-      EndTime: { type: String },
-      availableCount: { type: Number,default: 0}, 
-      Enabled:{type:Boolean},
-    },
-    { _id: false } 
-  );
-  
-  const timingSchema = new mongoose.Schema(
-    {
-      Default: sessionSchema,
-      Session1: sessionSchema,
-      Session2: sessionSchema,
-      Session3: sessionSchema,
-      Session4: sessionSchema,
+        BreakfastSession1: { type: Number, default: 0, },
+        BreakfastSession2: { type: Number, default: 0, },
+        BreakfastSession3: { type: Number, default: 0, },
+        LunchSession1: { type: Number, default: 0, },
+        LunchSession2: { type: Number, default: 0, },
+        LunchSession3: { type: Number, default: 0, },
+        DinnerSession1: { type: Number, default: 0, },
+        DinnerSession2: { type: Number, default: 0, },
+        DinnerSession3: { type: Number, default: 0, },
     },
     { _id: false }
-  );
-  
-  const mealTimingSchema = new mongoose.Schema({
+);
+
+const sessionSchema = new mongoose.Schema(
+    {
+        StartTime: { type: String },
+        EndTime: { type: String },
+        Enabled: { type: Boolean },
+    },
+    { _id: false }
+);
+
+const timingSchema = new mongoose.Schema(
+    {
+        Session1: sessionSchema,
+        Session2: sessionSchema,
+        Session3: sessionSchema,
+    },
+    { _id: false }
+);
+
+const mealTimingSchema = new mongoose.Schema({
     Breakfast: timingSchema,
     Lunch: timingSchema,
     Dinner: timingSchema,
-  }, {_id:false});
+}, { _id: false });
 
 
 const mymenuSchema = new mongoose.Schema({
-    std_itm_UId: { 
+    ritem_UId: {
         type: String,
         required: true,
-        unique: true  
+        unique: true
     },
-    std_itm_name: { 
+    ritem_name: {
         type: String,
     },
-    std_itm_dispname: { 
+    ritem_dispname: {
         type: String,
         required: true
-    },
-    std_itm_subTag: { 
-        type: String,
-    },
-    totalCount: { 
-        type: Number,
-        default:0
-    },
-    std_itm_priceRange: { 
-        type: String,
-    }, 
-    std_itm_itemType: {  
-        type: String,   
-    },
-    std_itm_availability :{
-        type:Boolean,
-    
-    }, 
-    std_itm_itemSubType: {   
-        type: String,
-        
-    },
-    std_itm_comboType: { 
-        type: String,
-        
-    },
-    std_itm_rawSource: { 
-        type: String,
-       
-    },
-    std_itm_category: { 
-        type: String,
-       
-    },
-    std_itm_subCategory: { 
-        type: String,
-        
-    },
-    std_itm_cuisine: { 
-        type: String,
-        
-    },
-    std_itm_regional: { 
-        type: String,
-        
     },
 
-    std_itm_normalPrice: {
-        type: Number,
-        
+    ritem_priceRange: {
+        type: String,
     },
-    std_itm_packagePrice: {
-        type: Number,
-        default:0
+    ritem_itemType: {
+        type: String,
     },
-    std_itm_preorderPrice: {
-        type: Number,
-        default:0
+    ritem_availability: {
+        type: Boolean,
+
     },
-    std_itm_tag :{
+    ritem_half_price: {
+        type: Boolean,
+
+    },
+    ritem_itemSubType: {
+        type: String,
+
+    },
+    ritem_comboType: {
+        type: String,
+
+    },
+    ritem_rawSource: {
+        type: String,
+
+    },
+    ritem_category: {
+        type: String,
+
+    },
+    ritem_subCategory: {
+        type: String,
+
+    },
+    ritem_cuisine: {
+        type: String,
+
+    },
+    ritem_cuisine_description: {
+        type: String,
+    },
+    ritem_description: {
+        type: String,
+    },
+    ritem_regional: {
+        type: String,
+
+    },
+
+    ritem_normalPrice: {
+        type: Number,
+    },
+    ritem_half_normalPrice: {
+        type: Number,
+    },
+    ritem_packagePrice: {
+        type: Number,
+        default: 0
+    },
+    ritem_preorderPrice: {
+        type: Number,
+        default: 0
+    },
+    ritem_half_preorderPrice: {
+        type: Number,
+        default: 0
+    },
+    ritem_normalFinalPrice: {
+        type: Number,
+        default: 0
+    },
+    ritem_half_normalFinalPrice: {
+        type: Number,
+        default: 0
+    },
+    ritem_preorderFinalPrice: {
+        type: Number,
+        default: 0
+    },
+    ritem_half_preorderFinalPrice: {
+        type: Number,
+        default: 0
+    },
+    ritem_tag: {
         type: String,
         required: true
+    },
+
+    ritem_available_type: {
+        type: Number,
+        default: 0
+    },
+
+    ritem_consumption_mode: {
+        type: [String],
+        default: []
     },
 
     fp_unit_avail_days_and_meals: {
@@ -136,28 +163,42 @@ const mymenuSchema = new mongoose.Schema({
             Sat: mealSchema,
         },
         default: {
-            Sun: { Breakfast: false, Lunch: false, Dinner: false ,BreakfastSession1 : false, BreakfastSession2 : false, BreakfastSession3 : false, BreakfastSession4 : false, LunchSession1 : false,LunchSession2 : false,LunchSession3 : false,LunchSession4 : false, DinnerSession1 : false,DinnerSession2 : false,DinnerSession3 : false,DinnerSession4 : false},
-            Mon: { Breakfast: false, Lunch: false, Dinner: false ,BreakfastSession1 : false, BreakfastSession2 : false, BreakfastSession3 : false, BreakfastSession4 : false, LunchSession1 : false,LunchSession2 : false,LunchSession3 : false,LunchSession4 : false, DinnerSession1 : false,DinnerSession2 : false,DinnerSession3 : false,DinnerSession4 : false },
-            Tue: { Breakfast: false, Lunch: false, Dinner: false ,BreakfastSession1 : false, BreakfastSession2 : false, BreakfastSession3 : false, BreakfastSession4 : false, LunchSession1 : false,LunchSession2 : false,LunchSession3 : false,LunchSession4 : false, DinnerSession1 : false,DinnerSession2 : false,DinnerSession3 : false,DinnerSession4 : false},
-            Wed: { Breakfast: false, Lunch: false, Dinner: false ,BreakfastSession1 : false, BreakfastSession2 : false, BreakfastSession3 : false, BreakfastSession4 : false, LunchSession1 : false,LunchSession2 : false,LunchSession3 : false,LunchSession4 : false, DinnerSession1 : false,DinnerSession2 : false,DinnerSession3 : false,DinnerSession4 : false},
-            Thu: { Breakfast: false, Lunch: false, Dinner: false ,BreakfastSession1 : false, BreakfastSession2 : false, BreakfastSession3 : false, BreakfastSession4 : false, LunchSession1 : false,LunchSession2 : false,LunchSession3 : false,LunchSession4 : false, DinnerSession1 : false,DinnerSession2 : false,DinnerSession3 : false,DinnerSession4 : false},
-            Fri: { Breakfast: false, Lunch: false, Dinner: false ,BreakfastSession1 : false, BreakfastSession2 : false, BreakfastSession3 : false, BreakfastSession4 : false, LunchSession1 : false,LunchSession2 : false,LunchSession3 : false,LunchSession4 : false, DinnerSession1 : false,DinnerSession2 : false,DinnerSession3 : false,DinnerSession4 : false},
-            Sat: { Breakfast: false, Lunch: false, Dinner: false ,BreakfastSession1 : false, BreakfastSession2 : false, BreakfastSession3 : false, BreakfastSession4 : false, LunchSession1 : false,LunchSession2 : false,LunchSession3 : false,LunchSession4 : false, DinnerSession1 : false,DinnerSession2 : false,DinnerSession3 : false,DinnerSession4 : false,},
+            Sun: {
+                BreakfastSession1: 0, BreakfastSession2: 0, BreakfastSession3: 0, LunchSession1: 0, LunchSession2: 0, LunchSession3: 0, DinnerSession1: 0, DinnerSession2: 0, DinnerSession3: 0,
+            },
+            Mon: {
+                BreakfastSession1: 0, BreakfastSession2: 0, BreakfastSession3: 0, LunchSession1: 0, LunchSession2: 0, LunchSession3: 0, DinnerSession1: 0, DinnerSession2: 0, DinnerSession3: 0,
+            },
+            Tue: {
+                BreakfastSession1: 0, BreakfastSession2: 0, BreakfastSession3: 0, LunchSession1: 0, LunchSession2: 0, LunchSession3: 0, DinnerSession1: 0, DinnerSession2: 0, DinnerSession3: 0,
+            },
+            Wed: {
+                BreakfastSession1: 0, BreakfastSession2: 0, BreakfastSession3: 0, LunchSession1: 0, LunchSession2: 0, LunchSession3: 0, DinnerSession1: 0, DinnerSession2: 0, DinnerSession3: 0,
+            },
+            Thu: {
+                BreakfastSession1: 0, BreakfastSession2: 0, BreakfastSession3: 0, LunchSession1: 0, LunchSession2: 0, LunchSession3: 0, DinnerSession1: 0, DinnerSession2: 0, DinnerSession3: 0,
+            },
+            Fri: {
+                BreakfastSession1: 0, BreakfastSession2: 0, BreakfastSession3: 0, LunchSession1: 0, LunchSession2: 0, LunchSession3: 0, DinnerSession1: 0, DinnerSession2: 0, DinnerSession3: 0,
+            },
+            Sat: {
+                BreakfastSession1: 0, BreakfastSession2: 0, BreakfastSession3: 0, LunchSession1: 0, LunchSession2: 0, LunchSession3: 0, DinnerSession1: 0, DinnerSession2: 0, DinnerSession3: 0,
+            },
         },
-        required : true, 
-        _id :false 
+        required: true,
+        _id: false
     },
-    fp_unit_sessions:{
-        type:mealTimingSchema, 
+    fp_unit_sessions: {
+        type: mealTimingSchema,
         default: {
-            Breakfast: { Default: {}, Session1: {}, Session2: {}, Session3: {}, Session4: {} },
-            Lunch: { Default: {}, Session1: {}, Session2: {}, Session3: {}, Session4: {} },
-            Dinner: { Default: {}, Session1: {}, Session2: {}, Session3: {}, Session4: {} },
-          },
-          required:true
+            Breakfast: { Session1: {}, Session2: {}, Session3: {}, },
+            Lunch: { Session1: {}, Session2: {}, Session3: {}, },
+            Dinner: { Session1: {}, Session2: {}, Session3: {}, },
+        },
+        required: true
     }
-},{ collection: 'kaa001_menu' } );
+}, { collection: 'kaa1_menu' });
 
 
 const Mymenu = mongoose.model("Mymenu", mymenuSchema);
-module.exports = {Mymenu, mymenuSchema };
+module.exports = { Mymenu, mymenuSchema };

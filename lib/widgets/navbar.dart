@@ -9,7 +9,7 @@ import '../constants/utils.dart';
 class NavBarItem extends StatefulWidget {
   final String icon;
   final String text;
-  final Function touched;
+  final Function? touched;
   final bool active;
   final Function(bool)? hover;
   const NavBarItem({Key? key, required this.icon, required this.text, required this.touched, required this.active, this.hover}) : super(key: key);
@@ -25,7 +25,7 @@ class _NavBarItemState extends State<NavBarItem> {
       color: Colors.transparent,
       child: InkWell(
         onTap: (){
-          widget.touched();
+          widget.touched!();
         },
         // splashColor: Colors.white,
         hoverColor: Colors.white12,
@@ -81,5 +81,68 @@ class _NavBarItemState extends State<NavBarItem> {
         ),
       ),
     );
+  }
+
+  void showPopupMenu1(BuildContext context) {
+    {
+      showMenu(
+        context: context,
+        color: GlobalVariables.whiteColor,
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        position: RelativeRect.fromLTRB(100, 215, 100, 0), // Adjust the position as needed
+        items: [
+          PopupMenuItem(
+            child: ListTile(
+              title: Text('Live menu'),
+              onTap: () {
+                setState(() {
+                  // select(1);
+                  // _selectedIndex = 1;
+                  // menuIndex = 1;
+                });
+
+                Navigator.pop(context); // Close the popup menu
+
+              },
+            ),
+          ),
+          PopupMenuItem(
+            child: ListTile(
+              title: Text('Menu editor'),
+              onTap: () {
+                setState(() {
+                  // menuIndex = 2;
+                  // select(1);
+                  // _selectedIndex = 1;
+
+                });
+
+                Navigator.pop(context); // Close the popup menu
+
+              },
+            ),
+          ),
+          PopupMenuItem(
+            child: ListTile(
+              title: Text('Menu history'),
+              onTap: () {
+                setState(() {
+                  // menuIndex = 3;
+                  // select(1);
+                  // _selectedIndex = 1;
+
+                });
+
+                Navigator.pop(context); // Close the popup menu
+
+              },
+            ),
+          ),
+        ],
+      );
+    }
   }
 }

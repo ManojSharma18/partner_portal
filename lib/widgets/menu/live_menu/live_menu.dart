@@ -161,7 +161,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
             return  BlocBuilder<OrderBloc,OrderState>(builder: (BuildContext context, orderState) {
               return ResponsiveBuilder(
                   mobileBuilder: (BuildContext context,BoxConstraints constraints){
-                    return  LiveMenuMobile(selectedCategories:  LiveMenuVariables.selectedCategories,);
+                    return  LiveMenuMobile(selectedCategories:  LiveMenuVariables.selectedCategoriesBreakfast,);
                   },
                   tabletBuilder: (BuildContext context,BoxConstraints constraints)
                   {
@@ -175,7 +175,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                             .toList();
 
                         if (matchingItems.isNotEmpty) {
-                          LiveMenuVariables.selectedCategories.add(cuisine);
+                          LiveMenuVariables.selectedCategoriesBreakfast.add(cuisine);
                           // selectedItem = query;
 
                           // Add the matching items to filteredFoodCategory
@@ -224,7 +224,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                             .toList();
 
                         if (matchingItems.isNotEmpty) {
-                          LiveMenuVariables.selectedCategories.add(cuisine);
+                          LiveMenuVariables.selectedCategoriesBreakfast.add(cuisine);
                           // selectedItem = query;
 
                           // Add the matching items to filteredFoodCategory
@@ -269,7 +269,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                             .toList();
 
                         if (matchingItems.isNotEmpty) {
-                          LiveMenuVariables.selectedCategories.add(cuisine);
+                          LiveMenuVariables.selectedCategoriesBreakfast.add(cuisine);
                           // selectedItem = query;
 
                           // Add the matching items to filteredFoodCategory
@@ -285,7 +285,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                              .toList();
 
                         if (matchingItems.isNotEmpty) {
-                          LiveMenuVariables.selectedCategories.add(cuisine);
+                          LiveMenuVariables.selectedCategoriesBreakfast.add(cuisine);
                           // selectedItem = query;
 
                           // Add the matching items to filteredFoodCategory
@@ -300,7 +300,7 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                             .toList();
 
                         if (matchingItems.isNotEmpty) {
-                          LiveMenuVariables.selectedCategories.add(cuisine);
+                          LiveMenuVariables.selectedCategoriesBreakfast.add(cuisine);
                           // selectedItem = query;
 
                           // Add the matching items to filteredFoodCategory
@@ -455,13 +455,9 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                                                                           spacing: 5, // spacing between columns
                                                                           runSpacing: 5, // spacing between rows
                                                                           children: List.generate(
-                                                                            filteredFoodCategory.length == 0
-                                                                                ? foodCategories.length
-                                                                                : filteredFoodCategory.length,
-                                                                                (index) {
-                                                                              String category = filteredFoodCategory.length == 0
-                                                                                  ? foodCategories.keys.elementAt(index)
-                                                                                  : filteredFoodCategory.keys.elementAt(index);
+                                                                            filteredFoodCategory.length == 0 ? foodCategories.length: filteredFoodCategory.length,
+                                                                                (index)
+                                                                            { String category = filteredFoodCategory.length == 0 ? foodCategories.keys.elementAt(index) : filteredFoodCategory.keys.elementAt(index);
                                                                               List<Map<String, dynamic>> itemsList = filteredFoodCategory.length == 0
                                                                                   ? foodCategories[category]!
                                                                                   : filteredFoodCategory[category]!;
@@ -529,10 +525,6 @@ class _LiveMenuState extends State<LiveMenu> with TickerProviderStateMixin {
                                                               ),
                                                             ),
                                                           )
-
-
-
-
 
                                                         ],
                                                       ),

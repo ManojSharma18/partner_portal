@@ -78,7 +78,8 @@ class _ManageOrdersState extends State<ManageOrders> with SingleTickerProviderSt
         if(state is OrderErrorState) {
           return const Center(child: Text("Node server error"),);
         }
-        if(state is OrdersLoadedState){
+        if(state is OrdersLoadedState) {
+          print("I am also here as well");
           return ResponsiveBuilder(
               mobileBuilder: (BuildContext context,BoxConstraints constraint){
                 return ManageOrdersMob(tabController: _tabController,  filteredOrders: OrderVariables.filteredOrders, inprogress: GlobalVariables.inprogress);
@@ -1214,6 +1215,47 @@ class _ManageOrdersState extends State<ManageOrders> with SingleTickerProviderSt
               }).toList();
             }
 
+            if(OrderVariables.isPickup){
+              OrderVariables.filteredOrders = state.ordersList.where((order) {
+                return order['Type'].contains('Pick up');
+              }).toList();
+            }
+
+            if(OrderVariables.isDeliver){
+              OrderVariables.filteredOrders = state.ordersList.where((order) {
+                return order['Type'].contains('Deliver');
+              }).toList();
+            }
+
+            if(OrderVariables.isDineIn){
+              OrderVariables.filteredOrders = state.ordersList.where((order) {
+                return order['Type'].contains('Dine in');
+              }).toList();
+            }
+
+            if(OrderVariables.isPickup && OrderVariables.isDeliver) {
+              OrderVariables.filteredOrders = state.ordersList.where((order) {
+                return order['Type'].contains('Pick up') || order['Type'].contains('Deliver');
+              }).toList();
+            }
+
+            if(OrderVariables.isPickup && OrderVariables.isDineIn) {
+              OrderVariables.filteredOrders = state.ordersList.where((order) {
+                return order['Type'].contains('Dine in') || order['Type'].contains('Deliver');
+              }).toList();
+            }
+
+            if(OrderVariables.isDineIn && OrderVariables.isDeliver) {
+              OrderVariables.filteredOrders = state.ordersList.where((order) {
+                return order['Type'].contains('Dine in') || order['Type'].contains('Deliver');
+              }).toList();
+            }
+
+            if(OrderVariables.isDineIn && OrderVariables.isDeliver && OrderVariables.isPickup) {
+              OrderVariables.filteredOrders = state.ordersList.where((order) {
+                return order['Type'].contains('Dine in') || order['Type'].contains('Deliver') || order['Type'].contains('Pick up');
+              }).toList();
+            }
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1320,10 +1362,12 @@ class _ManageOrdersState extends State<ManageOrders> with SingleTickerProviderSt
                                     children: [
                                       SizedBox(height: 10,),
                                       Container(
+                                        color: GlobalVariables.whiteColor,
                                         margin: EdgeInsets.all(10),
                                         child: Column(
                                           children: [
                                             Container(
+                                              color: GlobalVariables.whiteColor,
                                               margin: EdgeInsets.all(10),
                                               child: Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1337,6 +1381,7 @@ class _ManageOrdersState extends State<ManageOrders> with SingleTickerProviderSt
                                             ),
                                             SizedBox(height: 10,),
                                             Container(
+                                              color: GlobalVariables.whiteColor,
                                               margin: EdgeInsets.all(10),
                                               child: Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -47,19 +47,6 @@ class LiveMenuMobile extends StatelessWidget {
                  state.selectedCategories.add('South indian breakfast');
                }
              },),
-             SizedBox(height: 0,),
-             Container(
-               margin: EdgeInsets.all(10),
-               child: Row(
-                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                 children: [
-                   GlobalFunction.buildMealButton(context,MealTime.All,'All'),
-                   GlobalFunction.buildMealButton(context,MealTime.Breakfast,'Breakfast'),
-                   GlobalFunction.buildMealButton(context,MealTime.Lunch,'Lunch'),
-                   GlobalFunction.buildMealButton(context,MealTime.Dinner,'Dinner'),
-                 ],
-               ),
-             ),
              Expanded(
                child: ReorderableListView.builder(
                  buildDefaultDragHandles:false,

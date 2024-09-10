@@ -16,8 +16,7 @@ class OrderService {
       if (response.statusCode == 200) {
         // If the request is successful, parse the JSON response into a list of OrderModel
         List<dynamic> jsonOrders = json.decode(response.body);
-        List<OrderModel> orders = jsonOrders.map((json) =>
-            OrderModel.fromMap(json)).toList();
+        List<OrderModel> orders = jsonOrders.map((json) => OrderModel.fromMap(json)).toList();
         return orders;
       } else {
         // If the server returns an error response, throw an exception
@@ -34,8 +33,7 @@ class OrderService {
       final response = await http.get(
           Uri.parse('$apiUrl/subscriptionOrders/subscriptionOrder/'));
 
-      print(response.statusCode);
-      print(response.body);
+
 
       if (response.statusCode == 200) {
         // If the request is successful, parse the JSON response into a list of OrderModel

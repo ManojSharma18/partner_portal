@@ -5,7 +5,10 @@ import 'package:partner_admin_portal/bloc/manage_orders/order_bloc.dart';
 import 'package:partner_admin_portal/bloc/manage_orders/order_state.dart';
 import 'package:partner_admin_portal/bloc/orders/orders_bloc.dart';
 import 'package:partner_admin_portal/bloc/orders/orders_state.dart';
+import 'package:partner_admin_portal/constants/global_function.dart';
+import 'package:partner_admin_portal/constants/order_constants/order_funtions.dart';
 import 'package:partner_admin_portal/constants/order_constants/order_variables.dart';
+import 'package:partner_admin_portal/widgets/holiday_mob.dart';
 import 'package:partner_admin_portal/widgets/orders/manage/manage_subscription.dart';
 import 'package:partner_admin_portal/widgets/responsive_builder.dart';
 import 'package:partner_admin_portal/widgets/orders/forecast/analyse_orders.dart';
@@ -109,9 +112,10 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
           backgroundColor: GlobalVariables.primaryColor.withOpacity(0.2),
           title: Row(
             children: [
+
               Text( selectedDay,style:SafeGoogleFont(
                 'Poppins',
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF363563),
               ),),
@@ -122,21 +126,42 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
                 },
                 child: Icon(Icons.arrow_drop_down_circle_outlined, color: GlobalVariables.textColor),
               ),
-              SizedBox(width: 10,),
-              InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => BarcodeScannerWidget ()),
-                    );
-                  },
-                  child: Icon(Icons.qr_code_scanner_outlined,color: Color(0xFF363563),size: 25,)),
+
+
             ],
           ),
+          actions: [
+            Switch(
+                activeThumbImage: NetworkImage(
+                  'https://cdn2.iconfinder.com/data/icons/picons-essentials/71/power-512.png',),
+                inactiveTrackColor: Colors.grey,
+                inactiveThumbImage: NetworkImage(
+                  'https://cdn2.iconfinder.com/data/icons/picons-essentials/71/power-512.png',),
+                inactiveThumbColor: GlobalVariables.whiteColor,
+                value: GlobalVariables.isOpend,
+                onChanged: (val) {
+                  setState(() {
+                    GlobalVariables.isOpend = val;
+                  });
+                }),
+            SizedBox(width: 10,),
+            InkWell(
+              onTap: (){
+                // _showHolidayPopupMenu(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => HolidayPage()));
+              },
+              child: Image.asset(
+                'assets/images/holidaynew.png',
+                width: 25,
+                height: 25,color: GlobalVariables.textColor,
+              ),
+            ),
+            SizedBox(width: 10,),
+          ],
         ),
         body:ManageOrders(query: searchedQuery,),
       );
-    }, tabletBuilder: (BuildContext context,BoxConstraints constraints){
+    },  tabletBuilder: (BuildContext context,BoxConstraints constraints){
       return BlocProvider(
         create: (BuildContext context) => OrdersBloc(
             OrderService()
@@ -165,20 +190,7 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF363563),
                     ),),
-                    SizedBox(width: 5 * fem,),
-                    Switch(
-                        activeThumbImage: NetworkImage(
-                          'https://cdn2.iconfinder.com/data/icons/picons-essentials/71/power-512.png',),
-                        inactiveTrackColor: Colors.grey,
-                        inactiveThumbImage: NetworkImage(
-                          'https://cdn2.iconfinder.com/data/icons/picons-essentials/71/power-512.png',),
-                        inactiveThumbColor: GlobalVariables.whiteColor,
-                        value: GlobalVariables.isOpend,
-                        onChanged: (val) {
-                          setState(() {
-                            GlobalVariables.isOpend = val;
-                          });
-                        }),
+
                     SizedBox(width: 5 * fem,),
                     Container(
 
@@ -187,7 +199,7 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
                           child: Center(child: Text(
                             "${dayProvider.selectedDay}", style: SafeGoogleFont(
                             'Poppins',
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF363563),
                           ),)),
@@ -254,8 +266,23 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
                     ),
 
                     SizedBox(width: 5 * fem,),
+                    Switch(
+                        activeThumbImage: NetworkImage(
+                          'https://cdn2.iconfinder.com/data/icons/picons-essentials/71/power-512.png',),
+                        inactiveTrackColor: Colors.grey,
+                        inactiveThumbImage: NetworkImage(
+                          'https://cdn2.iconfinder.com/data/icons/picons-essentials/71/power-512.png',),
+                        inactiveThumbColor: GlobalVariables.whiteColor,
+                        value: GlobalVariables.isOpend,
+                        onChanged: (val) {
+                          setState(() {
+                            GlobalVariables.isOpend = val;
+                          });
+                        }),
 
-                    SearchBars(hintText: "Search name or number or OID", width: 80 *
+                    SizedBox(width: 5 * fem,),
+
+                    SearchBars(hintText: "Search number or OID", width: 100 *
                         fem, height: 45,
                       onChanged: (query) {
                         setState(() {
@@ -268,6 +295,18 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
                 backgroundColor: Color(0xfffbb830),
                 actions: [
                   InkWell(
+                    onTap: (){
+                      // _showHolidayPopupMenu(context);
+                      GlobalFunction.showHolidayMessage(context);
+                    },
+                    child: Image.asset(
+                      'assets/images/holidaynew.png',
+                      width: 30,
+                      height: 30,color: GlobalVariables.textColor,
+                    ),
+                  ),
+                  SizedBox(width: 30,),
+                  InkWell(
                       onTap: () {
                         Navigator.push(
                           context,
@@ -277,15 +316,15 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
                       },
                       child: Icon(Icons.qr_code_scanner_outlined, color: Color(
                           0xFF363563), size: 25,)),
-                  SizedBox(width: 5 * fem,),
+                  SizedBox(width: 30,),
                   Icon(Icons.notifications_active_outlined, color: Color(0xFF363563),
                     size: 25,),
-                  SizedBox(width: 5 * fem,),
+                  SizedBox(width: 30,),
                   CircleAvatar(
                     backgroundImage: NetworkImage(
                         "https://icon-library.com/images/profile-icon-vector/profile-icon-vector-7.jpg"),
                   ),
-                  SizedBox(width: 5 * fem,)
+                  SizedBox(width: 30,)
                 ],
               ),
               body: widget.index == 1
@@ -393,7 +432,8 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
         ),
       );
 
-    }, desktopBuilder: (BuildContext context,BoxConstraints constraints){
+    },
+        desktopBuilder: (BuildContext context,BoxConstraints constraints){
       return BlocProvider(
         create: (BuildContext context) => OrdersBloc(
             OrderService()
@@ -408,7 +448,8 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
             return const Center(child: Text("Node server error"),);
           }
           if(orderState is OrdersLoadedState){
-            return BlocBuilder<OrderBloc,OrderState>(builder: (BuildContext context, state) {
+            return BlocBuilder<OrderBloc,OrderState>(builder: (BuildContext orderContext, state) {
+              print("I am here only");
               return Scaffold(
                 appBar: AppBar(
                   // toolbarHeight: 80,
@@ -416,7 +457,18 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
                   leading: Container(),
                   title: Row(
                     children: [
-
+                      Container(
+                          width: 45*fem,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 4.0,bottom: 4.0,top: 4.0),
+                            child: Center(child: Text("ORDER DETAILS",style: SafeGoogleFont(
+                              'Poppins',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF363563),
+                            ),)),
+                          )
+                      ),
                       Container(
                         width: 30*fem,
                           child: Padding(
@@ -483,18 +535,33 @@ class _OrderDetailsState extends State<OrderDetails> with SingleTickerProviderSt
                         });
                       }),
                       SizedBox(width: 15*fem,),
-
-                      SearchBars(hintText: "Search name or number or OID", width: 100*fem,height: 45,
+                      SearchBars(hintText: "Search number or OID", width: 100*fem,height: 45,
                         onChanged: (query) {
                           setState(() {
                             searchedQuery = query;
                           });
+                        },
+                        onPressed: ()
+                        {
+                          OrderFunctions.showFilterAlert(orderContext,context);
                         },
                       ),
                     ],
                   ),
                   backgroundColor: Color(0xfffbb830),
                   actions: [
+                    InkWell(
+                      onTap: (){
+                        // _showHolidayPopupMenu(context);
+                        GlobalFunction.showHolidayMessage(context);
+                      },
+                      child: Image.asset(
+                        'assets/images/holidaynew.png',
+                        width: 30,
+                        height: 30,color: GlobalVariables.textColor,
+                      ),
+                    ),
+                    SizedBox(width: 10*fem,),
                     InkWell(
                         onTap: () {
                           Navigator.push(

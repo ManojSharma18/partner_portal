@@ -25,7 +25,7 @@ class AnalyseOrdersMobile extends StatelessWidget {
           children: [
             Text("${dayProvider.selectedDay}",style:SafeGoogleFont(
               'Poppins',
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.bold,
               color: Color(0xFF363563),
             ),),
@@ -39,6 +39,32 @@ class AnalyseOrdersMobile extends StatelessWidget {
 
           ],
         ),
+        actions: [
+          Switch(
+              activeThumbImage: NetworkImage(
+                'https://cdn2.iconfinder.com/data/icons/picons-essentials/71/power-512.png',),
+              inactiveTrackColor: Colors.grey,
+              inactiveThumbImage: NetworkImage(
+                'https://cdn2.iconfinder.com/data/icons/picons-essentials/71/power-512.png',),
+              inactiveThumbColor: GlobalVariables.whiteColor,
+              value: GlobalVariables.isOpend,
+              onChanged: (val) {
+                  GlobalVariables.isOpend = val;
+              }),
+          SizedBox(width: 10,),
+          InkWell(
+            onTap: (){
+              // _showHolidayPopupMenu(context);
+              GlobalFunction.showHolidayMessage(context);
+            },
+            child: Image.asset(
+              'assets/images/holidaynew.png',
+              width: 25,
+              height: 25,color: GlobalVariables.textColor,
+            ),
+          ),
+          SizedBox(width: 10,),
+        ],
       ),
       body: BlocBuilder<OrderBloc,OrderState>(
         builder: (BuildContext context, state) {
@@ -52,32 +78,22 @@ class AnalyseOrdersMobile extends StatelessWidget {
                       appBar:  AppBar(
                         backgroundColor: GlobalVariables.primaryColor.withOpacity(0.2),
                         toolbarHeight: 1,
-                        bottom: PreferredSize(
-                          preferredSize: Size.fromHeight(50.0),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 400,
-                                child: TabBar(
-                                  labelPadding: EdgeInsets.symmetric(horizontal: 5),
-                                  indicatorWeight: 5, // Adjust the indicator weight
-                                  indicatorColor: Color(0xfffbb830),
-                                  unselectedLabelColor: Colors.black54,
-                                  labelColor: Color(0xFF363563),
-                                  labelStyle: SafeGoogleFont(
-                                    'Poppins',
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF363563),
-                                  ),
-                                  tabs: [
-                                    Tab(text: "Today",),
-                                    Tab(text: "Tomorrow",)
-                                  ],
-                                ),
-                              ),
-                            ],
+                        bottom: TabBar(
+                          labelPadding: EdgeInsets.symmetric(horizontal: 5),
+                          indicatorWeight: 5, // Adjust the indicator weight
+                          indicatorColor: Color(0xfffbb830),
+                          unselectedLabelColor: Colors.black54,
+                          labelColor: Color(0xFF363563),
+                          labelStyle: SafeGoogleFont(
+                            'Poppins',
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF363563),
                           ),
+                          tabs: [
+                            Tab(text: "Today",),
+                            Tab(text: "Tomorrow",)
+                          ],
                         ),
                       ),
                       body: TabBarView(
@@ -90,16 +106,9 @@ class AnalyseOrdersMobile extends StatelessWidget {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-
-                                    GlobalFunction.buildMealButton(context,MealTime.All,'All'),
-
-                                    GlobalFunction.buildMealButton(context,MealTime.Breakfast,'Breakfast'),
-
-                                    GlobalFunction.buildMealButton(context,MealTime.Lunch,'Lunch'),
-
-                                    GlobalFunction.buildMealButton(context,MealTime.Dinner,'Dinner'),
-
-
+                                    GlobalFunction.buildSubscriptionForOrders(context,Subsciption.All, 'All'),
+                                    GlobalFunction.buildSubscriptionForOrders(context,Subsciption.ForOrders, 'For Orders'),
+                                    GlobalFunction.buildSubscriptionForOrders(context,Subsciption.Sub, 'Subscriptions'),
                                   ],
                                 ),
                               ),

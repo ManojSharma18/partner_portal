@@ -42,6 +42,32 @@ class ManageSubscriptionMobile extends StatelessWidget {
 
           ],
         ),
+        actions: [
+          Switch(
+              activeThumbImage: NetworkImage(
+                'https://cdn2.iconfinder.com/data/icons/picons-essentials/71/power-512.png',),
+              inactiveTrackColor: Colors.grey,
+              inactiveThumbImage: NetworkImage(
+                'https://cdn2.iconfinder.com/data/icons/picons-essentials/71/power-512.png',),
+              inactiveThumbColor: GlobalVariables.whiteColor,
+              value: GlobalVariables.isOpend,
+              onChanged: (val) {
+                GlobalVariables.isOpend = val;
+              }),
+          SizedBox(width: 10,),
+          InkWell(
+            onTap: (){
+              // _showHolidayPopupMenu(context);
+              GlobalFunction.showHolidayMessage(context);
+            },
+            child: Image.asset(
+              'assets/images/holidaynew.png',
+              width: 25,
+              height: 25,color: GlobalVariables.textColor,
+            ),
+          ),
+          SizedBox(width: 10,),
+        ],
       ),
       body:Column(
         crossAxisAlignment: CrossAxisAlignment.start,

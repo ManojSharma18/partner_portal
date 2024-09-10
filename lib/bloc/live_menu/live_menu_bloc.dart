@@ -5,7 +5,7 @@ import 'package:partner_admin_portal/constants/live_menu_constants/live_menu_fun
 import 'package:partner_admin_portal/constants/live_menu_constants/live_menu_variables.dart';
 
 class LiveMenuBloc extends Bloc<LiveMenuEvent,LiveMenuState>{
-  LiveMenuBloc() : super(LiveMenuState(selectedCategories: LiveMenuVariables.selectedCategories, foodCategories: LiveMenuVariables.foodCategories, itemName: LiveMenuVariables.selectedItem));
+  LiveMenuBloc() : super(LiveMenuState(selectedCategories: LiveMenuVariables.selectedCategoriesBreakfast, foodCategories: LiveMenuVariables.foodCategories, itemName: LiveMenuVariables.selectedItem));
 
   Stream<LiveMenuState> mapEventToState(LiveMenuEvent event) async* {
     if (event is SelectCategoryEvent) {
@@ -35,13 +35,13 @@ class LiveMenuBloc extends Bloc<LiveMenuEvent,LiveMenuState>{
       yield state.copyWith(foodCategories: state.foodCategories,mealTime: event.mealTime);    }
     if(event is CategoryEvent){
       if (event.categoryContainsMatch) {
-        if ( LiveMenuVariables.selectedCategories.contains(event.category)) {
-          LiveMenuVariables.selectedCategories.remove(event.category);
+        if ( LiveMenuVariables.selectedCategoriesBreakfast.contains(event.category)) {
+          LiveMenuVariables.selectedCategoriesBreakfast.remove(event.category);
         } else {
-          LiveMenuVariables.selectedCategories.add(event.category);
+          LiveMenuVariables.selectedCategoriesBreakfast.add(event.category);
         }
       }
-      yield LiveMenuState(selectedCategories: LiveMenuVariables.selectedCategories, foodCategories: LiveMenuVariables.foodCategories, itemName: LiveMenuVariables.selectedItem);
+      yield LiveMenuState(selectedCategories: LiveMenuVariables.selectedCategoriesBreakfast, foodCategories: LiveMenuVariables.foodCategories, itemName: LiveMenuVariables.selectedItem);
     }
   }
 

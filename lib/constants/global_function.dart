@@ -1,10 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:partner_admin_portal/bloc/manage_orders/order_bloc.dart';
 import 'package:partner_admin_portal/bloc/manage_orders/order_event.dart';
 import 'package:partner_admin_portal/bloc/manage_orders/order_state.dart';
 import 'package:partner_admin_portal/constants/utils.dart';
+import 'package:partner_admin_portal/widgets/custom_textfield.dart';
 import 'package:partner_admin_portal/widgets/menu/live_menu/live_menu.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/orders/manage/manage_orderes.dart';
 import 'global_variables.dart';
 
@@ -43,6 +47,24 @@ class GlobalFunction {
   static Amount selectedAmount = Amount.All;
 
   static Subsciption selectedSubs = Subsciption.All;
+
+  static void showSnackBar(BuildContext context,String content) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(milliseconds: 1800),
+        content: Text(
+          content,
+          style: GlobalVariables.dataItemStyle,
+        ),
+        backgroundColor: GlobalVariables.primaryColor, // Set your custom background color
+        behavior: SnackBarBehavior.floating, // Make the Snackbar floating
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+
+      ),
+    );
+  }
 
   static Widget buildMealButton(BuildContext context,MealTime mealTime, String label) {
     double baseWidth = 375;
@@ -300,6 +322,7 @@ class GlobalFunction {
         builder: (BuildContext context, state) {
           print(currentOrder);
           return AlertDialog(
+            backgroundColor: GlobalVariables.whiteColor,
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -765,6 +788,7 @@ class GlobalFunction {
       return  BlocBuilder<OrderBloc,OrderState>(
         builder: (BuildContext context, state) {
           return AlertDialog(
+            backgroundColor: GlobalVariables.whiteColor,
             title: Text("Items | ${list[index]['Items'].length}", style: SafeGoogleFont(
               'Poppins',
               fontSize: 15,
@@ -956,5 +980,454 @@ class GlobalFunction {
       );
     });
 
+  }
+
+  static showHolidayMessage(BuildContext context) {
+    DateTime today = DateTime.now();
+    showDialog(
+        context: context,
+        builder: (contexts) {
+          return AlertDialog(
+            backgroundColor: GlobalVariables.whiteColor,
+            title: Text("Set vecation",style: SafeGoogleFont(
+              'Poppins',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: GlobalVariables.primaryColor,
+            ),),
+            content: Container(
+              width: 450,
+              height: 600,
+              child: DefaultTabController(
+                length: 2, // Number of tabs
+                child: Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: GlobalVariables.primaryColor.withOpacity(0.3),
+                    toolbarHeight: 1,
+                    bottom: TabBar(
+                      labelPadding: EdgeInsets.symmetric(horizontal: 5),
+
+                      // Adjust the indicator weight
+                      indicatorColor: Color(0xfffbb830),
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      unselectedLabelColor: Colors.black54,
+                      labelColor: Color(0xFF363563),
+                      labelStyle: SafeGoogleFont(
+                        'Poppins',
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF363563),
+                      ),
+                      tabs: [
+                        Tab(text: 'Week'),
+                        Tab(text: 'Range',)
+                      ],
+                    ),
+                  ),
+                  body: TabBarView(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(left: 10),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Container(
+                                      width: 150,
+                                      child: Text('${DateFormat('EEE').format(today.add(Duration(days: 0)))} : ${DateFormat('dd MMM').format(today.add(Duration(days: 0)))}',style: GlobalVariables.dataItemStyle,)),
+
+                                  Transform.scale(
+                                    scale: 0.8,
+                                    child: Switch(value: true, onChanged: (val){
+
+                                    }),
+                                  ),
+                                  SizedBox(width: 130),
+                                  Checkbox(value: false, onChanged: (val) {
+
+                                  })
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+
+                              DataTable(
+                                dataRowHeight: 80,
+                                columnSpacing: 10,
+
+                                border: TableBorder.all(
+                                    color: Colors.black12,
+                                    width: 1,
+                                    style: BorderStyle.solid,
+                                    borderRadius: BorderRadius.circular(10)),
+                                columns: [
+                                  DataColumn(label: Container(width: 60,child: Text(''))),
+                                  DataColumn(label: Container(width: 65,child: Text(''))),
+                                  DataColumn(label: Container(
+                                    width: 65,
+                                    child: Center(
+                                      child: Text("Orders",style: SafeGoogleFont(
+                                        'Poppins',
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color:GlobalVariables.textColor,
+                                      ),),
+                                    ),
+                                  ),),
+                                  DataColumn(label:
+                                  Container(
+                                    width: 75,
+                                    child: Center(
+                                      child: Text("Subscription",style: SafeGoogleFont(
+                                        'Poppins',
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color:GlobalVariables.textColor,
+                                      ),),
+                                    ),
+                                  ),),
+                                ],
+                                rows: [
+                                  DataRow(cells: [
+                                    DataCell(Container(
+                                        width: 60,
+                                        child: Text("Breakfast",style: SafeGoogleFont(
+                                          'Poppins',
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                          color: GlobalVariables.textColor,
+                                        ),)),),
+                                    DataCell(
+                                      Column(
+                                        children: [
+                                          Transform.scale(
+                                            scale: 0.6,
+                                            child: Switch(value: true, onChanged: (val){
+
+                                            }),
+                                          ),
+                                          SizedBox(height: 5,),
+                                          Text("\u20B9 2000")
+                                        ],
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              buildSession1(true),
+                                              SizedBox(height: 5,),
+                                              Text("\u20B9 200")
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              buildSession1(false),
+                                              SizedBox(height: 5,),
+                                              Text("\u20B9 2000")
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(Container(
+                                        width: 60,
+                                        child: Text("Lunch",style: SafeGoogleFont(
+                                          'Poppins',
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                          color: GlobalVariables.textColor,
+                                        ),)),),
+                                    DataCell(
+                                      Column(
+                                        children: [
+                                          Transform.scale(
+                                            scale: 0.6,
+                                            child: Switch(value: true, onChanged: (val){
+
+                                            }),
+                                          ),
+                                          SizedBox(height: 5,),
+                                          Text("\u20B9 2000")
+                                        ],
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              buildSession1(true),
+                                              SizedBox(height: 5,),
+                                              Text("\u20B9 200")
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              buildSession1(false),
+                                              SizedBox(height: 5,),
+                                              Text("\u20B9 2000")
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ]),
+                                  DataRow(cells: [
+                                    DataCell(
+                                      Container(
+                                          width: 60,
+                                          child: Text("Dinner",style: SafeGoogleFont(
+                                            'Poppins',
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.bold,
+                                            color: GlobalVariables.textColor,
+                                          ),)),),
+                                    DataCell(
+                                      Column(
+                                        children: [
+                                          Transform.scale(
+                                            scale: 0.6,
+                                            child: Switch(value: true, onChanged: (val){
+
+                                            }),
+                                          ),
+                                          SizedBox(height: 5,),
+                                          Text("\u20B9 2000")
+                                        ],
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              buildSession1(true),
+                                              SizedBox(height: 5,),
+                                              Text("\u20B9 200")
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              buildSession1(false),
+                                              SizedBox(height: 5,),
+                                              Text("\u20B9 2000")
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ]),
+
+                                ],
+                              ),
+
+
+
+                              SizedBox(height: 15,),
+                              Row(
+                                children: [
+                                  Container(
+                                      width: 150,
+                                      child: Text('${DateFormat('EEE').format(today.add(Duration(days: 1)))} : ${DateFormat('dd MMM').format(today.add(Duration(days: 1)))}',style: GlobalVariables.dataItemStyle,)),
+                                  Transform.scale(
+                                    scale: 0.8,
+                                    child: Switch(value: true, onChanged: (val){
+
+                                    }),
+                                  ),
+                                  SizedBox(width: 130,),
+                                  Checkbox(value: true, onChanged: (val) {
+
+                                  })
+                                ],
+                              ),
+                              SizedBox(height: 15,),
+                              Row(
+                                children: [
+                                  Container(
+                                      width: 150,
+                                      child: Text('${DateFormat('EEE').format(today.add(Duration(days: 2)))} : ${DateFormat('dd MMM').format(today.add(Duration(days: 2)))}',style: GlobalVariables.dataItemStyle,)),
+                                  Transform.scale(
+                                    scale: 0.8,
+                                    child: Switch(value: true, onChanged: (val){
+
+                                    }),
+                                  ),
+                                  SizedBox(width: 130),
+                                  Checkbox(value: true, onChanged: (val) {
+
+                                  })
+                                ],
+                              ),
+                              SizedBox(height: 15,),
+                              Row(
+                                children: [
+                                  Container(
+                                      width: 150,
+                                      child: Text('${DateFormat('EEE').format(today.add(Duration(days: 3)))} : ${DateFormat('dd MMM').format(today.add(Duration(days: 3)))}',style: GlobalVariables.dataItemStyle,)),
+                                  Transform.scale(
+                                    scale: 0.8,
+                                    child: Switch(value: true, onChanged: (val){
+
+                                    }),
+                                  ),
+                                  SizedBox(width: 130),
+                                  Checkbox(value: true, onChanged: (val) {
+
+                                  })
+                                ],
+                              ),
+                              SizedBox(height: 15,),
+                              Row(
+                                children: [
+                                  Container(
+                                      width: 150,
+                                      child: Text('${DateFormat('EEE').format(today.add(Duration(days: 4)))} : ${DateFormat('dd MMM').format(today.add(Duration(days: 4)))}',style: GlobalVariables.dataItemStyle,)),
+                                  Transform.scale(
+                                    scale: 0.8,
+                                    child: Switch(value: true, onChanged: (val){
+
+                                    }),
+                                  ),
+                                  SizedBox(width: 130),
+                                  Checkbox(value: true, onChanged: (val) {
+
+                                  })
+                                ],
+                              ),
+                              SizedBox(height: 15,),
+                              Row(
+                                children: [
+                                  Container(
+                                      width: 150,
+                                      child: Text('${DateFormat('EEE').format(today.add(Duration(days: 5)))} : ${DateFormat('dd MMM').format(today.add(Duration(days: 5)))}',style: GlobalVariables.dataItemStyle,)),
+                                  Transform.scale(
+                                    scale: 0.8,
+                                    child: Switch(value: true, onChanged: (val){
+
+                                    }),
+                                  ),
+                                  SizedBox(width: 130),
+                                  Checkbox(value: true, onChanged: (val) {
+
+                                  })
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      Container(
+                        margin: EdgeInsets.only(left: 30),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 10,),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+
+                                CustomTextField(label: "Start Date", controller: TextEditingController(),showCalendar: true,),
+                                SizedBox(width: 30,),
+                                Column(
+                                  children: [
+                                    Text("to",style: TextStyle(
+                                      fontFamily: 'RenogareSoft',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: GlobalVariables.textColor,
+                                    ),),
+                                    SizedBox(height: 15,),
+                                    Text(":",style: TextStyle(
+                                      fontFamily: 'RenogareSoft',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: GlobalVariables.textColor,
+                                    ),),
+                                  ],
+                                ),
+                                SizedBox(width: 30,),
+                                CustomTextField(label: "End Date", controller: TextEditingController(),showCalendar: true,),
+                              ],
+                            )
+                          ],
+                        ),
+                      )
+
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            actions: [
+              CustomButton(text: "Cancel", onTap: (){
+                Navigator.pop(context);
+              }, color: Colors.red,textColor: GlobalVariables.textColor,),
+              CustomButton(text: "Submit", onTap: (){
+                Navigator.pop(context);
+              }, color: GlobalVariables.primaryColor,textColor: GlobalVariables.textColor,)
+            ],
+          );
+        });
+  }
+
+  static Widget buildSession1(bool offAndOn) {
+    return InkWell(
+      onTap: () {
+
+      },
+      child: Container(
+        width: 35,
+        height: 30,
+        decoration: BoxDecoration(
+          color: offAndOn ? GlobalVariables.primaryColor : GlobalVariables.whiteColor,
+          border: Border.all(color: GlobalVariables.primaryColor),
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Center(
+          child: Text(offAndOn ? 'ON' : 'OFF', style: SafeGoogleFont(
+            'Poppins',
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: GlobalVariables.textColor,
+          ),),
+        ),
+      ),
+    );
   }
 }

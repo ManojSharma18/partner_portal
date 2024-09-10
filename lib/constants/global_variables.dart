@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:partner_admin_portal/constants/utils.dart';
-
 import '../models/live_menu_model.dart';
 import '../models/restaurant_menu.dart';
 
-final String apiUrl = 'http://slys.in:4000';
+final String apiUrl = 'http://localhost:4000';
+
 
 class GlobalVariables {
   static const primaryColor =  Color(0xfffbb830);
@@ -26,6 +26,8 @@ class GlobalVariables {
     fontWeight: FontWeight.bold,
     color: GlobalVariables.textColor,
   );
+
+  static String selectedDay = '';
 
   static bool isOpend = true;
 

@@ -15,7 +15,7 @@ class MenuEditorLoadedState extends MenuEditorState {
   final Set<String> selectedCategories;
   final Map<String, List<Map<String,dynamic>>> foodCategories;
   final String itemName;
-  final Map<String,Map<String,Map<String,bool>>> daysMealSession;
+  final Map<String,Map<String,Map<String,int>>> daysMealSession;
   MenuEditorLoadedState(this.selectedCategories, this.foodCategories, this.itemName,this.daysMealSession);
 
   @override

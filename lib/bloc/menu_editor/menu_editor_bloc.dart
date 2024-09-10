@@ -38,9 +38,6 @@ class MenuEditorBloc extends Bloc<MenuEditorEvent,MenuEditorState> {
           updatedCategories = {event.categoryName}; // This will reset the set to contain only the new category
         }
 
-        print(updatedCategories);
-
-
         emit(MenuEditorLoadedState(updatedCategories, event.foodCategories, event.categoryName,MenuEditorVariables.daysMealSession));
       } catch (e) {
         print("MEnu Editor error is ${e.toString()}");
@@ -62,7 +59,8 @@ class MenuEditorBloc extends Bloc<MenuEditorEvent,MenuEditorState> {
             }
           }
         }
-        emit(MenuEditorLoadedState(event.selectedCategories, event.foodCategories, event.categoryName, event.daysMealSession));
+        emit(MenuEditorLoadedState(event.selectedCategories, event.foodCategories, event.categoryName,
+            {}));
       } catch (e) {
         emit(MenuEditorErrorState(e.toString()));
       }
@@ -79,7 +77,8 @@ class MenuEditorBloc extends Bloc<MenuEditorEvent,MenuEditorState> {
             m[sessionKey] = event.val;
           }
         }
-        emit(MenuEditorLoadedState(event.selectedCategories, event.foodCategories, event.categoryName, event.daysMealSession));
+        emit(MenuEditorLoadedState(event.selectedCategories, event.foodCategories, event.categoryName,
+            {}));
       } catch (e) {
         emit(MenuEditorErrorState(e.toString()));
       }
@@ -98,17 +97,81 @@ class MenuEditorBloc extends Bloc<MenuEditorEvent,MenuEditorState> {
             {
               for(var sessionKey in session.keys)
               {
-                session[sessionKey] = event.val;
+                session[sessionKey] = 0;
               }
             }
           }
         }
-        emit(MenuEditorLoadedState(event.selectedCategories, event.foodCategories, event.categoryName, event.daysMealSession));
+        emit(MenuEditorLoadedState(event.selectedCategories, event.foodCategories, event.categoryName,
+            {}));
       } catch (e) {
         emit(MenuEditorErrorState(e.toString()));
       }
     });
 
+    on<SelectAllDaysSubEvent>((event, emit) async {
+      emit(MenuEditorLoadingState());
+      try {
+        print("Bloc is working correctly");
+        for (var meals in event.daysMealSession.values) {
+
+          for (var sessionKey in meals.values) {
+
+            for(var s in sessionKey.keys)
+            {
+              sessionKey[s] = event.val;
+            }
+          }
+        }
+        emit(MenuEditorLoadedState(event.selectedCategories, event.foodCategories, event.categoryName,
+            {}));
+      } catch (e) {
+        emit(MenuEditorErrorState(e.toString()));
+      }
+    });
+
+    on<SelectMealsSubEvent>((event, emit) async {
+      emit(MenuEditorLoadingState());
+      try {
+        print("Meal Bloc is working correctly");
+        for (var meals in event.daysMealSession.values) {
+          var m = meals[event.meal];
+
+          for (var sessionKey in m!.keys) {
+            m[sessionKey] = event.val;
+          }
+        }
+        emit(MenuEditorLoadedState(event.selectedCategories, event.foodCategories, event.categoryName,
+            {}));
+      } catch (e) {
+        emit(MenuEditorErrorState(e.toString()));
+      }
+    });
+
+    on<SelectSingleDaySubEvent>((event, emit) async {
+      emit(MenuEditorLoadingState());
+      try {
+        print("Meal Bloc is working correctly");
+        for(var day in MenuEditorVariables.daysMealSession.keys)
+        {
+          var day1 = event.d;
+          if(day==day1)
+          {
+            for(var session in MenuEditorVariables.daysMealSession[day]!.values)
+            {
+              for(var sessionKey in session.keys)
+              {
+                session[sessionKey] = 0;
+              }
+            }
+          }
+        }
+        emit(MenuEditorLoadedState(event.selectedCategories, event.foodCategories, event.categoryName,
+            {}));
+      } catch (e) {
+        emit(MenuEditorErrorState(e.toString()));
+      }
+    });
 
   }
 }

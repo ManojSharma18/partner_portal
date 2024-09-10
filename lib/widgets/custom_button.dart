@@ -7,7 +7,8 @@ class CustomButton extends StatelessWidget {
   final String text;
   final Function() onTap;
   final Color color;
-  const CustomButton({Key? key, required this.text, required this.onTap, required this.color}) : super(key: key);
+  final Color? textColor;
+  const CustomButton({Key? key, required this.text, required this.onTap, required this.color,this.textColor = GlobalVariables.primaryColor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class CustomButton extends StatelessWidget {
         'Poppins',
         fontSize: 12,
         fontWeight: FontWeight.bold,
-        color: GlobalVariables.primaryColor,
+        color: textColor,
       ),),
       style: ButtonStyle(
       backgroundColor: MaterialStateProperty.all<Color>(color),

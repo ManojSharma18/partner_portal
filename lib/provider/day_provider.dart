@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:partner_admin_portal/constants/global_variables.dart';
 
 class DayProvider extends ChangeNotifier {
   int _tapCount = 0;
-  String _selectedDay = 'Fri : ${DateFormat('dd MMM').format(DateTime.now())}'; // Initial value is Monday
+
+
+
+  String _selectedDay = '${DateFormat('EEE').format(DateTime.now())} : ${DateFormat('dd MMM').format(DateTime.now())}'; // Initial value is Monday
 
   String get selectedDay => _selectedDay;
 
@@ -13,6 +17,7 @@ class DayProvider extends ChangeNotifier {
   }
 
   void updateSelectedDayWithTapCount(String day,int tapCount) {
+    GlobalVariables.selectedDay = day;
     _selectedDay = day;
     _tapCount = tapCount;
     notifyListeners();

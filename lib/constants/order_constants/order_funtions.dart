@@ -1,11 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:partner_admin_portal/bloc/manage_orders/order_bloc.dart';
+import 'package:partner_admin_portal/bloc/orders/orders_state.dart';
 import 'package:partner_admin_portal/constants/order_constants/order_variables.dart';
 import 'package:partner_admin_portal/constants/utils.dart';
+import 'package:partner_admin_portal/repository/order_service.dart';
 import 'package:partner_admin_portal/widgets/Forecast_table.dart';
 import 'package:partner_admin_portal/widgets/small_custom_textfield.dart';
 
+import '../../bloc/orders/orders_bloc.dart';
+import '../../bloc/orders/orders_event.dart';
 import '../global_variables.dart';
 import '../live_menu_constants/live_menu_variables.dart';
 
@@ -97,16 +103,23 @@ class OrderFunctions {
                                 ),
                               ),
                             ),
-                            InkWell(
-                                onTap: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => Material(child: ForeCastTable())));
-                                },
-                                child: Icon(Icons.arrow_forward_ios,color: GlobalVariables.textColor.withOpacity(0.9),size: 20,)
-                            )
+
                           ],
                         ),
                       ),
-
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(total.toString(),style: SafeGoogleFont(
+                            'Poppins',
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color:GlobalVariables.textColor,
+                          ),),
+                          SizedBox(width: 5,),
+                          Image(image: AssetImage('assets/images/square.png',),width: 15,height: 15,)
+                        ],
+                      ),
 
                       leading: Container(
                         margin: EdgeInsets.fromLTRB(0, 0*fem, 2, 1.5),
@@ -138,65 +151,27 @@ class OrderFunctions {
                   ),
                   SizedBox(height: 10,),
                   Container(
-                    margin: EdgeInsets.only(left: 5*fem,right: 5*fem),
-                    padding: EdgeInsets.only(left: 5*fem),
+                    margin: EdgeInsets.only(left: 25*fem,right: 15*fem),
+                    padding: EdgeInsets.only(left: 5*fem,right: 5),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(total.toString(),style: SafeGoogleFont(
-                              'Poppins',
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color:GlobalVariables.textColor,
-                            ),),
-                            SizedBox(height:5),
-                            Container(
-                              width:65*fem,
-                              height: 40,
-                              child: SmallCustomTextField(
-                                min:0,max:9999,
-                                textEditingController: totalController,height: 30,fontSize: 12,
-                                onChanged: (text){
-
-
-                                },
-                              ),
-                            ),
-                            SizedBox(height:10),
-                            Text("Total ",style: SafeGoogleFont(
-                              'Poppins',
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color:GlobalVariables.textColor,
-                            ),),
-                          ],
-                        ),
-                        Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(breakfast.toString(),style: SafeGoogleFont(
-                              'Poppins',
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color:GlobalVariables.textColor,
-                            ),),
-                            SizedBox(height:5),
-                            Container(
-                              width:65*fem,
-                              height:35,
-                              child: SmallCustomTextField(
-                                textEditingController: breakfastController,height: 30,fontSize: 12,
-                                min:0,max:9999,
-                                onChanged: (text){
-
-                                },
-                              ),
+                            Row(
+                              children: [
+                                Text(breakfast.toString(),style: SafeGoogleFont(
+                                  'Poppins',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color:GlobalVariables.textColor,
+                                ),),
+                                SizedBox(width: 5,),
+                                Image(image: AssetImage('assets/images/triangle.png'),width: 15,height: 15,)
+                              ],
                             ),
                             SizedBox(height:10),
                             Text("Breakfast",style: SafeGoogleFont(
@@ -211,24 +186,19 @@ class OrderFunctions {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(lunch.toString(),style: SafeGoogleFont(
-                              'Poppins',
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color:GlobalVariables.textColor,
-                            ),),
-                            SizedBox(height: 5,),
-                            Container(
-                              width:65*fem,
-                              height:35,
-                              child: SmallCustomTextField(
-                                textEditingController: lunchController,height: 30,fontSize: 12,
-                                min:0,max:9999,
-                                onChanged: (text){
-
-                                },
-                              ),
+                            Row(
+                              children: [
+                                Text(lunch.toString(),style: SafeGoogleFont(
+                                  'Poppins',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color:GlobalVariables.textColor,
+                                ),),
+                                SizedBox(width: 5,),
+                                Image(image: AssetImage('assets/images/down.png'),width: 15,height: 15,)
+                              ],
                             ),
+
                             SizedBox(height: 10,),
                             Container(
                               child: Text("Lunch",style: SafeGoogleFont(
@@ -244,23 +214,17 @@ class OrderFunctions {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(dinner.toString(),style: SafeGoogleFont(
-                              'Poppins',
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color:GlobalVariables.textColor,
-                            ),),
-                            SizedBox(height: 5,),
-                            Container(
-                              width:65*fem,
-                              height:35,
-                              child: SmallCustomTextField(
-                                textEditingController: dinnerController,height: 30,fontSize: 12,
-                                min:0,max:9999,
-                                onChanged: (text){
-
-                                },
-                              ),
+                            Row(
+                              children: [
+                                Text(dinner.toString(),style: SafeGoogleFont(
+                                  'Poppins',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color:GlobalVariables.textColor,
+                                ),),
+                                SizedBox(width: 5,),
+                                Image(image: AssetImage('assets/images/triangle.png'),width: 15,height: 15,)
+                              ],
                             ),
                             SizedBox(height: 10,),
                             Text("Dinner",style: SafeGoogleFont(
@@ -271,6 +235,12 @@ class OrderFunctions {
                             ),),
                           ],
                         ),
+                        InkWell(
+                            onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Material(child: ForeCastTable())));
+                            },
+                            child: Icon(Icons.arrow_forward_ios,color: GlobalVariables.textColor.withOpacity(0.9),size: 20,)
+                        )
 
                       ],
                     ),
@@ -290,5 +260,219 @@ class OrderFunctions {
     DateTime timeA = DateFormat('hh:mm a').parse(a['Time']);
     DateTime timeB = DateFormat('hh:mm a').parse(b['Time']);
     return OrderVariables.ascending ? timeA.compareTo(timeB) : timeB.compareTo(timeA);
+  }
+
+  static void showFilterAlert(BuildContext OrderContext,BuildContext showContext,) {
+    showDialog(
+      context: showContext,
+      builder: (BuildContext contexts) {
+        return BlocProvider(
+          create: (BuildContext context) => OrdersBloc(
+              OrderService()
+          )..add(LoadOrdersEvent()),
+          child: BlocBuilder<OrdersBloc,OrdersState>(builder: (BuildContext context, state) {
+            if(state is OrdersLoadedState) {
+              return AlertDialog(
+                content: Container(
+                  width: 350,
+                  height: 500,
+                  child: CustomPopupOrderItem(
+                    isPickup: OrderVariables.isPickup,
+                    isDeliver: OrderVariables.isDeliver,
+                    isDineIn: OrderVariables.isDineIn,
+                    onPickupChanged: OrderFunctions.handlePickupChange,
+                    onDeliverChanged:OrderFunctions.handleDeliverChange,
+                    onDineInChanged: OrderFunctions.handleDineInChange,
+                  ),
+                ),
+                actions: [
+                  GestureDetector(
+                    onTap: () {
+                      OrderContext.read<OrdersBloc>().add(LoadOrdersEvent());
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      width: 100,
+                      height: 30,
+                      decoration: BoxDecoration(
+                          color: GlobalVariables.primaryColor,
+                          borderRadius: BorderRadius.circular(5)
+                      ),
+                      child: Center(child: Text("Set",style: GlobalVariables.dataItemStyle,)),
+                    ),
+                  )
+                ],
+              );
+            }
+            return AlertDialog(
+              content: Container(
+                width: 350,
+                height: 500,
+                child: CustomPopupOrderItem(
+                  isPickup: OrderVariables.isPickup,
+                  isDeliver: OrderVariables.isDeliver,
+                  isDineIn: OrderVariables.isDineIn,
+                  onPickupChanged: OrderFunctions.handlePickupChange,
+                  onDeliverChanged:OrderFunctions.handleDeliverChange,
+                  onDineInChanged: OrderFunctions.handleDineInChange,
+                ),
+              ),
+              actions: [
+
+              ],
+            );
+          },
+          ),
+        );
+      },
+    );
+  }
+
+  static void handlePickupChange(BuildContext context,bool? value) {
+    context.read<OrdersBloc>().add(HandlePickupEvent(context, value!));
+  }
+
+  static void handleDeliverChange(BuildContext context,bool? value) {
+    context.read<OrdersBloc>().add(HandleDeliverEvent(context, value!));
+  }
+
+  static void handleDineInChange(BuildContext context,bool? value) {
+    context.read<OrdersBloc>().add(HandleDineInEvent(context, value!));
+  }
+}
+
+class CustomPopupOrderItem extends StatefulWidget {
+  final bool isPickup;
+  final bool isDeliver;
+  final bool isDineIn;
+  final Function(BuildContext, bool?) onPickupChanged;
+  final Function(BuildContext, bool?) onDeliverChanged;
+  final Function(BuildContext, bool?) onDineInChanged;
+
+
+
+  CustomPopupOrderItem({
+    required this.isPickup,
+    required this.isDeliver,
+    required this.isDineIn,
+    required this.onPickupChanged, required this.onDeliverChanged, required this.onDineInChanged,
+  });
+
+  @override
+  State<CustomPopupOrderItem> createState() => _CustomPopupMenuItemState();
+}
+
+class _CustomPopupMenuItemState extends State<CustomPopupOrderItem> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (BuildContext context) => OrdersBloc(
+          OrderService()
+      )..add(LoadOrdersEvent()),
+      child: BlocBuilder<OrdersBloc,OrdersState>(builder: (BuildContext orderContext, state) {
+        if(state is OrdersLoadedState)  {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      'Deliver mode',
+                      style: GlobalVariables.headingStyle,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: OrderVariables.isPickup,
+                        onChanged: (bool? value) => widget.onPickupChanged(orderContext, value),
+                      ),
+                      Text('Pick up',style: GlobalVariables.dataItemStyle,),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: OrderVariables.isDeliver,
+                        onChanged: (bool? value) => widget.onDeliverChanged(orderContext, value),
+                      ),
+                      Text('Deliver',style: GlobalVariables.dataItemStyle,),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: OrderVariables.isDineIn,
+                        onChanged: (bool? value) => widget.onDineInChanged(orderContext, value),
+                      ),
+                      Text('Dine in',style: GlobalVariables.dataItemStyle,),
+                    ],
+                  ),
+
+
+                ],
+              ),
+
+
+            ],
+          );
+        }
+        return  Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    'Deliver mode',
+                    style: GlobalVariables.headingStyle,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: OrderVariables.isPickup,
+                      onChanged: (bool? value) => widget.onPickupChanged(orderContext, value),
+                    ),
+                    Text('Pick up',style: GlobalVariables.dataItemStyle,),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: OrderVariables.isDeliver,
+                      onChanged: (bool? value) => widget.onDeliverChanged(orderContext, value),
+                    ),
+                    Text('Deliver',style: GlobalVariables.dataItemStyle,),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: OrderVariables.isDineIn,
+                      onChanged: (bool? value) => widget.onDineInChanged(orderContext, value),
+                    ),
+                    Text('Dine in',style: GlobalVariables.dataItemStyle,),
+                  ],
+                ),
+
+
+              ],
+            ),
+
+
+          ],
+        );
+      },
+
+      ),
+    );
   }
 }

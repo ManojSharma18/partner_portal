@@ -60,6 +60,48 @@ class OrdersBloc extends Bloc<OrdersEvent,OrdersState>{
       }
     });
 
+    on<HandlePickupEvent>((event, emit) async {
+      emit(OrdersLoadingState());
+      try {
+        final orders = await _orderService.fetchOrders();
+        OrderVariables.orders = orders;
+
+        OrderVariables.isPickup = event.value;
+
+        emit(OrdersLoadedState(orders, GlobalVariables.orders, GlobalVariables.inprogress, GlobalVariables.closed));
+      } catch (e) {
+        emit(OrderErrorState(e.toString()));
+      }
+    });
+
+    on<HandleDeliverEvent>((event, emit) async {
+      emit(OrdersLoadingState());
+      try {
+        final orders = await _orderService.fetchOrders();
+        OrderVariables.orders = orders;
+
+        OrderVariables.isDeliver = event.value;
+
+        emit(OrdersLoadedState(orders, GlobalVariables.orders, GlobalVariables.inprogress, GlobalVariables.closed));
+      } catch (e) {
+        emit(OrderErrorState(e.toString()));
+      }
+    });
+
+    on<HandleDineInEvent>((event, emit) async {
+      emit(OrdersLoadingState());
+      try {
+        final orders = await _orderService.fetchOrders();
+        OrderVariables.orders = orders;
+
+        OrderVariables.isDineIn = event.value;
+
+        emit(OrdersLoadedState(orders, GlobalVariables.orders, GlobalVariables.inprogress, GlobalVariables.closed));
+      } catch (e) {
+        emit(OrderErrorState(e.toString()));
+      }
+    });
+
     on<OrdersAcceptEvent>((event, emit) async {
       emit(OrdersLoadingState());
       try {
@@ -88,7 +130,6 @@ class OrdersBloc extends Bloc<OrdersEvent,OrdersState>{
         emit(OrderErrorState(e.toString()));
       }
     });
-
 
     on<OrdersRejectEvent>((event, emit) async {
       emit(OrdersLoadingState());
@@ -140,7 +181,6 @@ class OrdersBloc extends Bloc<OrdersEvent,OrdersState>{
         emit(OrderErrorState(e.toString()));
       }
     });
-
 
     on<CancelAllOrderEvent>((event, emit) async {
       emit(OrdersLoadingState());

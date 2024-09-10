@@ -84,4 +84,28 @@ class CancelAllOrderEvent extends OrdersEvent {
 }
 
 
+class HandlePickupEvent extends OrdersEvent {
+  final BuildContext context;
+  final bool value;
+  HandlePickupEvent(this.context,this.value);
+  @override
+  List<Object?> get props =>  [];
+}
+
+class HandleDeliverEvent extends OrdersEvent {
+  final BuildContext context;
+  final bool value;
+  HandleDeliverEvent(this.context,this.value);
+  @override
+  List<Object?> get props =>  [];
+}
+
+class HandleDineInEvent extends OrdersEvent {
+  final BuildContext context;
+  final bool value;
+  HandleDineInEvent(this.context,this.value);
+  @override
+  List<Object?> get props =>  [];
+}
+
 

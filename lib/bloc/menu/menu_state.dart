@@ -36,3 +36,11 @@ class ErrorState extends MenuState{
   List<Object?> get props =>  [error];
 }
 
+class MenuConsumptionState extends MenuState {
+  final List<String> consumptionMode;
+  MenuConsumptionState(this.consumptionMode);
+
+  @override
+  List<Object?> get props =>  [consumptionMode];
+}
+

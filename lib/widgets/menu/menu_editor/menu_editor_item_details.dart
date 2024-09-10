@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:partner_admin_portal/widgets/menu/live_menu/count_table.dart';
+import 'package:partner_admin_portal/widgets/menu/menu_editor/subscription_availability.dart';
+import 'package:partner_admin_portal/widgets/menu/menu_editor/variants_addon.dart';
 
 import '../../../constants/global_variables.dart';
 import '../../../constants/utils.dart';
@@ -15,6 +17,8 @@ class MenuEditorItemDetails extends StatefulWidget {
 }
 
 class _MenuEditorItemDetailsState extends State<MenuEditorItemDetails> {
+  bool subscribed = false;
+
   @override
   Widget build(BuildContext context) {
     double baseWidth = 375;
@@ -25,7 +29,7 @@ class _MenuEditorItemDetailsState extends State<MenuEditorItemDetails> {
         backgroundColor: GlobalVariables.primaryColor.withOpacity(0.2),
         title: Row(
           children: [
-            Text( "${widget.itemName} detail",
+            Text( "${widget.itemName} ",
               style:SafeGoogleFont(
               'Poppins',
               fontSize: 14,
@@ -36,9 +40,35 @@ class _MenuEditorItemDetailsState extends State<MenuEditorItemDetails> {
 
           ],
         ),
+        actions: [
+          Transform.scale(
+            scale: 0.8,
+            child: Switch(
+              value: subscribed,
+              onChanged: (val) {
+                setState(() {
+                  subscribed = val;
+                });
+              },
+              // Color when the switch is off
+            ),
+          ),
+          SizedBox(width: 10,),
+          InkWell(
+            onTap: (){
+              // _showHolidayPopupMenu(context);
+            },
+            child: Image.asset(
+              'assets/images/holidaynew.png',
+              width: 25,
+              height: 25,color: GlobalVariables.textColor,
+            ),
+          ),
+          SizedBox(width: 10,),
+        ],
       ),
       body: DefaultTabController(
-        length: 5,
+        length: 4,
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -62,6 +92,19 @@ class _MenuEditorItemDetailsState extends State<MenuEditorItemDetails> {
                       ),
                       tabs:
                       [
+
+                        Tab(
+                          child: Text(
+                            'Availability',
+
+                          ),
+                        ),
+                        Tab(
+                          child: Text(
+                            'Subscription',
+
+                          ),
+                        ),
                         Tab(
                           child: Row(
                             children: [
@@ -74,28 +117,11 @@ class _MenuEditorItemDetailsState extends State<MenuEditorItemDetails> {
                         ),
                         Tab(
                           child: Text(
-                            'Subscription',
-
-                          ),
-                        ),
-                        Tab(
-                          child: Text(
-                            'Availability',
-
-                          ),
-                        ),
-                        Tab(
-                          child: Text(
                             'Add on',
 
                           ),
                         ),
-                        Tab(
-                          child: Text(
-                            'Other',
 
-                          ),
-                        ),
                       ],
 
                     ),
@@ -108,11 +134,10 @@ class _MenuEditorItemDetailsState extends State<MenuEditorItemDetails> {
           ),
           body: TabBarView(
             children: [
-              ItemDetailsMob(name: widget.itemName),
-              Column(),
               ItemAvailableMob(),
-              Column(),
-              Column()
+              SubscriptionAvailability(),
+              ItemDetailsMob(name: widget.itemName),
+              VariantsAddon(),
             ],
           ),
         ),

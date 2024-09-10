@@ -4,15 +4,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:partner_admin_portal/bloc/menu/menu_bloc.dart';
+import 'package:partner_admin_portal/bloc/menu/menu_state.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
 import 'package:partner_admin_portal/constants/utils.dart';
+import 'package:partner_admin_portal/repository/menu_services.dart';
+
+import '../constants/menu_editor_constants/menu_editor_variables.dart';
 
 
 class CustomTextField extends StatefulWidget {
+  final FocusNode focusNode = FocusNode();
   final String label;
   final bool required;
+  final bool isCategory;
   final TextEditingController controller;
   final double height;
   final double width;
@@ -21,6 +31,9 @@ class CustomTextField extends StatefulWidget {
   final bool showSearchBox1;
   final String itemName;
   final Function(String?)? onChanged;
+  final Function(String?)? onChangedDropdown;
+  final Function(String?)? onSubmitted;
+  final bool isChangedDropDown;
   final VoidCallback? onTap;
   final bool showGenerateOTP;
   final bool showVerifyOTP;
@@ -36,17 +49,29 @@ class CustomTextField extends StatefulWidget {
   final double fontSize;
   final double dropdownSize;
   final bool dropdownAuto;
+  final bool displayCount;
+  final bool onlyDigits;
+  String selectedValue;
+  final bool digitsAndLetters;
+  final bool itemNotFound;
+  final bool searchItem;
+  final bool priceLimit;
+  final bool showAddItemDropDownSearch;
+
 
   CustomTextField({
     required this.label,
     this.required = false,
     required this.controller,
-    this.height = 40,
+    this.height = 60,
+    this.isCategory = false,
     this.width = 150,
     this.isDropdown = false,
     this.dropdownItems,
     this.showSearchBox1 = false,
     this.onChanged,
+    this.onChangedDropdown,
+    this.onSubmitted,
     this.onTap,
     this.itemName = "",
     this.showGenerateOTP = false,
@@ -62,7 +87,15 @@ class CustomTextField extends StatefulWidget {
     this.readOnly = false,
     this.fontSize =12,
     this.dropdownSize=14,
-    this.dropdownAuto = false
+    this.dropdownAuto = false,
+    this.displayCount = false,this.onlyDigits = false,
+    this.selectedValue = "",
+    this.digitsAndLetters = false,
+    this.itemNotFound = true,
+    this.searchItem = false,
+    this.isChangedDropDown = false,
+    this.priceLimit = false,
+    this.showAddItemDropDownSearch = true
   });
 
   @override
@@ -78,9 +111,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   bool dropAddItem = false;
 
+
+  MenuService _menuService = MenuService();
+
+
+
+  TextEditingController searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+    widget.controller.addListener(_convertToUpperCase);
     if (widget.isDropdown && widget.dropdownItems!.isNotEmpty && widget.controller.text.isEmpty) {
       widget.controller.text = widget.dropdownItems!.first;
     }
@@ -98,36 +139,39 @@ class _CustomTextFieldState extends State<CustomTextField> {
         });
       }
 
-  }
-
-  Future<Map<String, String>> fetchOwnerAndRestaurantName(String fssaiRegisterNumber) async {
-    try {
-      final response = await http.get(Uri.parse('https://api.fssai.gov.in/api/food-license/basic?licenseNumber=$fssaiRegisterNumber'));
-
-      print(response.body);
-      print(response.statusCode);
-
-      if (response.statusCode == 200) {
-        Map<String, dynamic> responseData = json.decode(response.body);
-
-        String ownerName = responseData['result']['data'][0]['ownerName'];
-        String restaurantName = responseData['result']['data'][0]['name'];
-
-        return {
-          'ownerName': ownerName,
-          'restaurantName': restaurantName,
-        };
-      } else {
-        throw Exception('Failed to load data from FSSAI API');
-      }
-    } catch (e) {
-      // Handle timeouts or other errors
-      throw Exception('Failed to load data from FSSAI API: $e');
+    if (widget.controller.text.isNotEmpty) {
+      selectedValue = widget.controller.text;
     }
   }
 
+  void _convertToUpperCase() {
+    final text = widget.controller.text;
+    if (text != text.toUpperCase()) {
+      widget.controller.value = widget.controller.value.copyWith(
+        text: text.toUpperCase(),
+        selection: TextSelection(
+          baseOffset: text.length,
+          extentOffset: text.length,
+        ),
+      );
+    }
+  }
+
+
+  TextInputFormatter getInputFormatter() {
+    if (widget.onlyDigits) {
+      return NumberInputFormatter();
+    } else if (widget.digitsAndLetters) {
+      return CustomInputFormatter();
+    } else {
+      return UpperCaseTextFormatter();
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -148,6 +192,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     TextSpan(
                       text: widget.required ? '*' : '',
                       style: TextStyle(
+                        fontSize: 15,
                         color: widget.required ? Colors.red : Colors.transparent, // Set red color for '*'
                       ),
                     ),
@@ -182,15 +227,23 @@ class _CustomTextFieldState extends State<CustomTextField> {
           ],
         ),
 
-
-
         SizedBox(height: 5,),
         SizedBox(
           height: widget.height,
           width: widget.width,
           child: TextField(
             controller: widget.controller,
+            focusNode: widget.focusNode,
+            onSubmitted: widget.onSubmitted,
+            onTap: () {
+              widget.onTap?.call();
+            },
+            inputFormatters: [
+              getInputFormatter(),
+              widget.priceLimit ? LengthLimitingTextInputFormatter(4) : LengthLimitingTextInputFormatter(50),
+            ],
             readOnly: widget.readOnly,
+
             style: TextStyle(
               fontFamily: 'BertSans',
               fontSize: 12,
@@ -209,152 +262,194 @@ class _CustomTextFieldState extends State<CustomTextField> {
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintStyle: SafeGoogleFont(
-                       'Poppins',
-                          fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                     color: GlobalVariables.textColor,
-    ),
+                'Poppins',
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: GlobalVariables.textColor,
+              ),
               prefixIcon: widget.prefixWidget,
               hintText: widget.hintText,
-              suffixIcon: widget.isDropdown
-                  ? Padding(
-                padding: const EdgeInsets.only(right: 0.0),
-                child: DropdownSearch<String>(
-                  key: dropdownKey,
-                  enabled: true,
-                  popupProps: PopupProps.menu(
-                    showSelectedItems: true,
-                    constraints: BoxConstraints(
-                       maxHeight: 250
-                ),
-                    showSearchBox: widget.showSearchBox1,
-                    fit: FlexFit.loose,
-                    emptyBuilder: (context, searchEntry) =>
-                        Container(
-                          height: 250,
-                          child: Center(
-                              child:
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text('${widget.itemName} not found',
-                                    style:SafeGoogleFont(
-                            'Poppins',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.red,
-                          ),),
-                                  Container(
-                                    margin: EdgeInsets.all(30),
-                                    child: Text('Do you want to create this ${widget.itemName}',
-                                      style:SafeGoogleFont(
-                                        'Poppins',
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                        color: GlobalVariables.textColor,
-                                      ),),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Container(
-                                          width: 50,
-                                          decoration: BoxDecoration(
-                                              color:GlobalVariables.whiteColor,
-                                              border:Border.all(color: Colors.black54),
-                                              borderRadius: BorderRadius.circular(10)),
-                                          padding: EdgeInsets.all(7),
-                                          child: Center(
-                                            child: Text(
-                                              'No',
-                                              style: SafeGoogleFont(
-                                                'Poppins',
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black54,
-                                              ),
+              suffixIcon: widget.isDropdown ?
+              DropdownSearch<String>(
+                key: dropdownKey,
+                enabled: true,
+                popupProps: PopupProps.menu(
+                  showSelectedItems: true,
+                  constraints: BoxConstraints(
+                      maxHeight: 280
+                  ),
+                  showSearchBox: widget.showSearchBox1,
+                  searchFieldProps: TextFieldProps(
+                    controller: searchController,
+                    inputFormatters: [getInputFormatter(),],
+                    autocorrect: true,
+                  ),
+
+                  scrollbarProps: ScrollbarProps(
+                    thickness: 5.0,
+                    radius: Radius.circular(6.0),
+                    thumbColor: GlobalVariables.textColor
+                  ),
+
+
+                  fit: FlexFit.loose,
+                  emptyBuilder: (context, searchEntry) {
+                    return Container(
+                      height: 250,
+                      child: Center(
+                          child:
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Visibility(
+                                visible: widget.itemNotFound,
+                                child: Text('${searchEntry} not found',
+                                  style:SafeGoogleFont(
+                                    'Poppins',
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.red,
+                                  ),),
+                              ),
+                              Container(
+                                margin: EdgeInsets.all(30),
+                                child: Text(widget.showAddItemDropDownSearch ? 'Do you want to create ${searchEntry}' : 'Item not available or disabled\n Please enable item in menu editor',
+                                  style:SafeGoogleFont(
+                                    'Poppins',
+                                    fontSize: widget.itemNotFound ? 13 : 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: GlobalVariables.textColor,
+                                  ),),
+                              ),
+                              Visibility(
+                                visible: widget.showAddItemDropDownSearch,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+
+                                    InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        decoration: BoxDecoration(
+                                            color:GlobalVariables.whiteColor,
+                                            border:Border.all(color: Colors.black54),
+                                            borderRadius: BorderRadius.circular(10)),
+                                        padding: EdgeInsets.all(7),
+                                        child: Center(
+                                          child: Text(
+                                            'No',
+                                            style: SafeGoogleFont(
+                                              'Poppins',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black54,
                                             ),
                                           ),
                                         ),
                                       ),
-                                      TextButton(
-                                        onPressed: () {
-                                         setState(() {
-                                           dropAddItem = true;
-                                           print(widget.dropdownItems!);
-                                           selectedValue = searchEntry;
-                                           widget.dropdownItems!.add(searchEntry);
-                                           widget.dropdownItems!.last;
-                                           widget.controller.text = searchEntry;
-                                           print(widget.dropdownItems!);
-                                         });
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Container(
-                                          width: 50,
-                                          decoration: BoxDecoration(
-                                              color: GlobalVariables.primaryColor,
-                                              borderRadius: BorderRadius.circular(10)),
-                                          padding: EdgeInsets.all(7),
-                                          child: Center(
-                                            child: Text(
-                                              'Yes',
-                                              style: SafeGoogleFont(
-                                                'Poppins',
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: GlobalVariables.whiteColor,
-                                              ),
+                                    ),
+                                    SizedBox(width: 15,),
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          if(MenuEditorVariables.isTagDropdown)
+                                            {
+                                              MenuEditorVariables.tagAddType = "created";
+                                            }
+                                          if(MenuEditorVariables.isItemDropdown){
+                                            MenuEditorVariables.itemAddType = "created";
+                                          }
+                                          dropAddItem = true;
+                                          print(widget.dropdownItems!);
+                                          selectedValue = searchEntry;
+                                          widget.dropdownItems!.add(searchEntry);
+                                          widget.dropdownItems!.last;
+                                          widget.controller.text = searchEntry;
+                                          print(widget.dropdownItems!);
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        decoration: BoxDecoration(
+                                            color: GlobalVariables.primaryColor,
+                                            borderRadius: BorderRadius.circular(10)),
+                                        padding: EdgeInsets.all(7),
+                                        child: Center(
+                                          child: Text(
+                                            'Yes',
+                                            style: SafeGoogleFont(
+                                              'Poppins',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: GlobalVariables.whiteColor,
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ],
-                              )),
+                                    ),
+                                    SizedBox(width: 15,),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )),
+                    );
+                  },
+                  itemBuilder: (context, item, isSelected) {
+                    return ListTile(
+                      title: Text(
+                        item,
+                        style: TextStyle(
+                          fontFamily: 'poppins',
+                          color: isSelected ? GlobalVariables.primaryColor : Colors.black,
+                          fontWeight: isSelected ? FontWeight.w400 : FontWeight.normal,
                         ),
-                  ),
-                  items: widget.dropdownItems ?? [],
-                  onChanged: (selectedItem) {
-                    if (widget.onChanged != null){
-                      widget.onChanged!(selectedItem);
-                    }
-                    setState(() {
-                      selectedValue = selectedItem;
-                      widget.controller.text = selectedItem ?? '';
-                    });
+                      ),
+                    );
                   },
-                  selectedItem:
-                       dropAddItem
-                      ? widget.dropdownItems!.last
-                      :  widget.dropdownItems != null && widget.dropdownItems!.isNotEmpty ? widget.dropdownItems!.first
-                      : null,
-                  dropdownDecoratorProps: DropDownDecoratorProps(
-                    dropdownSearchDecoration: InputDecoration(
-                      border: InputBorder.none,
-                    ),
-                  ),
-                  itemAsString: (item) {
-                    return item;
-                  },
-                  dropdownBuilder: _style,
-                  compareFn: (item, selectedItem) => item == selectedItem,
+
+
                 ),
-              )
-                  : widget.showCalendar
+                onChanged: widget.isChangedDropDown
+                    ? widget.onChangedDropdown
+                    : (selectedItem) {
+                  if (widget.onChanged != null){
+                    widget.onChanged!(selectedItem);
+                  }
+                  setState(() {
+                    selectedValue = selectedItem;
+                    widget.controller.text = selectedItem ?? '';
+                  });
+                },
+                items: widget.dropdownItems ?? [],
+
+                selectedItem: widget.selectedValue == "" ? selectedValue : widget.selectedValue,
+                // selectedItem: widget.selectedValue == "" ? selectedValue : widget.selectedValue,
+                // selectedItem: "",
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration: InputDecoration(
+                    border: InputBorder.none,
+                  ),
+                ),
+                itemAsString: (item) {
+                  return item;
+                },
+                dropdownBuilder: _style,
+                compareFn: (item, selectedItem) => item == selectedItem,
+              ) :
+              widget.showCalendar
                   ? GestureDetector(
                 onTap: () async {
                   DateTime? selectedDate = await showDatePicker(
                     context: context,
-                    initialDate: _selectedDate ?? DateTime.now(),
-                    firstDate: DateTime(2000),
+                    initialDate: _selectedDate ?? DateTime.now().add(Duration(days: 2)),
+                    firstDate: DateTime.now().add(Duration(days: 2)),
                     lastDate: DateTime(2100),
                   );
 
@@ -370,14 +465,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
               )
                   : (widget.onTap != null
                   ? IconButton(
-                icon: Icon(Icons.access_time, size: 18),
+                icon: Icon(Icons.edit, size: 18),
                 onPressed: widget.onTap,
                 color: Colors.black,
               )
 
                   : null  ),
             ),
-          ),
+          )
         ),
         Visibility(
           visible: widget.showVerifyOTP && _isNumberEntered,
@@ -402,12 +497,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           child: InkWell(
             onTap: ()
             async {
-              try {
-                Map<String, String> details = await fetchOwnerAndRestaurantName("21223052000251");
-                print(details);
-              } catch (e) {
-                print('Error: $e');
-              }
+
             },
             child: Text(
               'Validate Fssai',
@@ -488,6 +578,76 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ),
           ],
         ),
+        Visibility(
+          visible: widget.displayCount,
+          child: Container(
+            width: widget.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 1.0,),
+                      child: Text(
+                        '${widget.controller.text.length}/50', // Warning message
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Open Sans',
+                          fontSize: 12, // Adjust the font size as needed
+                          color: GlobalVariables.textColor.withOpacity(0.7), // Change the color as needed
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Visibility(
+                  visible: _isNumberEntered && widget.showGenerateOTP && _isValidNumber ,
+                  child: InkWell(
+                    onTap: () {
+                      showDialog(context: context, builder: (context) =>
+                          AlertDialog(
+                            title: Text("Enter your OTP",style: TextStyle(
+                              fontWeight: FontWeight.w300,
+                              fontFamily: 'Open Sans',
+                              fontSize: 18,
+                              color: Colors.black,
+                              wordSpacing: 0.23,
+                              letterSpacing: 0.23,
+                            ),),
+                            content: TextFormField(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            actions: [
+                              TextButton(onPressed: (){
+                                Navigator.pop(context);
+                              }, child: Text("Close")),
+                              TextButton(onPressed: (){
+                                Navigator.pop(context);
+                              }, child: Text("Verify"))
+                            ],
+                          )
+                      );
+                    },
+                    child: Text(
+                      'Generate\nOTP',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Open Sans',
+                        fontSize: 18, // Adjust the font size as needed
+                        color: Color(0xfffbb830), // Change the color as needed
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
 
       ],
     );
@@ -513,6 +673,74 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
       ),
     );
+  }
+}
+
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
+    return newValue.copyWith(
+      text: newValue.text.toUpperCase(),
+    );
+  }
+}
+
+class NumberInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
+    final newText = newValue.text;
+
+    if(newValue.text.startsWith(' ')){
+      return oldValue;
+    }
+
+    if (newText.isEmpty) {
+      return newValue;
+    }
+
+    // Allow only digits and one decimal point
+    final regExp = RegExp(r'^\d*\.?\d*$');
+    if (regExp.hasMatch(newText)) {
+      return newValue;
+    }
+
+    // If not matching, return the old value
+    return oldValue;
+  }
+}
+
+class CustomInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue,
+      TextEditingValue newValue,
+      ) {
+    final newText = newValue.text;
+
+    if(newValue.text.startsWith(' ')){
+      return oldValue;
+    }
+
+    if (newText.isEmpty) {
+      return newValue;
+    }
+
+
+    // Allow digits, letters, comma, and hyphen
+    final RegExp  regExp = RegExp(r'^[a-zA-Z0-9\-\,\&\~\!\@\#\*\(\)\./ ]*$');
+    if (regExp.hasMatch(newText)) {
+      return newValue;
+    }
+
+    // If not matching, return the old value
+    return oldValue;
   }
 }
 

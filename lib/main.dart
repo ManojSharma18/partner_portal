@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:partner_admin_portal/bloc/days_timings/days_time_bloc.dart';
+import 'package:partner_admin_portal/bloc/image/image_picker_bloc.dart';
 import 'package:partner_admin_portal/bloc/live_menu/live_menu_bloc.dart';
+import 'package:partner_admin_portal/bloc/live_menu_1/live_menu1_bloc.dart';
 import 'package:partner_admin_portal/bloc/manage_orders/order_bloc.dart';
+import 'package:partner_admin_portal/bloc/manage_settings/manage_settings_bloc.dart';
 import 'package:partner_admin_portal/bloc/menu/menu_bloc.dart';
 import 'package:partner_admin_portal/bloc/menu_editor/menu_editor_bloc.dart';
 import 'package:partner_admin_portal/bloc/order_forecast/forecast_bloc.dart';
 import 'package:partner_admin_portal/bloc/orders/orders_bloc.dart';
 import 'package:partner_admin_portal/bloc/subscription_order/subscription_order_bloc.dart';
+import 'package:partner_admin_portal/bloc/time/time_bloc.dart';
 import 'package:partner_admin_portal/constants/global_variables.dart';
 import 'package:partner_admin_portal/provider/day_provider.dart';
+import 'package:partner_admin_portal/repository/live_menu_service.dart';
 import 'package:partner_admin_portal/repository/menu_services.dart';
 import 'package:partner_admin_portal/repository/order_service.dart';
 import 'package:partner_admin_portal/screens/dashboard_screen.dart';
@@ -39,6 +45,11 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context)=> MenuEditorBloc()),
         BlocProvider(create: (context)=> SubscriptionOrdersBloc(OrderService())),
         BlocProvider(create: (context)=> OrdersBloc(OrderService())),
+        BlocProvider(create: (context)=> DaysTimeBloc()),
+        BlocProvider(create: (context)=> TimeSelectionBloc()),
+        BlocProvider(create: (context)=> ImagePickerBloc()),
+        BlocProvider(create: (context)=> ManageSettingsBloc()),
+        BlocProvider(create: (context)=> LiveMenu1Bloc(LiveMenuService()))
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

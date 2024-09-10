@@ -167,7 +167,7 @@ class _RatingState extends State<Rating> {
       appBar: AppBar(
         title: Row(
           children: [
-            Text("Ratings",style: SafeGoogleFont(
+            Text("RATINGS",style: SafeGoogleFont(
               'Poppins',
               fontSize: 18,
               fontWeight: FontWeight.bold,

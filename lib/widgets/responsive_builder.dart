@@ -39,7 +39,7 @@ class ResponsiveBuilder extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         double maxWidth = constraints.maxWidth;
-        print("Max Width: $maxWidth"); // Debugging statement
+        // Debugging statement
 
         if (maxWidth >= 1000 && screenWidth >=1250) {
           // Use desktop layout

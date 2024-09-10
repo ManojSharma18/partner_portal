@@ -55,4 +55,8 @@ class OrderVariables {
   static List<OrderModel> orders = [];
 
   static bool ascending = true;
+
+  static bool isPickup = false;
+  static bool isDeliver = false;
+  static bool isDineIn = false;
 }
