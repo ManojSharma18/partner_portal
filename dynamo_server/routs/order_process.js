@@ -71,49 +71,49 @@ router.post("/book-items", async (req, res) => {
 // let pendingRequests = []; // Initialize with an empty array
 
 // New endpoint to check order status
-router.get("/booking-status/:cartId", async (req, res) => {
-  const { cartId } = req.params;
-  const { userId } = req.query;
+// router.get("/booking-status/:cartId", async (req, res) => {
+//   const { cartId } = req.params;
+//   const { userId } = req.query;
 
-  try {
-    // Query r_list_history to get the current status of the booking
-    const params = {
-      TableName: "r-list_history",
-      Key: {
-        userId: userId,
-        cartId: cartId,
-      },
-      ProjectionExpression: "#s",
-      ExpressionAttributeNames: {
-        "#s": "status", // Alias for reserved keyword 'status'
-      },
-    };
+//   try {
+//     // Query r_list_history to get the current status of the booking
+//     const params = {
+//       TableName: "r-list_history",
+//       Key: {
+//         userId: userId,
+//         cartId: cartId,
+//       },
+//       ProjectionExpression: "#s",
+//       ExpressionAttributeNames: {
+//         "#s": "status", // Alias for reserved keyword 'status'
+//       },
+//     };
 
-    console.log(params);
+//     console.log(params);
 
-    const result = await docClient.get(params).promise();
+//     const result = await docClient.get(params).promise();
 
-    console.log(result);
+//     console.log(result);
 
-    if (result.Item) {
-      return res.status(200).json({
-        success: true,
-        status: result.Item.status,
-      });
-    }
+//     if (result.Item) {
+//       return res.status(200).json({
+//         success: true,
+//         status: result.Item.status,
+//       });
+//     }
 
-    res.status(404).json({
-      success: false,
-      message: "Booking not found",
-    });
-  } catch (error) {
-    console.error("Error fetching booking status:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch booking status",
-    });
-  }
-});
+//     res.status(404).json({
+//       success: false,
+//       message: "Booking not found",
+//     });
+//   } catch (error) {
+//     console.error("Error fetching booking status:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to fetch booking status",
+//     });
+//   }
+// });
 
 const fetchLastCartId = async () => {
   const params = {
