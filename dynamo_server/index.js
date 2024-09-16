@@ -13,10 +13,14 @@ app.use(bodyParser.json());
 
 const docClient = new AWS.DynamoDB.DocumentClient({ region: "us-east-1" });
 
-const liveMenuNewRouter = require("./routs/order_manage");
-app.use("/liveMenu", liveMenuNewRouter);
+// const liveMenuNewRouter = require("./routs/order_manage");
+// app.use("/liveMenu", liveMenuNewRouter);
 
-const QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/746669234475/order.fifo";
+const orderProcessRouter = require("./routs/order_process");
+app.use("/orderProcess", orderProcessRouter);
+
+const QUEUE_URL =
+  "https://sqs.us-east-1.amazonaws.com/746669234475/MyQueue.fifo";
 
 async function processBookingRequest(message) {
   const { userId, cartItems, date, meal, selectedSession, cartId } = JSON.parse(
@@ -247,7 +251,7 @@ async function pollSQSQueue() {
   }
 }
 
-setInterval(pollSQSQueue, 3000);
+// setInterval(pollSQSQueue, 3000);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
